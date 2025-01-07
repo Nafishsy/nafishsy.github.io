@@ -2,7 +2,7 @@
 layout: post
 title:  "Few-Shot Learning for Retinal Vessel Segmentation: Achieving 0.86 Dice Coefficient"
 date:   2025-01-07 00:00:00 +00:00
-image: images\prediction.png
+image: \images\prediction.png
 categories: research
 author: "Nafiz Ahmed"
 authors: "<strong>Nafiz Ahmed</strong>"

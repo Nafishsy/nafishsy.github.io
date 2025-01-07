@@ -1,0 +1,21 @@
+---
+layout: post
+title:  "Music and Mental Health: KNN Classification of Music Effects"
+date:   2022-12-07
+image: /images/59ea4181d4bbe.png
+categories: "Course:"
+author: Nafiz Ahmed
+subtitle: "KNN for Mental Health Classification"
+# paper: /pdfs/music_mental_health_knn.pdf
+course: "Data Science, R"
+code: https://github.com/Nafishsy/Music-and-Mental-Health-KNN-Classification-of-Music-Effects.git
+# video: https://www.youtube.com/watch?v=example
+---
+The course was the pivoting point as it shifted my interests from software to machine learning.  
+This project investigates the relationship between music and mental health, specifically in individuals experiencing anxiety, depression, insomnia, and OCD. Using the `mxmh_survey_results.csv` dataset, K-Nearest Neighbors (KNN) classification is employed to categorize music’s perceived effects as improving, worsening, or having no effect.
+
+I implement KNN classification and analyze the results, achieving promising results. The research explores how different music characteristics correlate with mental health conditions.
+
+[Project Paper](/pdfs/music_mental_health_knn.pdf){:target="_blank"}
+
+[YouTube Presentation](https://www.youtube.com/watch?v=example){:target="_blank"}
