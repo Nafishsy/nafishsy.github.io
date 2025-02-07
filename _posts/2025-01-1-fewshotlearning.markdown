@@ -12,4 +12,4 @@ arxiv:
 # code: https://github.com/nafishy/few-shot-retinal-vessel-segmentation
 # website: https://nafishy.github.io/few-shot-retinal-vessel
 ---
-In this project, I explore few-shot learning techniques applied to retinal vessel segmentation. Currently, I have achieved a Dice coefficient of 0.86, approaching the current state-of-the-art (SOTA) of 0.89, achieved without using few-shot learning. This showcases the effectiveness of few-shot learning in improving segmentation accuracy for medical imaging, especially when limited labeled data is available.
+In this project, I explore few-shot learning techniques applied to retinal vessel segmentation. Currently, I have achieved a Dice coefficient of 0.885 (06-February-2025), approaching the current state-of-the-art (SOTA) of 0.89, achieved without using few-shot learning. This showcases the effectiveness of few-shot learning in improving segmentation accuracy for medical imaging, especially when limited labeled data is available.
