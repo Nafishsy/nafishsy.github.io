@@ -80,7 +80,18 @@
           {% if cat == 'research' %}
           <tr class="card-row">
             <td style="padding:15px;width:25%;vertical-align:middle;min-width:120px">
+              {% if post.image and post.image != "" %}
               <img class="project-thumb" src="/tn{{post.image}}" alt="project image" style="width:auto; height:auto; max-width:100%;" />
+              {% elsif post.website %}
+              <div class="iframe-preview">
+                <iframe src="{{post.website}}" title="{{post.title}}" loading="lazy"></iframe>
+                <a href="{{post.website}}" target="_blank" class="iframe-overlay">View Site</a>
+              </div>
+              {% else %}
+              <div class="placeholder-thumb">
+                <span>Research</span>
+              </div>
+              {% endif %}
             </td>
             <td style="padding:15px 20px;width:75%;vertical-align:middle">
               <h3>{{post.title}}</h3>
@@ -204,7 +215,18 @@
           {% if cat != 'research' and cat != 'Intel' %}
           <tr class="card-row">
             <td style="padding:15px;width:25%;vertical-align:middle;min-width:120px">
+              {% if post.image and post.image != "" %}
               <img class="project-thumb" src="/tn{{post.image}}" alt="project image" style="width:auto; height:auto; max-width:100%;" />
+              {% elsif post.website %}
+              <div class="iframe-preview">
+                <iframe src="{{post.website}}" title="{{post.title}}" loading="lazy"></iframe>
+                <a href="{{post.website}}" target="_blank" class="iframe-overlay">View Site</a>
+              </div>
+              {% else %}
+              <div class="placeholder-thumb">
+                <span>Project</span>
+              </div>
+              {% endif %}
             </td>
             <td style="padding:15px 20px;width:75%;vertical-align:middle">
               <h3>{{post.title}}</h3>

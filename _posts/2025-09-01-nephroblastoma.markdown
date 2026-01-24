@@ -2,7 +2,7 @@
 layout: post
 title:  "AI-Driven Staging of Pediatric Nephroblastoma in Low-Resource Settings"
 date:   2025-09-01 00:00:00 +00:00
-image: /images/nephroblastoma.png
+image:
 categories: research
 author: "Nafiz Ahmed"
 authors: "<strong>Nafiz Ahmed</strong>, Md Kishor Morol"

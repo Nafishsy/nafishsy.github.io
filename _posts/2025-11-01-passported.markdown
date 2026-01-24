@@ -2,7 +2,7 @@
 layout: post
 title:  "PassPorted: Identity-Consistent Generative ID System"
 date:   2025-11-01 00:00:00 +00:00
-image: /images/passported.png
+image:
 categories: project
 author: "Nafiz Ahmed"
 authors: "<strong>Nafiz Ahmed</strong>"

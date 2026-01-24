@@ -2,7 +2,7 @@
 layout: post
 title:  "Enterprise-Scale Bengali Legal RAG System"
 date:   2025-10-15 00:00:00 +00:00
-image: /images/legal_rag.png
+image:
 categories: project
 author: "Nafiz Ahmed"
 authors: "<strong>Nafiz Ahmed</strong>"

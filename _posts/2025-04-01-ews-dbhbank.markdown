@@ -2,7 +2,7 @@
 layout: post
 title:  "Early Warning System (EWS) for DBH Bank"
 date:   2025-04-01 00:00:00 +00:00
-image: /images/ews_bank.png
+image:
 categories: project
 author: "Nafiz Ahmed"
 authors: "<strong>Nafiz Ahmed</strong>"

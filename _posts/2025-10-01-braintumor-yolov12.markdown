@@ -2,7 +2,7 @@
 layout: post
 title:  "Explainable Multi-Modal Brain Tumor Localization using Attention-Guided YOLOv12"
 date:   2025-10-01 00:00:00 +00:00
-image: /images/brain_tumor.png
+image:
 categories: research
 author: "Nafiz Ahmed"
 authors: "<strong>Nafiz Ahmed</strong>, Md Kishor Morol"
