@@ -1,513 +1,1313 @@
-// ================================
-// NAFIZ AHMED - PORTFOLIO SCRIPTS
-// ================================
+// ============================================
+// NAFIZ AHMED - PORTFOLIO RPG
+// A Pokemon-style exploration game
+// ============================================
 
-// Mobile Navigation Toggle
-const navToggle = document.querySelector('.nav-toggle');
-const navLinks = document.querySelector('.nav-links');
+const S = 16; // tile size
+const COLS = 30;
+const ROWS = 20;
 
-navToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('active');
-  navToggle.classList.toggle('active');
-});
-
-// Close mobile menu when clicking a link
-document.querySelectorAll('.nav-links a').forEach(link => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('active');
-    navToggle.classList.remove('active');
-  });
-});
-
-// Navbar background on scroll
-const navbar = document.querySelector('.navbar');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 50) {
-    navbar.style.background = 'rgba(15, 15, 35, 0.95)';
-    navbar.style.padding = '12px 40px';
-  } else {
-    navbar.style.background = 'rgba(15, 15, 35, 0.8)';
-    navbar.style.padding = '20px 40px';
-  }
-});
-
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  });
-});
-
-// Typewriter Effect
-const typewriterText = document.querySelector('.typewriter');
-const roles = [
-  'Machine Learning Engineer',
-  'Computer Vision Researcher',
-  'Agentic AI Developer',
-  'Medical AI Enthusiast'
-];
-let roleIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-let typeSpeed = 100;
-
-function typeWriter() {
-  const currentRole = roles[roleIndex];
-
-  if (isDeleting) {
-    typewriterText.textContent = currentRole.substring(0, charIndex - 1);
-    charIndex--;
-    typeSpeed = 50;
-  } else {
-    typewriterText.textContent = currentRole.substring(0, charIndex + 1);
-    charIndex++;
-    typeSpeed = 100;
-  }
-
-  if (!isDeleting && charIndex === currentRole.length) {
-    typeSpeed = 2000; // Pause at end
-    isDeleting = true;
-  } else if (isDeleting && charIndex === 0) {
-    isDeleting = false;
-    roleIndex = (roleIndex + 1) % roles.length;
-    typeSpeed = 500; // Pause before typing next
-  }
-
-  setTimeout(typeWriter, typeSpeed);
-}
-
-// Start typewriter after page loads
-setTimeout(typeWriter, 1000);
-
-// Scroll Animation Observer
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -50px 0px'
+// Tile types
+const T = {
+  GRASS: 0, PATH: 1, TREE: 2, WATER: 3, WALL: 4, DOOR: 5,
+  ROOF_C: 6, ROOF_R: 7, ROOF_Y: 8, ROOF_P: 9,
+  FLOWER_R: 10, FLOWER_Y: 11
 };
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('animate');
+// Walkable tiles
+const WALKABLE = new Set([T.GRASS, T.PATH, T.FLOWER_R, T.FLOWER_Y]);
 
-      // Stagger animation for cards
-      if (entry.target.classList.contains('pub-card') ||
-          entry.target.classList.contains('project-card') ||
-          entry.target.classList.contains('timeline-item')) {
-        const siblings = entry.target.parentElement.children;
-        Array.from(siblings).forEach((sibling, index) => {
-          setTimeout(() => {
-            sibling.classList.add('animate');
-          }, index * 100);
-        });
+// Map (30x20)
+const MAP = [
+  [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+  [2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+  [2,0,0,6,6,6,6,6,0,0,0,0,0,0,1,1,0,0,0,0,0,7,7,7,7,7,0,0,0,2],
+  [2,0,0,4,4,4,4,4,0,0,10,0,0,0,1,1,0,0,0,10,0,4,4,4,4,4,0,0,0,2],
+  [2,0,0,4,4,4,4,4,0,0,0,0,0,0,1,1,0,0,0,0,0,4,4,4,4,4,0,0,0,2],
+  [2,0,0,4,4,5,4,4,0,0,0,0,0,0,1,1,0,0,0,0,0,4,4,5,4,4,0,0,0,2],
+  [2,0,0,0,0,1,0,0,0,0,11,0,0,0,1,1,0,0,11,0,0,0,0,1,0,0,0,0,0,2],
+  [2,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,2],
+  [2,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,2],
+  [2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+  [2,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,3,3,0,2],
+  [2,0,0,0,0,1,0,0,0,10,0,0,0,0,1,1,0,0,0,10,0,0,0,1,0,0,3,3,0,2],
+  [2,0,0,8,8,8,8,8,0,0,0,0,0,0,1,1,0,0,0,0,0,9,9,9,9,9,0,0,0,2],
+  [2,0,0,4,4,4,4,4,0,0,11,0,0,0,1,1,0,0,0,11,0,4,4,4,4,4,0,0,0,2],
+  [2,0,0,4,4,4,4,4,0,0,0,0,0,0,1,1,0,0,0,0,0,4,4,4,4,4,0,0,0,2],
+  [2,0,0,4,4,5,4,4,0,0,0,0,0,0,1,1,0,0,0,0,0,4,4,5,4,4,0,0,0,2],
+  [2,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,2],
+  [2,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,2],
+  [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+  [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+];
+
+// Door -> building mapping (key = "x,y")
+const DOOR_MAP = {
+  '5,5': 'lab',
+  '23,5': 'workshop',
+  '5,15': 'career',
+  '23,15': 'academy'
+};
+
+// Building dialog content
+const BUILDINGS = {
+  lab: {
+    name: 'RESEARCH LAB',
+    pages: [
+      { speaker: 'RESEARCH LAB', text: 'Welcome! This lab houses all of Nafiz\'s published research and ongoing work.' },
+      { speaker: 'PUBLISHED', text: '"Deep Learning-Based NLP in Human-Agent Interaction" - Elsevier NLP Journal, 2024. A comprehensive survey on DL techniques in NLP for dialogue systems.' },
+      { speaker: 'PUBLISHED', text: '"Blockchain-Based Data Security for ERP Systems" - IJIEEB, 2023. Two proposed models for securing enterprise data with blockchain.' },
+      { speaker: 'UNDER REVIEW', text: '"Hybrid MedT" - A novel few-shot architecture achieving 92.72% Dice coefficient with only 5% training data for retinal vessel segmentation.' },
+      { speaker: 'UNDER REVIEW', text: '"Explainable Brain Tumor Localization" - Custom YOLOv12 with DenseBlock achieving 94.35% mAP@50 on 4-class brain tumor dataset.' },
+      { speaker: 'ONGOING', text: '"AI-Driven Staging of Pediatric Nephroblastoma" - Dual-stream system achieving 90.81% Dice score for Wilms\' tumor detection on CT scans.' }
+    ]
+  },
+  workshop: {
+    name: 'PROJECT WORKSHOP',
+    pages: [
+      { speaker: 'PROJECT WORKSHOP', text: 'Here you\'ll find Nafiz\'s most impressive engineering projects!' },
+      { speaker: 'RETINAL SEGMENTATION', text: 'Few-shot learning architecture with 92.72% Dice using Medical Transformer + hybrid attention. Built with TensorFlow.' },
+      { speaker: 'BENGALI LEGAL RAG', text: 'Enterprise-scale RAG pipeline for 50,000+ legal documents. 98% layout fidelity, 0.95 Faithfulness score using YOLOv8 + GPT-4.' },
+      { speaker: 'BANK WARNING SYSTEM', text: 'Financial risk prediction for DBH Bank using XGBoost + Prophet. Time-series analysis for proactive defaulter identification. Live in production!' },
+      { speaker: 'PASSPORTED', text: 'Generative AI system using Latent Diffusion + ControlNet to transform casual photos into standardized passport photos.' },
+      { speaker: 'BRAIN TUMOR AI', text: 'Custom YOLOv12 with DenseBlock integration. 94.35% mAP@50 across 4 tumor classes with Grad-CAM explainability.' }
+    ]
+  },
+  career: {
+    name: 'CAREER CENTER',
+    pages: [
+      { speaker: 'CAREER CENTER', text: 'Nafiz\'s professional journey spans multiple countries and cutting-edge AI domains!' },
+      { speaker: 'PERISCOPELABS', text: 'ML Engineer (Mid-Level) | Oct 2025 - Present | Banani, Bangladesh. Architecting defaulter warning systems, RAG pipelines with YOLOv5n + GPT-4, multi-agentic AI solutions.' },
+      { speaker: 'ELITE LAB', text: 'Researcher | Sep 2025 - Present | New York (Remote). Contributing to 3 papers on CV and LLMs. Built modified U-Net for retinal segmentation. Designed child-safe LLM guardrails.' },
+      { speaker: 'METROSOFTS', text: 'ML Engineer | Jan 2024 - Oct 2025 | Gothenburg, Sweden (Remote). Multi-modal AI pipeline with dual-YOLOv5n (87% acc, 120 FPS). LLaVaNext for UI annotation.' },
+      { speaker: 'AMIR LAB', text: 'Research Intern | Sep 2023 - Mar 2024 | Dhaka. Published peer-reviewed literature review on NLP + Deep Learning. Led 3-member research team.' },
+      { speaker: 'SHAPLA INFOSYS', text: 'Jr Software Engineer | Jan - Dec 2023 | Dhaka. Built web apps with Laravel/React (+40% satisfaction). 200+ Figma prototypes. 98% Lighthouse score.' }
+    ]
+  },
+  academy: {
+    name: 'ACADEMY',
+    pages: [
+      { speaker: 'ACADEMY', text: 'Welcome to the Academy! Here lies Nafiz\'s academic achievements and credentials.' },
+      { speaker: 'EDUCATION', text: 'B.Sc. in Computer Science & Engineering from American International University-Bangladesh (AIUB). CGPA: 3.93/4.00 - Top 2% of graduating class!' },
+      { speaker: 'HONORS', text: 'Magna Cum Laude honor! That\'s the highest academic distinction. Plus 4 consecutive Dean\'s List Awards for outstanding performance.' },
+      { speaker: 'SKILLS', text: 'ML/DL: PyTorch, TensorFlow, Keras, Transformers. CV: YOLO, U-Net, Segmentation, Medical Imaging. GenAI: RAG, LangChain, CrewAI, Prompt Engineering.' },
+      { speaker: 'SKILLS', text: 'MLOps: Docker, FastAPI, AWS, ChromaDB. Languages: Python, JavaScript, SQL. Research: Medical AI, Explainable AI, Few-Shot Learning.' },
+      { speaker: 'CONTACT', text: 'Email: nafizahmed273273@gmail.com | GitHub: Nafishsy | LinkedIn: Nafishy | Google Scholar: Nafiz Ahmed' }
+    ]
+  }
+};
+
+// NPC data
+const NPCS = [
+  {
+    x: 13, y: 8, name: 'Guide Chip', hair: '#40cc40', body: '#308830', skin: '#ffcc99',
+    acc: null, idleDir: 'down', idleTimer: 0, idleCycle: 0,
+    dialog: [
+      { speaker: 'GUIDE CHIP', text: 'Welcome to Nafiz\'s world! I\'m your guide.' },
+      { speaker: 'GUIDE CHIP', text: 'Explore the 4 buildings to learn about Nafiz. Walk up to doors and press SPACE!' },
+      { speaker: 'GUIDE CHIP', text: 'Collect all 10 glowing items scattered around town. Press I to view your inventory!' },
+      { speaker: 'GUIDE CHIP', text: 'Talk to the NPCs near each building for more details. Good luck, explorer!' }
+    ]
+  },
+  {
+    x: 8, y: 3, name: 'Prof. Synapse', hair: '#4060cc', body: '#3050aa', skin: '#e8bb88',
+    acc: 'glasses', idleDir: 'down', idleTimer: 0, idleCycle: 0,
+    dialog: [
+      { speaker: 'PROF. SYNAPSE', text: 'I study Nafiz\'s research output. Quite impressive!' },
+      { speaker: 'PROF. SYNAPSE', text: 'He\'s published in Elsevier and contributed to medical AI breakthroughs.' },
+      { speaker: 'PROF. SYNAPSE', text: 'His retinal vessel segmentation work achieves 92.72% Dice with just 5% training data. Remarkable few-shot learning!' }
+    ]
+  },
+  {
+    x: 20, y: 4, name: 'Dev.0', hair: '#dd8820', body: '#bb6610', skin: '#ffcc99',
+    acc: 'hat', idleDir: 'down', idleTimer: 0, idleCycle: 0,
+    dialog: [
+      { speaker: 'DEV.0', text: 'Yo! I\'m Dev.0, the project specialist.' },
+      { speaker: 'DEV.0', text: 'Nafiz built a RAG system handling 50,000+ Bengali legal documents. That\'s enterprise-scale NLP!' },
+      { speaker: 'DEV.0', text: 'He also built a bank early warning system that\'s live in production. Real-world ML impact!' }
+    ]
+  },
+  {
+    x: 8, y: 16, name: 'Cpt. Vector', hair: '#ccaa20', body: '#aa8810', skin: '#ddaa77',
+    acc: 'badge', idleDir: 'down', idleTimer: 0, idleCycle: 0,
+    dialog: [
+      { speaker: 'CPT. VECTOR', text: 'At ease, explorer! I track Nafiz\'s career deployments.' },
+      { speaker: 'CPT. VECTOR', text: 'He\'s worked across Bangladesh, Sweden, and the USA. A truly global ML engineer!' },
+      { speaker: 'CPT. VECTOR', text: 'Currently at Periscopelabs building Agentic AI for banking and travel sectors. Plus research at ELITE Lab in New York!' }
+    ]
+  },
+  {
+    x: 20, y: 16, name: 'Scholar Bit', hair: '#9944cc', body: '#7733aa', skin: '#ffcc99',
+    acc: 'book', idleDir: 'down', idleTimer: 0, idleCycle: 0,
+    dialog: [
+      { speaker: 'SCHOLAR BIT', text: 'Greetings! I\'m the Academy\'s keeper of knowledge.' },
+      { speaker: 'SCHOLAR BIT', text: 'Nafiz graduated with 3.93 CGPA from AIUB. That\'s Top 2% - earning Magna Cum Laude!' },
+      { speaker: 'SCHOLAR BIT', text: '4 consecutive Dean\'s Awards! His mastery spans PyTorch, TensorFlow, YOLO, LangChain, and much more.' }
+    ]
+  }
+];
+
+// Collectible items
+const ITEMS = [
+  { x: 2, y: 2, icon: '\u{1F525}', name: 'PyTorch Flame', desc: 'Mastery of PyTorch deep learning framework. Nafiz\'s primary research tool.', color: '#ff4422' },
+  { x: 27, y: 2, icon: '\u{1F48E}', name: 'TensorFlow Crystal', desc: 'TensorFlow expertise for production ML systems and medical imaging.', color: '#ff8800' },
+  { x: 12, y: 1, icon: '\u{1F4DC}', name: 'Research Scroll', desc: 'Published peer-reviewed research in Elsevier NLP Journal (2024).', color: '#eecc44' },
+  { x: 19, y: 7, icon: '\u{1F3AF}', name: 'YOLO Badge', desc: 'YOLO object detection mastery. YOLOv5, v8, v12 - customized architectures.', color: '#44cc44' },
+  { x: 1, y: 18, icon: '\u{1F3C6}', name: 'Dean\'s Trophy', desc: '4 consecutive Dean\'s List Awards from AIUB. Academic excellence!', color: '#ffd700' },
+  { x: 28, y: 18, icon: '\u{1F916}', name: 'RAG Module', desc: 'RAG pipeline expertise. Built systems for 50K+ documents with 0.95 Faithfulness.', color: '#4488ff' },
+  { x: 9, y: 18, icon: '\u{1F396}', name: 'Magna Medal', desc: 'Magna Cum Laude honor. Top 2% graduate with 3.93 CGPA.', color: '#ff4488' },
+  { x: 19, y: 18, icon: '\u{1F4E6}', name: 'Docker Container', desc: 'MLOps deployment with Docker, FastAPI, and AWS. Production-ready ML.', color: '#2288dd' },
+  { x: 28, y: 10, icon: '\u{1F511}', name: 'LangChain Key', desc: 'LangChain + CrewAI orchestration. Multi-agent AI system architect.', color: '#cc88ff' },
+  { x: 12, y: 18, icon: '\u{1F441}', name: 'Vision Lens', desc: 'Computer Vision specialist. Medical imaging, segmentation, detection.', color: '#00ccdd' }
+];
+
+// Building labels
+const LABELS = [
+  { x: 5, y: 2, text: 'RESEARCH', color: '#00ccdd' },
+  { x: 23, y: 2, text: 'PROJECTS', color: '#cc3040' },
+  { x: 5, y: 12, text: 'CAREER', color: '#ccaa30' },
+  { x: 23, y: 12, text: 'ACADEMY', color: '#8844aa' }
+];
+
+// ============================================
+// PARTICLE SYSTEM
+// ============================================
+class Particles {
+  constructor() {
+    this.list = [];
+  }
+
+  emit(x, y, type, count) {
+    for (let i = 0; i < count; i++) {
+      const p = { x, y, type, life: 1, maxLife: 1 };
+      switch (type) {
+        case 'dust':
+          p.vx = (Math.random() - 0.5) * 0.8;
+          p.vy = -Math.random() * 0.5 - 0.2;
+          p.maxLife = 0.4 + Math.random() * 0.3;
+          p.life = p.maxLife;
+          p.size = 1 + Math.random();
+          p.color = '#c8a868';
+          break;
+        case 'sparkle':
+          p.vx = (Math.random() - 0.5) * 1.5;
+          p.vy = -Math.random() * 2 - 0.5;
+          p.maxLife = 0.5 + Math.random() * 0.4;
+          p.life = p.maxLife;
+          p.size = 1 + Math.random() * 2;
+          p.color = '#ffd700';
+          break;
+        case 'pickup':
+          const angle = (Math.PI * 2 / count) * i;
+          p.vx = Math.cos(angle) * 2;
+          p.vy = Math.sin(angle) * 2;
+          p.maxLife = 0.6;
+          p.life = 0.6;
+          p.size = 2;
+          p.color = '#ffd700';
+          break;
+        case 'firefly':
+          p.vx = (Math.random() - 0.5) * 0.3;
+          p.vy = (Math.random() - 0.5) * 0.3;
+          p.maxLife = 2 + Math.random() * 3;
+          p.life = p.maxLife;
+          p.size = 1;
+          p.phase = Math.random() * Math.PI * 2;
+          p.color = '#aaffaa';
+          break;
+      }
+      this.list.push(p);
+    }
+  }
+
+  update(dt) {
+    const sec = dt / 1000;
+    for (let i = this.list.length - 1; i >= 0; i--) {
+      const p = this.list[i];
+      p.life -= sec;
+      if (p.life <= 0) { this.list.splice(i, 1); continue; }
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.type === 'dust') p.vy -= sec * 0.5;
+      if (p.type === 'firefly') {
+        p.vx += (Math.random() - 0.5) * 0.1;
+        p.vy += (Math.random() - 0.5) * 0.1;
+        p.vx *= 0.98;
+        p.vy *= 0.98;
       }
     }
-  });
-}, observerOptions);
+  }
 
-// Observe elements for animation
-document.querySelectorAll('.section-header, .about-content, .pub-card, .project-card, .timeline-item, .contact-content, .cv-preview-card, .cv-skill-block').forEach(el => {
-  observer.observe(el);
-});
+  draw(ctx) {
+    for (const p of this.list) {
+      const alpha = Math.min(1, p.life / p.maxLife * 2);
+      if (p.type === 'firefly') {
+        const glow = (Math.sin(Date.now() / 300 + p.phase) + 1) * 0.5;
+        ctx.fillStyle = `rgba(170,255,170,${alpha * glow * 0.6})`;
+        ctx.fillRect(p.x - 1, p.y - 1, 3, 3);
+        ctx.fillStyle = `rgba(220,255,220,${alpha * glow})`;
+        ctx.fillRect(p.x, p.y, 1, 1);
+      } else {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = alpha;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.globalAlpha = 1;
+      }
+    }
+  }
+}
 
-// Active nav link on scroll
-const sections = document.querySelectorAll('section[id]');
+// ============================================
+// TILE DRAWING (improved)
+// ============================================
+function drawTile(ctx, x, y, type, time) {
+  const px = x * S, py = y * S;
+  const t = time || Date.now();
+  switch (type) {
+    case T.GRASS: {
+      // Rich multi-tone grass
+      ctx.fillStyle = '#5a9e4f';
+      ctx.fillRect(px, py, S, S);
+      // Varied grass blades
+      const seed = (x * 7 + y * 13) % 17;
+      ctx.fillStyle = '#4e9045';
+      ctx.fillRect(px + (seed % 5) + 1, py + 4, 1, 3);
+      ctx.fillRect(px + ((seed * 3) % 11) + 2, py + 9, 1, 2);
+      ctx.fillStyle = '#68b05a';
+      ctx.fillRect(px + ((seed * 7) % 13) + 1, py + 2, 1, 2);
+      // Subtle wind sway on some blades
+      const sway = Math.sin(t / 1200 + x * 0.7 + y * 0.3);
+      if (seed % 3 === 0) {
+        ctx.fillStyle = '#72b864';
+        ctx.fillRect(px + 7 + Math.round(sway), py + 1, 1, 3);
+      }
+      break;
+    }
+    case T.PATH: {
+      ctx.fillStyle = '#c8a868';
+      ctx.fillRect(px, py, S, S);
+      // Gravel detail
+      const ps = (x * 11 + y * 7) % 13;
+      ctx.fillStyle = '#ba9a5e';
+      ctx.fillRect(px + (ps % 6) + 2, py + 6, 2, 2);
+      ctx.fillRect(px + ((ps * 3) % 10) + 3, py + 12, 2, 1);
+      ctx.fillStyle = '#d4b878';
+      ctx.fillRect(px + ((ps * 5) % 8) + 4, py + 3, 1, 1);
+      ctx.fillRect(px + ((ps * 2) % 9) + 1, py + 10, 1, 1);
+      break;
+    }
+    case T.TREE: {
+      // Ground beneath
+      ctx.fillStyle = '#4a8a3f';
+      ctx.fillRect(px, py, S, S);
+      // Trunk with bark texture
+      ctx.fillStyle = '#6b4025';
+      ctx.fillRect(px + 6, py + 9, 4, 7);
+      ctx.fillStyle = '#5a3520';
+      ctx.fillRect(px + 7, py + 10, 1, 5);
+      // Canopy - layered for depth
+      ctx.fillStyle = '#245520';
+      ctx.fillRect(px + 1, py + 2, 14, 8);
+      ctx.fillStyle = '#2d6028';
+      ctx.fillRect(px + 2, py + 1, 12, 7);
+      ctx.fillStyle = '#3a7535';
+      ctx.fillRect(px + 3, py + 2, 10, 5);
+      // Leaf highlights
+      ctx.fillStyle = '#4a8a42';
+      ctx.fillRect(px + 4, py + 2, 3, 2);
+      ctx.fillRect(px + 9, py + 3, 2, 2);
+      // Depth shadow at base
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(px + 2, py + 9, 12, 2);
+      break;
+    }
+    case T.WATER: {
+      // Animated water with wave layers
+      ctx.fillStyle = '#2a6ac0';
+      ctx.fillRect(px, py, S, S);
+      const w1 = Math.sin(t / 700 + x * 0.8 + y * 0.3);
+      const w2 = Math.sin(t / 500 + x * 1.2 + y * 0.6);
+      ctx.fillStyle = '#3b7dd8';
+      ctx.fillRect(px, py + 4 + Math.round(w1), S, 4);
+      ctx.fillStyle = '#4a90e8';
+      ctx.fillRect(px + 2, py + 3 + Math.round(w1 * 1.5), 5, 1);
+      ctx.fillRect(px + 9, py + 8 + Math.round(w2), 4, 1);
+      // Foam/shimmer
+      ctx.fillStyle = 'rgba(180,220,255,0.3)';
+      ctx.fillRect(px + 1 + Math.round(w2), py + 6, 3, 1);
+      // Sparkle
+      if ((Math.floor(t / 400) + x + y) % 7 === 0) {
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.fillRect(px + ((t / 100 + x * 3) % 12) + 2, py + ((t / 150 + y * 5) % 10) + 3, 1, 1);
+      }
+      break;
+    }
+    case T.WALL: {
+      ctx.fillStyle = '#8888a0';
+      ctx.fillRect(px, py, S, S);
+      // Brick pattern
+      ctx.fillStyle = '#7a7a90';
+      ctx.fillRect(px, py + 4, S, 1);
+      ctx.fillRect(px, py + 9, S, 1);
+      ctx.fillRect(px, py + 14, S, 1);
+      ctx.fillRect(px + 8, py, 1, 4);
+      ctx.fillRect(px + 4, py + 5, 1, 4);
+      ctx.fillRect(px + 12, py + 5, 1, 4);
+      ctx.fillRect(px + 8, py + 10, 1, 4);
+      // Mortar highlight
+      ctx.fillStyle = '#9494a8';
+      ctx.fillRect(px + 2, py + 1, 1, 1);
+      ctx.fillRect(px + 10, py + 6, 1, 1);
+      break;
+    }
+    case T.DOOR: {
+      ctx.fillStyle = '#8b5e3c';
+      ctx.fillRect(px, py, S, S);
+      // Door frame
+      ctx.fillStyle = '#6a4528';
+      ctx.fillRect(px + 2, py, 12, 16);
+      // Door panels
+      ctx.fillStyle = '#7a5030';
+      ctx.fillRect(px + 3, py + 1, 10, 15);
+      // Panel lines
+      ctx.fillStyle = '#684428';
+      ctx.fillRect(px + 3, py + 7, 10, 1);
+      ctx.fillRect(px + 8, py + 1, 1, 15);
+      // Doorknob with shine
+      ctx.fillStyle = '#f0c040';
+      ctx.fillRect(px + 10, py + 8, 2, 2);
+      ctx.fillStyle = '#ffe080';
+      ctx.fillRect(px + 10, py + 8, 1, 1);
+      // Welcome mat
+      ctx.fillStyle = '#996644';
+      ctx.fillRect(px + 2, py + 15, 12, 1);
+      break;
+    }
+    case T.ROOF_C: {
+      ctx.fillStyle = '#00b8c0';
+      ctx.fillRect(px, py, S, S);
+      ctx.fillStyle = '#009da5';
+      ctx.fillRect(px, py + S - 3, S, 3);
+      // Tile pattern
+      ctx.fillStyle = '#00d0d8';
+      ctx.fillRect(px + 2, py + 2, 4, 2);
+      ctx.fillRect(px + 10, py + 5, 4, 2);
+      ctx.fillStyle = '#00a8b0';
+      ctx.fillRect(px + 7, py + 1, 3, 2);
+      break;
+    }
+    case T.ROOF_R: {
+      ctx.fillStyle = '#cc3040';
+      ctx.fillRect(px, py, S, S);
+      ctx.fillStyle = '#b02838';
+      ctx.fillRect(px, py + S - 3, S, 3);
+      ctx.fillStyle = '#dd4050';
+      ctx.fillRect(px + 2, py + 2, 4, 2);
+      ctx.fillRect(px + 10, py + 5, 4, 2);
+      ctx.fillStyle = '#aa2030';
+      ctx.fillRect(px + 7, py + 1, 3, 2);
+      break;
+    }
+    case T.ROOF_Y: {
+      ctx.fillStyle = '#ccaa30';
+      ctx.fillRect(px, py, S, S);
+      ctx.fillStyle = '#b09428';
+      ctx.fillRect(px, py + S - 3, S, 3);
+      ctx.fillStyle = '#ddbb40';
+      ctx.fillRect(px + 2, py + 2, 4, 2);
+      ctx.fillRect(px + 10, py + 5, 4, 2);
+      ctx.fillStyle = '#aa8820';
+      ctx.fillRect(px + 7, py + 1, 3, 2);
+      break;
+    }
+    case T.ROOF_P: {
+      ctx.fillStyle = '#7744aa';
+      ctx.fillRect(px, py, S, S);
+      ctx.fillStyle = '#663898';
+      ctx.fillRect(px, py + S - 3, S, 3);
+      ctx.fillStyle = '#8855bb';
+      ctx.fillRect(px + 2, py + 2, 4, 2);
+      ctx.fillRect(px + 10, py + 5, 4, 2);
+      ctx.fillStyle = '#5e2e90';
+      ctx.fillRect(px + 7, py + 1, 3, 2);
+      break;
+    }
+    case T.FLOWER_R: {
+      // Grass base
+      ctx.fillStyle = '#5a9e4f';
+      ctx.fillRect(px, py, S, S);
+      ctx.fillStyle = '#4e9045';
+      ctx.fillRect(px + 11, py + 3, 1, 2);
+      // Stem with sway
+      const fSway = Math.sin(t / 800 + x * 2) * 0.8;
+      ctx.fillStyle = '#3a7030';
+      ctx.fillRect(px + 7 + Math.round(fSway), py + 7, 2, 6);
+      // Petals
+      ctx.fillStyle = '#ee3344';
+      ctx.fillRect(px + 5, py + 4, 2, 3);
+      ctx.fillRect(px + 9, py + 4, 2, 3);
+      ctx.fillRect(px + 6, py + 3, 4, 2);
+      ctx.fillRect(px + 6, py + 7, 4, 2);
+      // Center
+      ctx.fillStyle = '#ffcc00';
+      ctx.fillRect(px + 7, py + 5, 2, 2);
+      // Petal highlight
+      ctx.fillStyle = '#ff6677';
+      ctx.fillRect(px + 6, py + 4, 1, 1);
+      break;
+    }
+    case T.FLOWER_Y: {
+      ctx.fillStyle = '#5a9e4f';
+      ctx.fillRect(px, py, S, S);
+      ctx.fillStyle = '#4e9045';
+      ctx.fillRect(px + 3, py + 8, 1, 2);
+      const fSway2 = Math.sin(t / 900 + x * 1.5) * 0.8;
+      ctx.fillStyle = '#3a7030';
+      ctx.fillRect(px + 7 + Math.round(fSway2), py + 7, 2, 6);
+      ctx.fillStyle = '#eebb22';
+      ctx.fillRect(px + 5, py + 4, 2, 3);
+      ctx.fillRect(px + 9, py + 4, 2, 3);
+      ctx.fillRect(px + 6, py + 3, 4, 2);
+      ctx.fillRect(px + 6, py + 7, 4, 2);
+      ctx.fillStyle = '#ff8800';
+      ctx.fillRect(px + 7, py + 5, 2, 2);
+      ctx.fillStyle = '#ffdd55';
+      ctx.fillRect(px + 6, py + 4, 1, 1);
+      break;
+    }
+  }
+}
 
-function highlightNavOnScroll() {
-  const scrollY = window.pageYOffset;
+// ============================================
+// CHARACTER DRAWING (much improved)
+// ============================================
+function drawChar(ctx, px, py, hairCol, bodyCol, dir, frame, skinCol, acc, breathe) {
+  const sk = skinCol || '#ffcc99';
+  const b = breathe || 0; // 0-1 breathing phase
+  const breatheOff = Math.round(Math.sin(b * Math.PI * 2) * 0.5);
 
-  sections.forEach(section => {
-    const sectionHeight = section.offsetHeight;
-    const sectionTop = section.offsetTop - 150;
-    const sectionId = section.getAttribute('id');
-    const navLink = document.querySelector(`.nav-links a[href="#${sectionId}"]`);
+  // Drop shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fillRect(px + 2, py + 14, 12, 2);
 
-    if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-      navLink?.classList.add('active');
+  if (dir === 'up') {
+    // === BACK VIEW ===
+    // Legs (walk animation: 4 frames)
+    ctx.fillStyle = '#2a2a50';
+    const legOff = [0, 1, 0, -1][frame % 4];
+    ctx.fillRect(px + 4 + legOff, py + 12, 3, 4);
+    ctx.fillRect(px + 9 - legOff, py + 12, 3, 4);
+    // Shoes
+    ctx.fillStyle = '#1a1a35';
+    ctx.fillRect(px + 4 + legOff, py + 14, 3, 2);
+    ctx.fillRect(px + 9 - legOff, py + 14, 3, 2);
+    // Body
+    ctx.fillStyle = bodyCol;
+    ctx.fillRect(px + 3, py + 7 + breatheOff, 10, 6);
+    // Arms
+    ctx.fillStyle = bodyCol;
+    const armSwing = [0, -1, 0, 1][frame % 4];
+    ctx.fillRect(px + 1, py + 7 + breatheOff + armSwing, 3, 5);
+    ctx.fillRect(px + 12, py + 7 + breatheOff - armSwing, 3, 5);
+    // Hands
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 1, py + 11 + breatheOff + armSwing, 3, 2);
+    ctx.fillRect(px + 12, py + 11 + breatheOff - armSwing, 3, 2);
+    // Neck
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 6, py + 5, 4, 3);
+    // Head
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 4, py + 1, 8, 6);
+    // Hair (covers most of back of head)
+    ctx.fillStyle = hairCol;
+    ctx.fillRect(px + 3, py + 0, 10, 5);
+    ctx.fillRect(px + 4, py + 5, 8, 2);
+  } else if (dir === 'left' || dir === 'right') {
+    // === SIDE VIEW ===
+    const flip = dir === 'left' ? 0 : 1;
+    // Legs
+    ctx.fillStyle = '#2a2a50';
+    const sLegOff = [0, 1, 0, -1][frame % 4];
+    if (dir === 'left') {
+      ctx.fillRect(px + 5 + sLegOff, py + 12, 3, 4);
+      ctx.fillRect(px + 8 - sLegOff, py + 12, 3, 4);
     } else {
-      navLink?.classList.remove('active');
+      ctx.fillRect(px + 5 + sLegOff, py + 12, 3, 4);
+      ctx.fillRect(px + 8 - sLegOff, py + 12, 3, 4);
     }
-  });
+    // Shoes
+    ctx.fillStyle = '#1a1a35';
+    ctx.fillRect(px + 5 + sLegOff, py + 14, 3, 2);
+    ctx.fillRect(px + 8 - sLegOff, py + 14, 3, 2);
+    // Body
+    ctx.fillStyle = bodyCol;
+    ctx.fillRect(px + 4, py + 7 + breatheOff, 8, 6);
+    // Back arm
+    const aSwing = [0, -1, 0, 1][frame % 4];
+    ctx.fillStyle = bodyCol;
+    if (dir === 'left') {
+      ctx.fillRect(px + 10, py + 7 + breatheOff - aSwing, 3, 5);
+      ctx.fillStyle = sk;
+      ctx.fillRect(px + 10, py + 11 + breatheOff - aSwing, 3, 2);
+    } else {
+      ctx.fillRect(px + 3, py + 7 + breatheOff - aSwing, 3, 5);
+      ctx.fillStyle = sk;
+      ctx.fillRect(px + 3, py + 11 + breatheOff - aSwing, 3, 2);
+    }
+    // Neck
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 6, py + 5, 4, 3);
+    // Head
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 4, py + 1, 8, 6);
+    // Hair
+    ctx.fillStyle = hairCol;
+    ctx.fillRect(px + 3, py + 0, 10, 3);
+    if (dir === 'left') {
+      ctx.fillRect(px + 9, py + 3, 4, 3);
+    } else {
+      ctx.fillRect(px + 3, py + 3, 4, 3);
+    }
+    // Eye
+    ctx.fillStyle = '#fff';
+    if (dir === 'left') {
+      ctx.fillRect(px + 4, py + 3, 3, 2);
+      ctx.fillStyle = '#111';
+      ctx.fillRect(px + 4, py + 3, 2, 2);
+    } else {
+      ctx.fillRect(px + 9, py + 3, 3, 2);
+      ctx.fillStyle = '#111';
+      ctx.fillRect(px + 10, py + 3, 2, 2);
+    }
+    // Front arm
+    ctx.fillStyle = bodyCol;
+    if (dir === 'left') {
+      ctx.fillRect(px + 2, py + 7 + breatheOff + aSwing, 3, 5);
+      ctx.fillStyle = sk;
+      ctx.fillRect(px + 2, py + 11 + breatheOff + aSwing, 3, 2);
+    } else {
+      ctx.fillRect(px + 11, py + 7 + breatheOff + aSwing, 3, 5);
+      ctx.fillStyle = sk;
+      ctx.fillRect(px + 11, py + 11 + breatheOff + aSwing, 3, 2);
+    }
+    // Accessories
+    if (acc === 'glasses' && dir === 'left') {
+      ctx.fillStyle = '#aaddff';
+      ctx.fillRect(px + 3, py + 3, 4, 2);
+      ctx.fillStyle = '#8899aa';
+      ctx.fillRect(px + 3, py + 3, 1, 2);
+      ctx.fillRect(px + 6, py + 3, 1, 2);
+    } else if (acc === 'glasses' && dir === 'right') {
+      ctx.fillStyle = '#aaddff';
+      ctx.fillRect(px + 9, py + 3, 4, 2);
+      ctx.fillStyle = '#8899aa';
+      ctx.fillRect(px + 9, py + 3, 1, 2);
+      ctx.fillRect(px + 12, py + 3, 1, 2);
+    }
+  } else {
+    // === FRONT VIEW (down) ===
+    // Legs
+    ctx.fillStyle = '#2a2a50';
+    const fLegOff = [0, 1, 0, -1][frame % 4];
+    ctx.fillRect(px + 4 + fLegOff, py + 12, 3, 4);
+    ctx.fillRect(px + 9 - fLegOff, py + 12, 3, 4);
+    // Shoes
+    ctx.fillStyle = '#1a1a35';
+    ctx.fillRect(px + 4 + fLegOff, py + 14, 3, 2);
+    ctx.fillRect(px + 9 - fLegOff, py + 14, 3, 2);
+    // Body
+    ctx.fillStyle = bodyCol;
+    ctx.fillRect(px + 3, py + 7 + breatheOff, 10, 6);
+    // Shirt detail / stripe
+    const bodyLight = bodyCol.replace(/[0-9a-f]{2}$/i, m => {
+      const v = Math.min(255, parseInt(m, 16) + 30);
+      return v.toString(16).padStart(2, '0');
+    });
+    ctx.fillStyle = bodyLight;
+    ctx.fillRect(px + 6, py + 8 + breatheOff, 4, 1);
+    // Arms
+    const armOff = [0, -1, 0, 1][frame % 4];
+    ctx.fillStyle = bodyCol;
+    ctx.fillRect(px + 1, py + 7 + breatheOff + armOff, 3, 5);
+    ctx.fillRect(px + 12, py + 7 + breatheOff - armOff, 3, 5);
+    // Hands
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 1, py + 11 + breatheOff + armOff, 3, 2);
+    ctx.fillRect(px + 12, py + 11 + breatheOff - armOff, 3, 2);
+    // Neck
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 6, py + 5, 4, 3);
+    // Head
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 4, py + 1, 8, 6);
+    // Hair
+    ctx.fillStyle = hairCol;
+    ctx.fillRect(px + 3, py + 0, 10, 3);
+    ctx.fillRect(px + 3, py + 1, 2, 3);
+    ctx.fillRect(px + 11, py + 1, 2, 3);
+    // Eyes (white + pupil)
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(px + 5, py + 3, 3, 2);
+    ctx.fillRect(px + 9, py + 3, 3, 2);
+    ctx.fillStyle = '#111';
+    ctx.fillRect(px + 6, py + 3, 2, 2);
+    ctx.fillRect(px + 10, py + 3, 2, 2);
+    // Eye shine
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(px + 6, py + 3, 1, 1);
+    ctx.fillRect(px + 10, py + 3, 1, 1);
+    // Mouth
+    ctx.fillStyle = '#cc8877';
+    ctx.fillRect(px + 7, py + 6, 2, 1);
+    // Accessories
+    if (acc === 'glasses') {
+      ctx.fillStyle = '#8899aa';
+      ctx.fillRect(px + 4, py + 3, 1, 2);
+      ctx.fillRect(px + 8, py + 3, 1, 1);
+      ctx.fillRect(px + 12, py + 3, 1, 2);
+      ctx.fillStyle = 'rgba(170,221,255,0.4)';
+      ctx.fillRect(px + 5, py + 3, 3, 2);
+      ctx.fillRect(px + 9, py + 3, 3, 2);
+    }
+    if (acc === 'hat') {
+      ctx.fillStyle = hairCol;
+      ctx.fillRect(px + 2, py - 1, 12, 3);
+      ctx.fillRect(px + 4, py - 3, 8, 3);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(px + 5, py - 1, 6, 1);
+    }
+    if (acc === 'badge') {
+      ctx.fillStyle = '#ffd700';
+      ctx.fillRect(px + 5, py + 8 + breatheOff, 2, 2);
+      ctx.fillStyle = '#ffee88';
+      ctx.fillRect(px + 5, py + 8 + breatheOff, 1, 1);
+    }
+    if (acc === 'book') {
+      ctx.fillStyle = '#cc4444';
+      ctx.fillRect(px + 12, py + 9 + breatheOff, 3, 4);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(px + 13, py + 10 + breatheOff, 1, 2);
+    }
+  }
 }
 
-window.addEventListener('scroll', highlightNavOnScroll);
+// ============================================
+// GAME CLASS
+// ============================================
+class PortfolioRPG {
+  constructor() {
+    this.canvas = document.getElementById('game');
+    this.ctx = this.canvas.getContext('2d');
+    this.ctx.imageSmoothingEnabled = false;
 
-// Parallax effect for floating icons
-const floatIcons = document.querySelectorAll('.float-icon');
+    this.keys = {};
+    this.keyJustPressed = {};
+    this.player = { x: 14, y: 9, dir: 'down', moving: false, targetX: 14, targetY: 9, progress: 0, frame: 0 };
+    this.collected = new Set();
+    this.discovered = new Set();
+    this.dialogActive = false;
+    this.dialogPages = [];
+    this.dialogIndex = 0;
+    this.inventoryOpen = false;
+    this.pickupTimer = 0;
+    this.pickupText = '';
+    this.started = false;
+    this.completed = false;
+    this.lastTime = 0;
+    this.moveTimer = 0;
+    this.gameTime = 0;
+    this.particles = new Particles();
+    this.dustTimer = 0;
+    this.fireflyTimer = 0;
 
-window.addEventListener('mousemove', (e) => {
-  const mouseX = e.clientX / window.innerWidth - 0.5;
-  const mouseY = e.clientY / window.innerHeight - 0.5;
+    // Pre-render map
+    this.mapCanvas = document.createElement('canvas');
+    this.mapCanvas.width = COLS * S;
+    this.mapCanvas.height = ROWS * S;
 
-  floatIcons.forEach((icon, index) => {
-    const speed = (index + 1) * 10;
-    icon.style.transform = `translate(${mouseX * speed}px, ${mouseY * speed}px)`;
-  });
-});
+    // DOM refs
+    this.hudEl = document.getElementById('hud');
+    this.dialogEl = document.getElementById('dialog');
+    this.dialogSpeaker = document.getElementById('dialog-speaker');
+    this.dialogText = document.getElementById('dialog-text');
+    this.pickupEl = document.getElementById('pickup');
+    this.pickupTextEl = document.getElementById('pickup-text');
+    this.inventoryEl = document.getElementById('inventory');
+    this.invGrid = document.getElementById('inv-grid');
+    this.invDesc = document.getElementById('inv-desc');
+    this.welcomeEl = document.getElementById('welcome');
+    this.completeEl = document.getElementById('complete');
+    this.itemCountEl = document.getElementById('item-count');
+    this.areaCountEl = document.getElementById('area-count');
 
-// Stats counter animation
-const stats = document.querySelectorAll('.stat-number');
-let statsAnimated = false;
+    this.setupInput();
+    this.buildInventoryUI();
+  }
 
-function animateStats() {
-  if (statsAnimated) return;
-
-  const heroSection = document.querySelector('.hero');
-  const heroRect = heroSection.getBoundingClientRect();
-
-  if (heroRect.top < window.innerHeight && heroRect.bottom > 0) {
-    stats.forEach(stat => {
-      const finalValue = stat.textContent;
-      const isPercentage = finalValue.includes('%');
-      const isPlus = finalValue.includes('+');
-      const numericValue = parseFloat(finalValue);
-
-      if (isNaN(numericValue)) return;
-
-      let current = 0;
-      const increment = numericValue / 50;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= numericValue) {
-          current = numericValue;
-          clearInterval(timer);
-        }
-
-        let display = current.toFixed(current % 1 === 0 ? 0 : 1);
-        if (isPlus) display += '+';
-        if (isPercentage) display += '%';
-        stat.textContent = display;
-      }, 30);
+  setupInput() {
+    window.addEventListener('keydown', e => {
+      if (!this.keys[e.code]) this.keyJustPressed[e.code] = true;
+      this.keys[e.code] = true;
+      e.preventDefault();
+    });
+    window.addEventListener('keyup', e => {
+      this.keys[e.code] = false;
     });
 
-    statsAnimated = true;
-  }
-}
+    // Welcome screen
+    const startGame = () => {
+      if (!this.started) {
+        this.started = true;
+        this.welcomeEl.classList.add('hidden');
+        this.hudEl.classList.add('visible');
+      }
+    };
+    this.welcomeEl.addEventListener('click', startGame);
 
-window.addEventListener('scroll', animateStats);
-animateStats(); // Check on load
+    // On-screen D-pad controls (touch)
+    const dpadBtns = document.querySelectorAll('.dpad-btn');
+    const dirMap = { up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight' };
+    dpadBtns.forEach(btn => {
+      const dir = btn.dataset.dir;
+      const code = dirMap[dir];
+      const press = (e) => {
+        e.preventDefault();
+        startGame();
+        if (!this.keys[code]) this.keyJustPressed[code] = true;
+        this.keys[code] = true;
+        btn.classList.add('pressed');
+      };
+      const release = (e) => {
+        e.preventDefault();
+        this.keys[code] = false;
+        btn.classList.remove('pressed');
+      };
+      btn.addEventListener('touchstart', press, { passive: false });
+      btn.addEventListener('touchend', release, { passive: false });
+      btn.addEventListener('touchcancel', release, { passive: false });
+      btn.addEventListener('mousedown', press);
+      btn.addEventListener('mouseup', release);
+      btn.addEventListener('mouseleave', release);
+    });
 
-// Cursor glow effect (optional - subtle)
-const cursorGlow = document.createElement('div');
-cursorGlow.style.cssText = `
-  position: fixed;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.3s;
-`;
-document.body.appendChild(cursorGlow);
+    // Action button (A = Space)
+    const btnAction = document.getElementById('btn-action');
+    btnAction.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startGame();
+      this.keyJustPressed['Space'] = true;
+      this.keys['Space'] = true;
+      btnAction.classList.add('pressed');
+    }, { passive: false });
+    btnAction.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      this.keys['Space'] = false;
+      btnAction.classList.remove('pressed');
+    }, { passive: false });
+    btnAction.addEventListener('mousedown', () => {
+      startGame();
+      this.keyJustPressed['Space'] = true;
+      this.keys['Space'] = true;
+    });
+    btnAction.addEventListener('mouseup', () => { this.keys['Space'] = false; });
 
-document.addEventListener('mousemove', (e) => {
-  cursorGlow.style.left = e.clientX + 'px';
-  cursorGlow.style.top = e.clientY + 'px';
-});
-
-// Console easter egg
-console.log('%c👋 Hello, curious developer!', 'font-size: 20px; font-weight: bold; color: #6366f1;');
-console.log('%cWant to collaborate? Reach out at nafizahmed273273@gmail.com', 'font-size: 14px; color: #94a3b8;');
-
-// ================================
-// THREE.JS NEURAL NETWORK BACKGROUND
-// ================================
-function initNeuralNetwork() {
-  const canvas = document.getElementById('neural-bg');
-  if (!canvas || typeof THREE === 'undefined') return;
-
-  const scene = new THREE.Scene();
-  const w = canvas.clientWidth || window.innerWidth;
-  const h = canvas.clientHeight || window.innerHeight;
-  const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setSize(w, h);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  const COUNT = 90;
-  const posArr = new Float32Array(COUNT * 3);
-  const colArr = new Float32Array(COUNT * 3);
-  const vels = [];
-  const cyan = new THREE.Color(0x00f0ff);
-  const red = new THREE.Color(0xff073a);
-
-  for (let i = 0; i < COUNT; i++) {
-    posArr[i * 3] = (Math.random() - 0.5) * 18;
-    posArr[i * 3 + 1] = (Math.random() - 0.5) * 12;
-    posArr[i * 3 + 2] = (Math.random() - 0.5) * 8;
-    const c = Math.random() > 0.8 ? red : cyan;
-    colArr[i * 3] = c.r;
-    colArr[i * 3 + 1] = c.g;
-    colArr[i * 3 + 2] = c.b;
-    vels.push({
-      x: (Math.random() - 0.5) * 0.008,
-      y: (Math.random() - 0.5) * 0.008,
-      z: (Math.random() - 0.5) * 0.003
+    // Inventory button (I)
+    const btnInv = document.getElementById('btn-inv');
+    btnInv.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startGame();
+      this.keyJustPressed['KeyI'] = true;
+      btnInv.classList.add('pressed');
+    }, { passive: false });
+    btnInv.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      btnInv.classList.remove('pressed');
+    }, { passive: false });
+    btnInv.addEventListener('mousedown', () => {
+      startGame();
+      this.keyJustPressed['KeyI'] = true;
     });
   }
 
-  const pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
-  pGeo.setAttribute('color', new THREE.BufferAttribute(colArr, 3));
-  scene.add(new THREE.Points(pGeo, new THREE.PointsMaterial({
-    size: 2.5,
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.85,
-    sizeAttenuation: true
-  })));
-
-  const MAX_L = 500;
-  const lPos = new Float32Array(MAX_L * 6);
-  const lCol = new Float32Array(MAX_L * 6);
-  const lGeo = new THREE.BufferGeometry();
-  lGeo.setAttribute('position', new THREE.BufferAttribute(lPos, 3));
-  lGeo.setAttribute('color', new THREE.BufferAttribute(lCol, 3));
-  lGeo.setDrawRange(0, 0);
-  scene.add(new THREE.LineSegments(lGeo, new THREE.LineBasicMaterial({
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.25
-  })));
-
-  camera.position.z = 9;
-  let mx = 0, my = 0;
-  document.addEventListener('mousemove', e => {
-    mx = (e.clientX / window.innerWidth) * 2 - 1;
-    my = -(e.clientY / window.innerHeight) * 2 + 1;
-  });
-
-  (function animate() {
-    requestAnimationFrame(animate);
-    const p = pGeo.attributes.position.array;
-
-    for (let i = 0; i < COUNT; i++) {
-      p[i * 3] += vels[i].x;
-      p[i * 3 + 1] += vels[i].y;
-      p[i * 3 + 2] += vels[i].z;
-      if (Math.abs(p[i * 3]) > 9) vels[i].x *= -1;
-      if (Math.abs(p[i * 3 + 1]) > 6) vels[i].y *= -1;
-      if (Math.abs(p[i * 3 + 2]) > 4) vels[i].z *= -1;
-      const dx = mx * 7 - p[i * 3];
-      const dy = my * 5 - p[i * 3 + 1];
-      const d = Math.sqrt(dx * dx + dy * dy);
-      if (d < 4) {
-        p[i * 3] += dx * 0.0015;
-        p[i * 3 + 1] += dy * 0.0015;
-      }
-    }
-    pGeo.attributes.position.needsUpdate = true;
-
-    let li = 0;
-    for (let i = 0; i < COUNT && li < MAX_L; i++) {
-      for (let j = i + 1; j < COUNT && li < MAX_L; j++) {
-        const dx = p[i * 3] - p[j * 3];
-        const dy = p[i * 3 + 1] - p[j * 3 + 1];
-        const dz = p[i * 3 + 2] - p[j * 3 + 2];
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist < 2.8) {
-          const a = 1 - dist / 2.8;
-          const idx = li * 6;
-          lPos[idx] = p[i * 3]; lPos[idx + 1] = p[i * 3 + 1]; lPos[idx + 2] = p[i * 3 + 2];
-          lPos[idx + 3] = p[j * 3]; lPos[idx + 4] = p[j * 3 + 1]; lPos[idx + 5] = p[j * 3 + 2];
-          lCol[idx] = 0; lCol[idx + 1] = 0.94 * a; lCol[idx + 2] = a;
-          lCol[idx + 3] = 0; lCol[idx + 4] = 0.94 * a; lCol[idx + 5] = a;
-          li++;
+  buildInventoryUI() {
+    this.invGrid.innerHTML = '';
+    ITEMS.forEach((item, i) => {
+      const slot = document.createElement('div');
+      slot.className = 'inv-slot' + (this.collected.has(i) ? ' collected' : ' empty');
+      slot.textContent = this.collected.has(i) ? item.icon : '?';
+      slot.addEventListener('click', () => {
+        if (this.collected.has(i)) {
+          this.invDesc.textContent = item.name + ': ' + item.desc;
+          document.querySelectorAll('.inv-slot').forEach(s => s.classList.remove('selected'));
+          slot.classList.add('selected');
         }
-      }
-    }
-
-    lGeo.setDrawRange(0, li * 2);
-    lGeo.attributes.position.needsUpdate = true;
-    lGeo.attributes.color.needsUpdate = true;
-
-    camera.position.x = Math.sin(Date.now() * 0.0001) * 0.5;
-    camera.position.y = Math.cos(Date.now() * 0.00012) * 0.3;
-    camera.lookAt(0, 0, 0);
-    renderer.render(scene, camera);
-  })();
-
-  window.addEventListener('resize', () => {
-    const w = canvas.clientWidth || window.innerWidth;
-    const h = canvas.clientHeight || window.innerHeight;
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-  });
-}
-
-if (typeof THREE !== 'undefined') initNeuralNetwork();
-else window.addEventListener('load', initNeuralNetwork);
-
-// ================================
-// NEURO PET - AI COMPANION GAME
-// ================================
-(function () {
-  const pet = document.getElementById('neuro-pet');
-  if (!pet) return;
-
-  const bubble = document.getElementById('petBubble');
-  const scoreEl = document.getElementById('neuronScore');
-  const sectionsEl = document.getElementById('sectionsFound');
-  const levelEl = document.getElementById('petLevel');
-  const xpFill = document.getElementById('petXP');
-  const sprite = pet.querySelector('.pet-sprite');
-  const lvlTag = pet.querySelector('.pet-lvl');
-
-  const S = {
-    xp: 0, level: 1, neurons: 0,
-    discovered: new Set(),
-    mood: 'idle',
-    lastScroll: Date.now(),
-    lastY: window.scrollY,
-    bTimeout: null, wTimeout: null
-  };
-
-  const INFO = {
-    hero: "Hi! I'm Neuro! Scroll down to explore Nafiz's world!",
-    about: "Magna Cum Laude & Top 2%! This human is brilliant!",
-    publications: "Published research in Elsevier! Real scientist vibes!",
-    projects: "92.7% Dice score with only 5% data?! Incredible!",
-    experience: "From Sweden to New York - building AI everywhere!",
-    cv: "Download the CV for the full story!",
-    contact: "Want to connect? Nafiz would love to hear from you!"
-  };
-
-  function say(text, dur) {
-    dur = dur || 3500;
-    clearTimeout(S.bTimeout);
-    bubble.textContent = text;
-    bubble.classList.add('visible');
-    S.bTimeout = setTimeout(() => bubble.classList.remove('visible'), dur);
-  }
-
-  function addXP(n) {
-    S.xp += n;
-    const need = S.level * 25;
-    if (S.xp >= need) {
-      S.xp -= need;
-      S.level++;
-      levelEl.textContent = S.level;
-      lvlTag.textContent = 'Lv.' + S.level;
-      say('Level up! Now Level ' + S.level + '!', 2500);
-      sprite.classList.add('levelup');
-      setTimeout(() => sprite.classList.remove('levelup'), 800);
-    }
-    xpFill.style.width = (S.xp / (S.level * 25) * 100) + '%';
-  }
-
-  function mood(m) { S.mood = m; sprite.className = 'pet-sprite ' + m; }
-
-  // Spawn collectible neurons in each section
-  const collectibles = [];
-  document.querySelectorAll('section[id]').forEach(sec => {
-    if (!sec.style.position || sec.style.position === 'static') {
-      sec.style.position = 'relative';
-    }
-    for (let i = 0; i < 3; i++) {
-      const el = document.createElement('div');
-      el.className = 'collectible-neuron';
-      el.innerHTML = '<i class="fas fa-bolt"></i>';
-      el.style.left = (15 + Math.random() * 70) + '%';
-      el.style.top = (15 + Math.random() * 70) + '%';
-      el.addEventListener('click', function () {
-        if (this.dataset.collected) return;
-        this.dataset.collected = '1';
-        this.classList.add('collected');
-        S.neurons++;
-        scoreEl.textContent = S.neurons;
-        addXP(15);
-        mood('happy');
-        setTimeout(() => mood('idle'), 1000);
-        setTimeout(() => this.remove(), 500);
       });
-      sec.appendChild(el);
-      collectibles.push(el);
-    }
-  });
-
-  function getCurSection() {
-    let cur = null;
-    document.querySelectorAll('section[id]').forEach(s => {
-      const r = s.getBoundingClientRect();
-      if (r.top < window.innerHeight * 0.5 && r.bottom > window.innerHeight * 0.5) cur = s.id;
+      this.invGrid.appendChild(slot);
     });
-    return cur;
   }
 
-  function autoCollect() {
-    const petR = pet.getBoundingClientRect();
-    collectibles.forEach(n => {
-      if (n.dataset.collected) return;
-      const r = n.getBoundingClientRect();
-      if (r.top > 0 && r.bottom < window.innerHeight) {
-        if (Math.abs(r.top - petR.top) < 250 && Math.abs(r.left - petR.left) < 300) {
-          n.dataset.collected = '1';
-          n.classList.add('collected');
-          S.neurons++;
-          scoreEl.textContent = S.neurons;
-          addXP(10);
-          setTimeout(() => n.remove(), 500);
+  renderMap() {
+    const mctx = this.mapCanvas.getContext('2d');
+    const t = Date.now();
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        drawTile(mctx, x, y, MAP[y][x], t);
+      }
+    }
+  }
+
+  start() {
+    this.renderMap();
+    requestAnimationFrame(t => this.loop(t));
+  }
+
+  loop(time) {
+    const dt = Math.min(time - this.lastTime, 50); // cap to prevent spiral
+    this.lastTime = time;
+    this.gameTime += dt;
+
+    if (this.started && !this.completed) {
+      this.update(dt);
+    }
+    this.render(time);
+    this.keyJustPressed = {};
+    requestAnimationFrame(t => this.loop(t));
+  }
+
+  update(dt) {
+    if (!this.started) return;
+
+    // Update particles
+    this.particles.update(dt);
+
+    // NPC idle animations
+    for (const npc of NPCS) {
+      npc.idleTimer += dt;
+      // Change facing direction occasionally
+      if (npc.idleTimer > 2000 + Math.random() * 3000) {
+        npc.idleTimer = 0;
+        npc.idleCycle++;
+        const dirs = ['down', 'left', 'right', 'down'];
+        npc.idleDir = dirs[npc.idleCycle % dirs.length];
+      }
+      // Face player when near
+      const dx = this.player.x - npc.x;
+      const dy = this.player.y - npc.y;
+      const dist = Math.abs(dx) + Math.abs(dy);
+      if (dist <= 2) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          npc.idleDir = dx > 0 ? 'right' : 'left';
+        } else {
+          npc.idleDir = dy > 0 ? 'down' : 'up';
         }
       }
-    });
+    }
+
+    // Spawn ambient fireflies near grass
+    this.fireflyTimer += dt;
+    if (this.fireflyTimer > 800) {
+      this.fireflyTimer = 0;
+      if (Math.random() < 0.3) {
+        const fx = (2 + Math.random() * 26) * S;
+        const fy = (2 + Math.random() * 16) * S;
+        this.particles.emit(fx, fy, 'firefly', 1);
+      }
+    }
+
+    // Space handling
+    if (this.keyJustPressed['Space']) {
+      if (this.completed) {
+        this.restart();
+        return;
+      }
+      if (this.dialogActive) {
+        this.advanceDialog();
+        return;
+      }
+      if (!this.inventoryOpen) {
+        this.interact();
+        return;
+      }
+    }
+
+    // Inventory toggle
+    if (this.keyJustPressed['KeyI']) {
+      this.toggleInventory();
+      return;
+    }
+
+    if (this.dialogActive || this.inventoryOpen) return;
+
+    // Pickup timer
+    if (this.pickupTimer > 0) {
+      this.pickupTimer -= dt;
+      if (this.pickupTimer <= 0) {
+        this.pickupEl.classList.add('hidden');
+      }
+    }
+
+    // Movement
+    if (this.player.moving) {
+      this.player.progress += dt / 140;
+      if (this.player.progress >= 1) {
+        this.player.x = this.player.targetX;
+        this.player.y = this.player.targetY;
+        this.player.moving = false;
+        this.player.progress = 0;
+        this.player.frame++;
+        this.checkItemPickup();
+      }
+      // Emit dust particles while moving on path
+      this.dustTimer += dt;
+      if (this.dustTimer > 100) {
+        this.dustTimer = 0;
+        const tile = MAP[this.player.targetY] && MAP[this.player.targetY][this.player.targetX];
+        if (tile === T.PATH) {
+          const ppx = (this.player.x + (this.player.targetX - this.player.x) * this.player.progress) * S + 8;
+          const ppy = (this.player.y + (this.player.targetY - this.player.y) * this.player.progress) * S + 14;
+          this.particles.emit(ppx, ppy, 'dust', 2);
+        }
+      }
+    } else {
+      this.moveTimer += dt;
+      if (this.moveTimer > 30) {
+        let moved = false;
+        if (this.keys['ArrowUp'] || this.keys['KeyW']) { moved = this.tryMove(0, -1, 'up'); }
+        else if (this.keys['ArrowDown'] || this.keys['KeyS']) { moved = this.tryMove(0, 1, 'down'); }
+        else if (this.keys['ArrowLeft'] || this.keys['KeyA']) { moved = this.tryMove(-1, 0, 'left'); }
+        else if (this.keys['ArrowRight'] || this.keys['KeyD']) { moved = this.tryMove(1, 0, 'right'); }
+        if (moved) this.moveTimer = 0;
+      }
+    }
   }
 
-  window.addEventListener('scroll', () => {
-    S.lastScroll = Date.now();
-    S.lastY = window.scrollY;
-    mood('walking');
-    clearTimeout(S.wTimeout);
-    S.wTimeout = setTimeout(() => mood('idle'), 600);
+  tryMove(dx, dy, dir) {
+    this.player.dir = dir;
+    const nx = this.player.x + dx;
+    const ny = this.player.y + dy;
+    if (this.isWalkable(nx, ny)) {
+      this.player.targetX = nx;
+      this.player.targetY = ny;
+      this.player.moving = true;
+      this.player.progress = 0;
+      return true;
+    }
+    return false;
+  }
 
-    const sec = getCurSection();
-    if (sec && !S.discovered.has(sec) && INFO[sec]) {
-      S.discovered.add(sec);
-      sectionsEl.textContent = S.discovered.size;
-      mood('scanning');
+  isWalkable(x, y) {
+    if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
+    if (!WALKABLE.has(MAP[y][x])) return false;
+    for (const npc of NPCS) {
+      if (npc.x === x && npc.y === y) return false;
+    }
+    return true;
+  }
+
+  getFacing() {
+    const d = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+    const [dx, dy] = d[this.player.dir];
+    return { x: this.player.x + dx, y: this.player.y + dy };
+  }
+
+  interact() {
+    const f = this.getFacing();
+    const key = f.x + ',' + f.y;
+
+    // Check doors
+    if (DOOR_MAP[key]) {
+      const b = BUILDINGS[DOOR_MAP[key]];
+      if (!this.discovered.has(DOOR_MAP[key])) {
+        this.discovered.add(DOOR_MAP[key]);
+        this.areaCountEl.textContent = this.discovered.size;
+      }
+      this.showDialog(b.pages);
+      this.checkComplete();
+      return;
+    }
+
+    // Check NPCs
+    for (const npc of NPCS) {
+      if (npc.x === f.x && npc.y === f.y) {
+        this.showDialog(npc.dialog);
+        return;
+      }
+    }
+  }
+
+  checkItemPickup() {
+    for (let i = 0; i < ITEMS.length; i++) {
+      if (!this.collected.has(i) && ITEMS[i].x === this.player.x && ITEMS[i].y === this.player.y) {
+        this.collected.add(i);
+        this.itemCountEl.textContent = this.collected.size;
+        this.showPickup('Got ' + ITEMS[i].name + '!');
+        // Burst particles on pickup
+        this.particles.emit(ITEMS[i].x * S + 8, ITEMS[i].y * S + 8, 'pickup', 12);
+        this.buildInventoryUI();
+        this.checkComplete();
+      }
+    }
+  }
+
+  showPickup(text) {
+    this.pickupTextEl.textContent = text;
+    this.pickupEl.classList.remove('hidden');
+    this.pickupEl.style.animation = 'none';
+    void this.pickupEl.offsetHeight;
+    this.pickupEl.style.animation = '';
+    this.pickupTimer = 2000;
+  }
+
+  showDialog(pages) {
+    this.dialogActive = true;
+    this.dialogPages = pages;
+    this.dialogIndex = 0;
+    this.renderDialogPage();
+    this.dialogEl.classList.remove('hidden');
+  }
+
+  renderDialogPage() {
+    const page = this.dialogPages[this.dialogIndex];
+    this.dialogSpeaker.textContent = page.speaker;
+    this.dialogText.textContent = page.text;
+    document.getElementById('dialog-prompt').textContent =
+      this.dialogIndex < this.dialogPages.length - 1 ? '\u25BC SPACE' : '\u25A0 CLOSE';
+  }
+
+  advanceDialog() {
+    this.dialogIndex++;
+    if (this.dialogIndex >= this.dialogPages.length) {
+      this.dialogActive = false;
+      this.dialogEl.classList.add('hidden');
+    } else {
+      this.renderDialogPage();
+    }
+  }
+
+  toggleInventory() {
+    this.inventoryOpen = !this.inventoryOpen;
+    if (this.inventoryOpen) {
+      this.buildInventoryUI();
+      this.invDesc.textContent = 'Click an item for details. Press I to close.';
+      this.inventoryEl.classList.remove('hidden');
+    } else {
+      this.inventoryEl.classList.add('hidden');
+    }
+  }
+
+  checkComplete() {
+    if (this.collected.size >= 10 && this.discovered.size >= 4) {
       setTimeout(() => {
-        say(INFO[sec], 4000);
-        addXP(20);
-        mood('happy');
-        setTimeout(() => mood('idle'), 2000);
-      }, 400);
+        this.completed = true;
+        document.getElementById('complete-stats').innerHTML =
+          'Items: ' + this.collected.size + '/10<br>Areas: ' + this.discovered.size + '/4<br>Mission: COMPLETE';
+        this.completeEl.classList.remove('hidden');
+      }, 1500);
     }
-    autoCollect();
-  });
+  }
 
-  pet.addEventListener('click', () => {
-    const msgs = [
-      "Beep boop! I'm your AI companion!",
-      "Nafiz achieved 92.7% Dice score! Amazing!",
-      "I've collected " + S.neurons + " neurons so far!",
-      "Keep scrolling to discover more sections!",
-      "Nafiz builds Agentic AI at Periscopelabs!",
-      "Click the glowing orbs to collect neurons!",
-      "I'm Level " + S.level + "! Help me grow!",
-      "Fun fact: Nafiz graduated Top 2% from AIUB!"
-    ];
-    say(msgs[Math.floor(Math.random() * msgs.length)], 3000);
-    mood('happy');
-    setTimeout(() => mood('idle'), 1200);
-    addXP(5);
-  });
+  restart() {
+    this.collected = new Set();
+    this.discovered = new Set();
+    this.player = { x: 14, y: 9, dir: 'down', moving: false, targetX: 14, targetY: 9, progress: 0, frame: 0 };
+    this.dialogActive = false;
+    this.inventoryOpen = false;
+    this.completed = false;
+    this.pickupTimer = 0;
+    this.particles = new Particles();
+    this.itemCountEl.textContent = '0';
+    this.areaCountEl.textContent = '0';
+    this.completeEl.classList.add('hidden');
+    this.dialogEl.classList.add('hidden');
+    this.inventoryEl.classList.add('hidden');
+    this.pickupEl.classList.add('hidden');
+    this.buildInventoryUI();
+  }
 
-  // Sleep if idle too long
-  setInterval(() => {
-    if (Date.now() - S.lastScroll > 12000 && S.mood !== 'sleeping') {
-      mood('sleeping');
-      say('Zzz... scroll to wake me!', 2500);
+  // ============================================
+  // RENDERING
+  // ============================================
+  render(time) {
+    const ctx = this.ctx;
+    const t = time || Date.now();
+
+    // Re-render animated tiles (water, flowers, grass with wind)
+    const mctx = this.mapCanvas.getContext('2d');
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        const tile = MAP[y][x];
+        if (tile === T.WATER || tile === T.FLOWER_R || tile === T.FLOWER_Y) {
+          drawTile(mctx, x, y, tile, t);
+        }
+      }
     }
-  }, 4000);
 
-  // Initial greeting
-  setTimeout(() => say("Hi! I'm Neuro! Click me or scroll to explore!", 4500), 1500);
-})();
+    // Blit map
+    ctx.drawImage(this.mapCanvas, 0, 0);
+
+    // Draw items with enhanced effects
+    for (let i = 0; i < ITEMS.length; i++) {
+      if (this.collected.has(i)) continue;
+      const item = ITEMS[i];
+      const bob = Math.sin(t / 400 + i * 1.3) * 2;
+      const pulse = (Math.sin(t / 300 + i * 0.7) + 1) * 0.5;
+      const px = item.x * S, py = item.y * S + bob;
+
+      // Outer glow pulse
+      ctx.globalAlpha = 0.1 + pulse * 0.15;
+      ctx.fillStyle = item.color;
+      ctx.fillRect(px - 1, py - 1, 18, 18);
+      ctx.globalAlpha = 1;
+
+      // Inner glow
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      ctx.fillRect(px + 1, py + 1, 14, 14);
+
+      // Item body with gradient feel
+      ctx.fillStyle = item.color;
+      ctx.fillRect(px + 3, py + 3, 10, 10);
+
+      // Darker edge for depth
+      const darkerColor = item.color.replace(/[0-9a-f]{2}/gi, (m, offset) => {
+        if (offset === 0) return m; // skip #
+        const v = Math.max(0, parseInt(m, 16) - 40);
+        return v.toString(16).padStart(2, '0');
+      });
+      ctx.fillStyle = darkerColor;
+      ctx.fillRect(px + 3, py + 11, 10, 2);
+      ctx.fillRect(px + 11, py + 3, 2, 10);
+
+      // Highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.fillRect(px + 4, py + 4, 2, 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillRect(px + 4, py + 6, 1, 2);
+      ctx.fillRect(px + 6, py + 4, 2, 1);
+
+      // Rotating sparkle
+      const sparkAngle = (t / 500 + i) % (Math.PI * 2);
+      const sx = px + 8 + Math.cos(sparkAngle) * 7;
+      const sy = py + 8 + Math.sin(sparkAngle) * 7;
+      const sparkAlpha = (Math.sin(t / 200 + i * 2) + 1) * 0.4;
+      ctx.globalAlpha = sparkAlpha;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(sx, sy, 1, 1);
+      ctx.globalAlpha = 1;
+    }
+
+    // Draw NPCs with idle animation
+    const breathePhase = t / 1500;
+    for (const npc of NPCS) {
+      const npcBreathe = (t / 1500 + NPCS.indexOf(npc) * 0.5) % 1;
+      drawChar(ctx, npc.x * S, npc.y * S, npc.hair, npc.body, npc.idleDir, 0, npc.skin, npc.acc, npcBreathe);
+
+      // Speech bubble indicator (bouncing)
+      const bubBob = Math.sin(t / 500 + NPCS.indexOf(npc)) * 1.5;
+      // Background
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fillRect(npc.x * S + 5, npc.y * S - 10 + bubBob, 6, 6);
+      // Triangle
+      ctx.fillRect(npc.x * S + 7, npc.y * S - 5 + bubBob, 2, 2);
+      // Dots
+      ctx.fillStyle = '#333';
+      ctx.fillRect(npc.x * S + 6, npc.y * S - 8 + bubBob, 1, 1);
+      ctx.fillRect(npc.x * S + 8, npc.y * S - 8 + bubBob, 1, 1);
+      ctx.fillRect(npc.x * S + 10, npc.y * S - 8 + bubBob, 1, 1);
+    }
+
+    // Draw player (ease-out interpolation for smooth movement)
+    let ppx, ppy;
+    if (this.player.moving) {
+      const dx = this.player.targetX - this.player.x;
+      const dy = this.player.targetY - this.player.y;
+      const eased = this.player.progress * (2 - this.player.progress);
+      ppx = (this.player.x + dx * eased) * S;
+      ppy = (this.player.y + dy * eased) * S;
+    } else {
+      ppx = this.player.x * S;
+      ppy = this.player.y * S;
+    }
+
+    const playerBreathe = (t / 1200) % 1;
+    const playerFrame = this.player.moving ? Math.floor(this.player.progress * 4) : 0;
+    drawChar(ctx, ppx, ppy, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
+
+    // Player direction indicator (small triangle showing facing)
+    if (!this.player.moving) {
+      const indicatorPulse = (Math.sin(t / 400) + 1) * 0.3 + 0.2;
+      ctx.globalAlpha = indicatorPulse;
+      ctx.fillStyle = '#00ddee';
+      const cx = ppx + 8, cy = ppy + 8;
+      if (this.player.dir === 'down') ctx.fillRect(cx - 1, ppy + 17, 2, 2);
+      else if (this.player.dir === 'up') ctx.fillRect(cx - 1, ppy - 3, 2, 2);
+      else if (this.player.dir === 'left') ctx.fillRect(ppx - 3, cy - 1, 2, 2);
+      else if (this.player.dir === 'right') ctx.fillRect(ppx + 17, cy - 1, 2, 2);
+      ctx.globalAlpha = 1;
+    }
+
+    // Particles
+    this.particles.draw(ctx);
+
+    // Building labels with glow
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    for (const label of LABELS) {
+      const labelPulse = (Math.sin(t / 1000 + LABELS.indexOf(label)) + 1) * 0.15;
+      ctx.font = '5px "Press Start 2P"';
+      // Glow
+      ctx.globalAlpha = 0.3 + labelPulse;
+      ctx.fillStyle = label.color;
+      ctx.fillText(label.text, label.x * S + S / 2, label.y * S - 1);
+      ctx.fillText(label.text, label.x * S + S / 2 + 1, label.y * S - 2);
+      // Main text
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#000';
+      ctx.fillText(label.text, label.x * S + S / 2 + 1, label.y * S - 2);
+      ctx.fillStyle = label.color;
+      ctx.fillText(label.text, label.x * S + S / 2, label.y * S - 3);
+    }
+
+    // Door hints - only show when player is near
+    const doors = [[5, 5], [23, 5], [5, 15], [23, 15]];
+    ctx.font = '4px "Press Start 2P"';
+    for (const [dx, dy] of doors) {
+      const dist = Math.abs(this.player.x - dx) + Math.abs(this.player.y - dy);
+      if (dist <= 3) {
+        const hintAlpha = Math.max(0, 1 - (dist - 1) * 0.4);
+        ctx.globalAlpha = hintAlpha * ((Math.sin(t / 500) + 1) * 0.3 + 0.4);
+        ctx.fillStyle = '#fff';
+        ctx.fillText('SPACE', dx * S + S / 2, dy * S + S + 10);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Vignette overlay for atmosphere
+    const gradient = ctx.createRadialGradient(240, 160, 120, 240, 160, 280);
+    gradient.addColorStop(0, 'rgba(0,0,0,0)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0.25)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, COLS * S, ROWS * S);
+  }
+}
+
+// ============================================
+// INIT
+// ============================================
+window.addEventListener('load', () => {
+  const game = new PortfolioRPG();
+  game.start();
+
+  // Space to start/complete handling
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space') {
+      if (!game.started) {
+        game.started = true;
+        game.welcomeEl.classList.add('hidden');
+        game.hudEl.classList.add('visible');
+      } else if (game.completed) {
+        game.restart();
+      }
+    }
+  });
+});

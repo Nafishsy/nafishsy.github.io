@@ -3,682 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nafiz Ahmed | ML Engineer & Researcher</title>
+  <title>Nafiz Ahmed | Portfolio RPG</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Animated Background -->
-  <div class="bg-gradient"></div>
-  <div class="bg-dots"></div>
+  <div id="game-wrapper">
+    <canvas id="game" width="480" height="320"></canvas>
 
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="nav-logo">
-      <span class="logo-text">NA</span>
-    </div>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#publications">Publications</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#cv">CV</a></li>
-      <li><a href="#contact" class="nav-cta">Contact</a></li>
-    </ul>
-    <div class="nav-toggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </nav>
-
-  <!-- Hero Section -->
-  <section id="hero" class="hero">
-    <canvas id="neural-bg"></canvas>
-    <div class="hero-content">
-      <div class="hero-badge">Available for Research Collaborations</div>
-      <h1 class="hero-title">
-        <span class="greeting">Hi, I'm</span>
-        <span class="name">Nafiz Ahmed</span>
-      </h1>
-      <p class="hero-subtitle">
-        <span class="typewriter">Machine Learning Engineer</span>
-        <span class="cursor">|</span>
-      </p>
-      <p class="hero-description">
-        Building intelligent systems at the intersection of
-        <span class="highlight">Computer Vision</span>,
-        <span class="highlight">Medical Imaging</span>, and
-        <span class="highlight">Agentic AI</span>
-      </p>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-number">3+</span>
-          <span class="stat-label">Years Experience</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number">92.7%</span>
-          <span class="stat-label">Dice Score (Retinal)</span>
-        </div>
-        <div class="stat">
-          <span class="stat-number">2</span>
-          <span class="stat-label">Publications</span>
-        </div>
+    <!-- On-screen Controls -->
+    <div id="controls">
+      <div class="dpad">
+        <button class="dpad-btn up" data-dir="up">&#9650;</button>
+        <button class="dpad-btn left" data-dir="left">&#9664;</button>
+        <div class="dpad-center"></div>
+        <button class="dpad-btn right" data-dir="right">&#9654;</button>
+        <button class="dpad-btn down" data-dir="down">&#9660;</button>
       </div>
-      <div class="hero-cta">
-        <a href="#projects" class="btn btn-primary">
-          <span>View My Work</span>
-          <i class="fas fa-arrow-right"></i>
-        </a>
-        <a href="#contact" class="btn btn-secondary">
-          <span>Get In Touch</span>
-        </a>
+      <div class="action-btns">
+        <button class="action-btn" id="btn-action">A<span>Talk</span></button>
+        <button class="action-btn" id="btn-inv">I<span>Items</span></button>
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="hero-image-wrapper">
-        <img src="images/nafiz ahmed.jpg" alt="Nafiz Ahmed" class="hero-image">
-        <div class="hero-image-ring"></div>
-        <div class="hero-image-ring ring-2"></div>
-        <div class="floating-icons">
-          <div class="float-icon icon-1"><i class="fas fa-brain"></i></div>
-          <div class="float-icon icon-2"><i class="fas fa-eye"></i></div>
-          <div class="float-icon icon-3"><i class="fas fa-code"></i></div>
-          <div class="float-icon icon-4"><i class="fas fa-microscope"></i></div>
+
+    <!-- Controls hint bar -->
+    <div id="controls-hint">
+      <span>&#8593;&#8595;&#8592;&#8594; Move</span>
+      <span>SPACE Talk</span>
+      <span>I Items</span>
+    </div>
+
+    <div id="hud">
+      <div class="hud-left">ITEMS <span id="item-count">0</span>/10</div>
+      <div class="hud-right">AREAS <span id="area-count">0</span>/4</div>
+    </div>
+
+    <div id="dialog" class="hidden">
+      <div id="dialog-speaker"></div>
+      <div id="dialog-text"></div>
+      <div id="dialog-prompt">&#9660; SPACE</div>
+    </div>
+
+    <div id="pickup" class="hidden">
+      <span id="pickup-text"></span>
+    </div>
+
+    <div id="inventory" class="hidden">
+      <div class="inv-title">INVENTORY</div>
+      <div id="inv-grid"></div>
+      <div id="inv-desc">Press I to close</div>
+    </div>
+
+    <div id="welcome">
+      <div class="welcome-content">
+        <div class="welcome-badge">PORTFOLIO RPG</div>
+        <h1>NAFIZ AHMED</h1>
+        <p class="welcome-role">ML Engineer &amp; Researcher</p>
+        <p class="welcome-desc">Explore the town, talk to NPCs,<br>collect items &amp; discover buildings!</p>
+        <div class="welcome-start">PRESS SPACE OR CLICK</div>
+        <div class="welcome-controls">
+          <span>Arrow Keys: Move</span>
+          <span>Space: Interact</span>
+          <span>I: Inventory</span>
         </div>
       </div>
     </div>
-    <div class="scroll-indicator">
-      <span>Scroll to explore</span>
-      <div class="scroll-arrow"></div>
-    </div>
-  </section>
 
-  <!-- About Section -->
-  <section id="about" class="about section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Get to know me</span>
-        <h2 class="section-title">About Me</h2>
-      </div>
-      <div class="about-content">
-        <div class="about-text">
-          <p class="about-intro">
-            I'm a <strong>Machine Learning Engineer</strong> passionate about pushing the boundaries of AI in healthcare and enterprise solutions.
-          </p>
-          <p>
-            Currently at <strong>Periscopelabs</strong>, I architect Agentic AI solutions for banking and travel sectors. My research at <strong>ELITE Lab (New York)</strong> focuses on medical image segmentation and explainable AI.
-          </p>
-          <p>
-            I graduated from <strong>AIUB</strong> with a 3.93 CGPA (Top 2%), earning the <em>Magna Cum Laude</em> honor and 4 consecutive Dean's Awards.
-          </p>
-          <div class="about-highlights">
-            <div class="highlight-item">
-              <i class="fas fa-award"></i>
-              <span>Magna Cum Laude</span>
-            </div>
-            <div class="highlight-item">
-              <i class="fas fa-medal"></i>
-              <span>4x Dean's Award</span>
-            </div>
-            <div class="highlight-item">
-              <i class="fas fa-graduation-cap"></i>
-              <span>Top 2% Graduate</span>
-            </div>
-          </div>
+    <div id="complete" class="hidden">
+      <div class="complete-content">
+        <h2>QUEST COMPLETE!</h2>
+        <p>You explored Nafiz's entire world!</p>
+        <div class="complete-stats" id="complete-stats"></div>
+        <div class="complete-links">
+          <a href="mailto:nafizahmed273273@gmail.com">Email</a>
+          <a href="https://github.com/Nafishsy" target="_blank">GitHub</a>
+          <a href="https://www.linkedin.com/in/Nafishy" target="_blank">LinkedIn</a>
+          <a href="https://scholar.google.com/citations?user=oHLUQsUAAAAJ" target="_blank">Scholar</a>
         </div>
-        <div class="about-skills">
-          <h3>Tech Stack</h3>
-          <div class="skills-grid">
-            <div class="skill-category">
-              <h4><i class="fas fa-robot"></i> ML & DL</h4>
-              <div class="skill-tags">
-                <span>PyTorch</span>
-                <span>TensorFlow</span>
-                <span>Keras</span>
-                <span>Transformers</span>
-              </div>
-            </div>
-            <div class="skill-category">
-              <h4><i class="fas fa-eye"></i> Computer Vision</h4>
-              <div class="skill-tags">
-                <span>YOLO</span>
-                <span>U-Net</span>
-                <span>Segmentation</span>
-                <span>Medical Imaging</span>
-              </div>
-            </div>
-            <div class="skill-category">
-              <h4><i class="fas fa-comments"></i> GenAI & LLMs</h4>
-              <div class="skill-tags">
-                <span>RAG</span>
-                <span>LangChain</span>
-                <span>CrewAI</span>
-                <span>Prompt Engineering</span>
-              </div>
-            </div>
-            <div class="skill-category">
-              <h4><i class="fas fa-server"></i> MLOps</h4>
-              <div class="skill-tags">
-                <span>Docker</span>
-                <span>FastAPI</span>
-                <span>AWS</span>
-                <span>ChromaDB</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="welcome-start">SPACE to play again</div>
       </div>
     </div>
-  </section>
-
-  <!-- Publications Section -->
-  <section id="publications" class="publications section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Research Output</span>
-        <h2 class="section-title">Publications</h2>
-      </div>
-      <div class="publications-grid">
-        <!-- Published -->
-        <div class="pub-card" data-status="published">
-          <div class="pub-status">
-            <span class="status-dot published"></span>
-            Published
-          </div>
-          <h3 class="pub-title">Deep Learning-Based NLP in Human-Agent Interaction</h3>
-          <p class="pub-authors"><strong>Nafiz Ahmed</strong>, Anik Kumar Saha, Md. Abdullah Al Noman, et al.</p>
-          <p class="pub-venue"><i class="fas fa-book"></i> Elsevier Natural Language Processing Journal, 2024</p>
-          <p class="pub-description">Comprehensive survey on deep learning techniques in NLP for HAI, covering dialogue systems, language understanding, and contextual communication.</p>
-          <div class="pub-links">
-            <a href="https://doi.org/10.1016/j.nlp.2024.100112" target="_blank" class="pub-link">
-              <i class="fas fa-external-link-alt"></i> DOI
-            </a>
-          </div>
-        </div>
-
-        <div class="pub-card" data-status="published">
-          <div class="pub-status">
-            <span class="status-dot published"></span>
-            Published
-          </div>
-          <h3 class="pub-title">Blockchain-Based Data Security for ERP Systems</h3>
-          <p class="pub-authors"><strong>Nafiz Ahmed</strong>, et al.</p>
-          <p class="pub-venue"><i class="fas fa-book"></i> IJIEEB, 2023</p>
-          <p class="pub-description">Two proposed models for securing enterprise data management using blockchain technology.</p>
-          <div class="pub-links">
-            <a href="https://doi.org/10.5815/ijieeb.2023.06.02" target="_blank" class="pub-link">
-              <i class="fas fa-external-link-alt"></i> DOI
-            </a>
-          </div>
-        </div>
-
-        <!-- Under Review -->
-        <div class="pub-card" data-status="review">
-          <div class="pub-status">
-            <span class="status-dot review"></span>
-            Under Review
-          </div>
-          <h3 class="pub-title">Hybrid MedT: Data-Efficient Transformer-UNet for Retinal Vessel Segmentation</h3>
-          <p class="pub-authors"><strong>Nafiz Ahmed</strong>, Md Kishor Morol</p>
-          <p class="pub-venue"><i class="fas fa-flask"></i> Submitted</p>
-          <p class="pub-description">Novel few-shot architecture achieving 92.72% Dice coefficient with only 5% training data using hybrid attention mechanisms.</p>
-          <div class="pub-links">
-            <a href="https://huggingface.co/spaces/Suzera1n/Few_Shot" target="_blank" class="pub-link">
-              <i class="fas fa-play"></i> Demo
-            </a>
-          </div>
-        </div>
-
-        <div class="pub-card" data-status="review">
-          <div class="pub-status">
-            <span class="status-dot review"></span>
-            Under Review
-          </div>
-          <h3 class="pub-title">Explainable Brain Tumor Localization using Attention-Guided YOLOv12</h3>
-          <p class="pub-authors"><strong>Nafiz Ahmed</strong>, Md Kishor Morol</p>
-          <p class="pub-venue"><i class="fas fa-flask"></i> Submitted</p>
-          <p class="pub-description">Custom YOLOv12 with DenseBlock and Grad-CAM achieving 94.35% mAP@50 on 4-class brain tumor dataset.</p>
-        </div>
-
-        <!-- Ongoing -->
-        <div class="pub-card" data-status="ongoing">
-          <div class="pub-status">
-            <span class="status-dot ongoing"></span>
-            Ongoing
-          </div>
-          <h3 class="pub-title">AI-Driven Staging of Pediatric Nephroblastoma</h3>
-          <p class="pub-authors"><strong>Nafiz Ahmed</strong>, Md Kishor Morol</p>
-          <p class="pub-venue"><i class="fas fa-microscope"></i> ELITE Lab</p>
-          <p class="pub-description">Dual-stream ResNet34 and DeepLabV3 system achieving 90.81% Dice score for Wilms' tumor detection on CT scans.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Projects Section -->
-  <section id="projects" class="projects section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">What I've Built</span>
-        <h2 class="section-title">Featured Projects</h2>
-      </div>
-      <div class="projects-grid">
-        <!-- Project 1 -->
-        <div class="project-card featured">
-          <div class="project-preview">
-            <iframe src="https://huggingface.co/spaces/Suzera1n/Few_Shot" loading="lazy"></iframe>
-            <div class="project-overlay">
-              <a href="https://huggingface.co/spaces/Suzera1n/Few_Shot" target="_blank" class="preview-btn">
-                <i class="fas fa-external-link-alt"></i> Live Demo
-              </a>
-            </div>
-          </div>
-          <div class="project-info">
-            <div class="project-tags">
-              <span class="tag">TensorFlow</span>
-              <span class="tag">Medical AI</span>
-              <span class="tag">Few-Shot</span>
-            </div>
-            <h3>Retinal Vessel Segmentation</h3>
-            <p>Novel few-shot learning architecture achieving 92.72% Dice coefficient using optimized Medical Transformer with hybrid attention mechanisms.</p>
-            <div class="project-metrics">
-              <div class="metric">
-                <span class="metric-value">92.7%</span>
-                <span class="metric-label">Dice Score</span>
-              </div>
-              <div class="metric">
-                <span class="metric-value">5%</span>
-                <span class="metric-label">Training Data</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Project 2 -->
-        <div class="project-card">
-          <div class="project-preview">
-            <div class="project-placeholder">
-              <i class="fas fa-gavel"></i>
-            </div>
-          </div>
-          <div class="project-info">
-            <div class="project-tags">
-              <span class="tag">RAG</span>
-              <span class="tag">YOLOv8</span>
-              <span class="tag">FastAPI</span>
-            </div>
-            <h3>Bengali Legal RAG System</h3>
-            <p>Enterprise-scale pipeline for 50,000+ legal documents with 98% layout fidelity and 0.95 Faithfulness score using hybrid search.</p>
-            <div class="project-metrics">
-              <div class="metric">
-                <span class="metric-value">50K+</span>
-                <span class="metric-label">Documents</span>
-              </div>
-              <div class="metric">
-                <span class="metric-value">0.95</span>
-                <span class="metric-label">Faithfulness</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Project 3 -->
-        <div class="project-card">
-          <div class="project-preview">
-            <div class="project-placeholder">
-              <i class="fas fa-chart-line"></i>
-            </div>
-          </div>
-          <div class="project-info">
-            <div class="project-tags">
-              <span class="tag">XGBoost</span>
-              <span class="tag">Prophet</span>
-              <span class="tag">Vue.js</span>
-            </div>
-            <h3>Bank Early Warning System</h3>
-            <p>Financial risk prediction system for DBH Bank using time-series analysis and ML models for proactive defaulter identification.</p>
-            <div class="project-metrics">
-              <div class="metric">
-                <span class="metric-value">DBH</span>
-                <span class="metric-label">Bank Client</span>
-              </div>
-              <div class="metric">
-                <span class="metric-value">Live</span>
-                <span class="metric-label">Production</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Project 4 -->
-        <div class="project-card">
-          <div class="project-preview">
-            <iframe src="https://huggingface.co/spaces/Suzera1n/PassPorted" loading="lazy"></iframe>
-            <div class="project-overlay">
-              <a href="https://huggingface.co/spaces/Suzera1n/PassPorted" target="_blank" class="preview-btn">
-                <i class="fas fa-external-link-alt"></i> Live Demo
-              </a>
-            </div>
-          </div>
-          <div class="project-info">
-            <div class="project-tags">
-              <span class="tag">Diffusion</span>
-              <span class="tag">ControlNet</span>
-              <span class="tag">PyTorch</span>
-            </div>
-            <h3>PassPorted - AI ID Photos</h3>
-            <p>Generative AI system using Latent Diffusion Models to transform casual photos into standardized passport photos.</p>
-          </div>
-        </div>
-
-        <!-- Project 5 -->
-        <div class="project-card">
-          <div class="project-preview">
-            <div class="project-placeholder">
-              <i class="fas fa-brain"></i>
-            </div>
-          </div>
-          <div class="project-info">
-            <div class="project-tags">
-              <span class="tag">YOLOv12</span>
-              <span class="tag">Grad-CAM</span>
-              <span class="tag">Attention</span>
-            </div>
-            <h3>Brain Tumor Detection</h3>
-            <p>Custom YOLOv12 with DenseBlock integration achieving 94.35% mAP@50 on 4-class tumor classification with explainable AI.</p>
-            <div class="project-metrics">
-              <div class="metric">
-                <span class="metric-value">94.3%</span>
-                <span class="metric-label">mAP@50</span>
-              </div>
-              <div class="metric">
-                <span class="metric-value">4</span>
-                <span class="metric-label">Classes</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Experience Section -->
-  <section id="experience" class="experience section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">My Journey</span>
-        <h2 class="section-title">Experience</h2>
-      </div>
-      <div class="timeline">
-        <!-- Experience 1 -->
-        <div class="timeline-item">
-          <div class="timeline-marker">
-            <i class="fas fa-briefcase"></i>
-          </div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <div>
-                <h3>Machine Learning Engineer (Mid-Level)</h3>
-                <p class="company">Periscopelabs <span class="location">Banani, Bangladesh</span></p>
-              </div>
-              <span class="timeline-date">Oct 2025 - Present</span>
-            </div>
-            <ul class="timeline-details">
-              <li>Architected defaulter warning system for DBH Bank using Prophet model</li>
-              <li>Built comprehensive RAG pipeline with YOLOv5n (90% accuracy) and GPT-4</li>
-              <li>Leveraged n8n, LangChain, CrewAI for multi-agentic solutions</li>
-            </ul>
-            <div class="timeline-tags">
-              <span>RAG</span>
-              <span>LangChain</span>
-              <span>GPT-4</span>
-              <span>CrewAI</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Experience 2 -->
-        <div class="timeline-item">
-          <div class="timeline-marker">
-            <i class="fas fa-flask"></i>
-          </div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <div>
-                <h3>Researcher</h3>
-                <p class="company">ELITE Lab <span class="location">New York, USA (Remote)</span></p>
-              </div>
-              <span class="timeline-date">Sep 2025 - Present</span>
-            </div>
-            <ul class="timeline-details">
-              <li>Contributing to 3 academic papers on CV and LLMs</li>
-              <li>Developed modified U-Net for retinal vessel segmentation</li>
-              <li>Designed Guardrails for child-safe LLMs</li>
-            </ul>
-            <div class="timeline-tags">
-              <span>Computer Vision</span>
-              <span>LLMs</span>
-              <span>Medical AI</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Experience 3 -->
-        <div class="timeline-item">
-          <div class="timeline-marker">
-            <i class="fas fa-laptop-code"></i>
-          </div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <div>
-                <h3>Machine Learning Engineer</h3>
-                <p class="company">MetroSofts <span class="location">Gothenburg, Sweden (Remote)</span></p>
-              </div>
-              <span class="timeline-date">Jan 2024 - Oct 2025</span>
-            </div>
-            <ul class="timeline-details">
-              <li>Built multi-modal AI pipeline with dual-YOLOv5n (87% accuracy, 120 FPS)</li>
-              <li>Integrated LLaVaNext for automated UI element annotation</li>
-              <li>Implemented Rasa with custom APIs for intelligent test orchestration</li>
-            </ul>
-            <div class="timeline-tags">
-              <span>YOLO</span>
-              <span>LLaVaNext</span>
-              <span>Rasa</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Experience 4 -->
-        <div class="timeline-item">
-          <div class="timeline-marker">
-            <i class="fas fa-search"></i>
-          </div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <div>
-                <h3>Research Intern</h3>
-                <p class="company">AMIR Lab <span class="location">Dhaka, Bangladesh</span></p>
-              </div>
-              <span class="timeline-date">Sep 2023 - Mar 2024</span>
-            </div>
-            <ul class="timeline-details">
-              <li>Published peer-reviewed literature review on NLP and Deep Learning</li>
-              <li>Applied PRISMA methodology for systematic survey</li>
-              <li>Led 3-member research team</li>
-            </ul>
-            <div class="timeline-tags">
-              <span>NLP</span>
-              <span>Research</span>
-              <span>PRISMA</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Experience 5 -->
-        <div class="timeline-item">
-          <div class="timeline-marker">
-            <i class="fas fa-code"></i>
-          </div>
-          <div class="timeline-content">
-            <div class="timeline-header">
-              <div>
-                <h3>Junior Software Engineer</h3>
-                <p class="company">Shapla Infosys <span class="location">Dhaka, Bangladesh</span></p>
-              </div>
-              <span class="timeline-date">Jan 2023 - Dec 2023</span>
-            </div>
-            <ul class="timeline-details">
-              <li>Built web applications with Laravel, MySQL, React (+40% satisfaction)</li>
-              <li>Designed 200+ UI/UX prototypes in Figma</li>
-              <li>Achieved 98% Google Lighthouse performance</li>
-            </ul>
-            <div class="timeline-tags">
-              <span>Laravel</span>
-              <span>React</span>
-              <span>Figma</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CV Section -->
-  <section id="cv" class="cv section">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Credentials</span>
-        <h2 class="section-title">Curriculum Vitae</h2>
-      </div>
-      <div class="cv-content">
-        <div class="cv-preview-card">
-          <div class="cv-icon">
-            <i class="fas fa-file-alt"></i>
-            <div class="cv-icon-glow"></div>
-          </div>
-          <div class="cv-info">
-            <h3>Nafiz Ahmed</h3>
-            <p class="cv-subtitle">Machine Learning Engineer & Researcher</p>
-            <div class="cv-highlights">
-              <div class="cv-highlight">
-                <i class="fas fa-graduation-cap"></i>
-                <span>B.Sc. in CSE - CGPA 3.93/4.0</span>
-              </div>
-              <div class="cv-highlight">
-                <i class="fas fa-briefcase"></i>
-                <span>3+ Years Industry Experience</span>
-              </div>
-              <div class="cv-highlight">
-                <i class="fas fa-flask"></i>
-                <span>2 Published Research Papers</span>
-              </div>
-            </div>
-          </div>
-          <div class="cv-actions">
-            <a href="CV_Of_Nafiz_Ahmed.pdf" target="_blank" class="btn btn-primary cv-btn">
-              <i class="fas fa-eye"></i>
-              <span>View CV</span>
-            </a>
-            <a href="CV_Of_Nafiz_Ahmed.pdf" download class="btn btn-secondary cv-btn">
-              <i class="fas fa-download"></i>
-              <span>Download</span>
-            </a>
-          </div>
-        </div>
-        <div class="cv-skills-grid">
-          <div class="cv-skill-block">
-            <div class="cv-skill-icon"><i class="fas fa-brain"></i></div>
-            <h4>AI & Machine Learning</h4>
-            <p>Deep Learning, Computer Vision, NLP, Medical Imaging, Few-Shot Learning</p>
-          </div>
-          <div class="cv-skill-block">
-            <div class="cv-skill-icon"><i class="fas fa-robot"></i></div>
-            <h4>Agentic AI</h4>
-            <p>RAG Systems, LangChain, CrewAI, n8n, Multi-Agent Orchestration</p>
-          </div>
-          <div class="cv-skill-block">
-            <div class="cv-skill-icon"><i class="fas fa-code"></i></div>
-            <h4>Development</h4>
-            <p>Python, PyTorch, TensorFlow, FastAPI, Docker, AWS</p>
-          </div>
-          <div class="cv-skill-block">
-            <div class="cv-skill-icon"><i class="fas fa-microscope"></i></div>
-            <h4>Research</h4>
-            <p>Medical AI, Explainable AI, YOLO Architectures, Transformer Models</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact" class="contact section">
-    <div class="container">
-      <div class="contact-content">
-        <div class="contact-text">
-          <span class="section-tag">Let's Connect</span>
-          <h2 class="section-title">Get In Touch</h2>
-          <p>I'm always excited to collaborate on research projects, discuss ML engineering opportunities, or just chat about the latest in AI.</p>
-        </div>
-        <div class="contact-links">
-          <a href="mailto:nafizahmed273273@gmail.com" class="contact-card">
-            <i class="fas fa-envelope"></i>
-            <span>Email Me</span>
-          </a>
-          <a href="https://github.com/Nafishsy" target="_blank" class="contact-card">
-            <i class="fab fa-github"></i>
-            <span>GitHub</span>
-          </a>
-          <a href="https://www.linkedin.com/in/Nafishy" target="_blank" class="contact-card">
-            <i class="fab fa-linkedin"></i>
-            <span>LinkedIn</span>
-          </a>
-          <a href="https://scholar.google.com/citations?user=oHLUQsUAAAAJ" target="_blank" class="contact-card">
-            <i class="fas fa-graduation-cap"></i>
-            <span>Scholar</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <p>&copy; 2025 Nafiz Ahmed. Built with creativity and code.</p>
-    </div>
-  </footer>
-
-  <!-- Neuro Pet - AI Companion Game -->
-  <div id="neuro-pet" class="neuro-pet">
-    <div class="pet-bubble" id="petBubble"></div>
-    <div class="pet-sprite">
-      <div class="pet-antenna"><span></span></div>
-      <div class="pet-core">
-        <div class="pet-eye left"></div>
-        <div class="pet-eye right"></div>
-        <div class="pet-mouth"></div>
-      </div>
-      <div class="pet-feet">
-        <div class="pet-foot left"></div>
-        <div class="pet-foot right"></div>
-      </div>
-    </div>
-    <div class="pet-tag"><span class="pet-name">NEURO</span> <span class="pet-lvl">Lv.1</span></div>
-  </div>
-  <div id="neuro-hud" class="neuro-hud">
-    <div class="hud-item"><i class="fas fa-bolt"></i> <span id="neuronScore">0</span></div>
-    <div class="hud-sep">|</div>
-    <div class="hud-item"><i class="fas fa-map-marker-alt"></i> <span id="sectionsFound">0</span>/7</div>
-    <div class="hud-sep">|</div>
-    <div class="hud-item">LVL <span id="petLevel">1</span></div>
-    <div class="hud-xp"><div class="hud-xp-fill" id="petXP"></div></div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
