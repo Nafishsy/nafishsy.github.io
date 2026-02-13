@@ -16,7 +16,7 @@ const T = {
 };
 
 // Walkable tiles
-const WALKABLE = new Set([T.GRASS, T.PATH, T.FLOWER_R, T.FLOWER_Y]);
+const WALKABLE = new Set([T.GRASS, T.PATH, T.FLOWER_R, T.FLOWER_Y, T.WATER]);
 
 // Map (30x20)
 const MAP = [
@@ -150,16 +150,16 @@ const NPCS = [
 
 // Collectible items
 const ITEMS = [
-  { x: 2, y: 2, icon: '\u{1F525}', name: 'PyTorch Flame', desc: 'Mastery of PyTorch deep learning framework. Nafiz\'s primary research tool.', color: '#ff4422' },
-  { x: 27, y: 2, icon: '\u{1F48E}', name: 'TensorFlow Crystal', desc: 'TensorFlow expertise for production ML systems and medical imaging.', color: '#ff8800' },
-  { x: 12, y: 1, icon: '\u{1F4DC}', name: 'Research Scroll', desc: 'Published peer-reviewed research in Elsevier NLP Journal (2024).', color: '#eecc44' },
-  { x: 19, y: 7, icon: '\u{1F3AF}', name: 'YOLO Badge', desc: 'YOLO object detection mastery. YOLOv5, v8, v12 - customized architectures.', color: '#44cc44' },
-  { x: 1, y: 18, icon: '\u{1F3C6}', name: 'Dean\'s Trophy', desc: '4 consecutive Dean\'s List Awards from AIUB. Academic excellence!', color: '#ffd700' },
-  { x: 28, y: 18, icon: '\u{1F916}', name: 'RAG Module', desc: 'RAG pipeline expertise. Built systems for 50K+ documents with 0.95 Faithfulness.', color: '#4488ff' },
-  { x: 9, y: 18, icon: '\u{1F396}', name: 'Magna Medal', desc: 'Magna Cum Laude honor. Top 2% graduate with 3.93 CGPA.', color: '#ff4488' },
-  { x: 19, y: 18, icon: '\u{1F4E6}', name: 'Docker Container', desc: 'MLOps deployment with Docker, FastAPI, and AWS. Production-ready ML.', color: '#2288dd' },
-  { x: 28, y: 10, icon: '\u{1F511}', name: 'LangChain Key', desc: 'LangChain + CrewAI orchestration. Multi-agent AI system architect.', color: '#cc88ff' },
-  { x: 12, y: 18, icon: '\u{1F441}', name: 'Vision Lens', desc: 'Computer Vision specialist. Medical imaging, segmentation, detection.', color: '#00ccdd' }
+  { x: 2, y: 2, style: 'fire', name: 'PyTorch Flame', desc: 'Mastery of PyTorch deep learning framework. Nafiz\'s primary research tool.', color: '#ff4422' },
+  { x: 27, y: 2, style: 'crystal', name: 'TensorFlow Crystal', desc: 'TensorFlow expertise for production ML systems and medical imaging.', color: '#ff8800' },
+  { x: 12, y: 1, style: 'star', name: 'Research Star', desc: 'Published peer-reviewed research in Elsevier NLP Journal (2024).', color: '#ffd700' },
+  { x: 19, y: 7, style: 'mushroom', name: 'YOLO Shroom', desc: 'YOLO object detection mastery. YOLOv5, v8, v12 - customized architectures.', color: '#44cc44' },
+  { x: 1, y: 18, style: 'trophy', name: 'Dean\'s Trophy', desc: '4 consecutive Dean\'s List Awards from AIUB. Academic excellence!', color: '#ffd700' },
+  { x: 28, y: 18, style: 'coin', name: 'RAG Coin', desc: 'RAG pipeline expertise. Built systems for 50K+ documents with 0.95 Faithfulness.', color: '#ffd700' },
+  { x: 9, y: 18, style: 'star', name: 'Magna Star', desc: 'Magna Cum Laude honor. Top 2% graduate with 3.93 CGPA.', color: '#ffd700' },
+  { x: 19, y: 18, style: 'mushroom', name: 'Docker Shroom', desc: 'MLOps deployment with Docker, FastAPI, and AWS. Production-ready ML.', color: '#2288dd' },
+  { x: 28, y: 10, style: 'coin', name: 'LangChain Coin', desc: 'LangChain + CrewAI orchestration. Multi-agent AI system architect.', color: '#cc88ff' },
+  { x: 12, y: 18, style: 'crystal', name: 'Vision Crystal', desc: 'Computer Vision specialist. Medical imaging, segmentation, detection.', color: '#00ccdd' }
 ];
 
 // Building labels
@@ -368,6 +368,14 @@ class Particles {
           p.life = 0.6;
           p.size = 2;
           p.color = '#ffd700';
+          break;
+        case 'splash':
+          p.vx = (Math.random() - 0.5) * 1.5;
+          p.vy = -Math.random() * 1.5 - 0.5;
+          p.maxLife = 0.3 + Math.random() * 0.2;
+          p.life = p.maxLife;
+          p.size = 1 + Math.random();
+          p.color = '#88ccff';
           break;
         case 'firefly':
           p.vx = (Math.random() - 0.5) * 0.3;
@@ -887,6 +895,255 @@ function drawInteriorObject(ctx, x, y, type, time) {
 }
 
 // ============================================
+// MARIO-STYLE ITEM DRAWING
+// ============================================
+function drawItem(ctx, px, py, style, time, color) {
+  const t = time || Date.now();
+  const bob = Math.sin(t / 400) * 2;
+  const y = py + bob;
+
+  switch (style) {
+    case 'star': {
+      // Mario-style super star
+      ctx.fillStyle = '#ffd700';
+      // Star body (5-pointed via pixels)
+      ctx.fillRect(px + 6, y + 1, 4, 2);
+      ctx.fillRect(px + 5, y + 3, 6, 2);
+      ctx.fillRect(px + 3, y + 5, 10, 3);
+      ctx.fillRect(px + 2, y + 6, 12, 2);
+      ctx.fillRect(px + 3, y + 8, 3, 3);
+      ctx.fillRect(px + 10, y + 8, 3, 3);
+      ctx.fillRect(px + 5, y + 10, 2, 2);
+      ctx.fillRect(px + 9, y + 10, 2, 2);
+      // Eyes
+      ctx.fillStyle = '#111';
+      ctx.fillRect(px + 6, y + 5, 1, 2);
+      ctx.fillRect(px + 9, y + 5, 1, 2);
+      // Shine
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(px + 5, y + 3, 2, 1);
+      ctx.fillRect(px + 4, y + 5, 1, 1);
+      break;
+    }
+    case 'mushroom': {
+      // Super mushroom style
+      const mc = color === '#2288dd' ? '#2288dd' : '#ee2222';
+      // Cap
+      ctx.fillStyle = mc;
+      ctx.fillRect(px + 3, y + 2, 10, 5);
+      ctx.fillRect(px + 2, y + 3, 12, 3);
+      // Cap spots
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(px + 4, y + 3, 3, 2);
+      ctx.fillRect(px + 9, y + 3, 3, 2);
+      ctx.fillRect(px + 7, y + 2, 2, 2);
+      // Face
+      ctx.fillStyle = '#f5deb3';
+      ctx.fillRect(px + 4, y + 7, 8, 4);
+      ctx.fillRect(px + 3, y + 8, 10, 2);
+      // Eyes
+      ctx.fillStyle = '#111';
+      ctx.fillRect(px + 5, y + 8, 2, 2);
+      ctx.fillRect(px + 9, y + 8, 2, 2);
+      // Feet
+      ctx.fillStyle = mc;
+      ctx.fillRect(px + 3, y + 11, 3, 2);
+      ctx.fillRect(px + 10, y + 11, 3, 2);
+      break;
+    }
+    case 'coin': {
+      // Spinning coin effect
+      const spin = Math.abs(Math.sin(t / 300));
+      const w = Math.max(2, Math.round(spin * 10));
+      const cx = px + 8 - Math.floor(w / 2);
+      ctx.fillStyle = '#ffd700';
+      ctx.fillRect(cx, y + 2, w, 12);
+      ctx.fillStyle = '#ffee55';
+      ctx.fillRect(cx + 1, y + 3, Math.max(1, w - 2), 10);
+      // Line detail
+      if (w > 4) {
+        ctx.fillStyle = '#cc9900';
+        ctx.fillRect(cx + Math.floor(w / 2), y + 4, 1, 8);
+      }
+      // Shine
+      ctx.fillStyle = '#fff';
+      if (w > 3) ctx.fillRect(cx + 1, y + 3, 1, 1);
+      break;
+    }
+    case 'fire': {
+      // Fire flower
+      ctx.fillStyle = '#22aa22';
+      ctx.fillRect(px + 7, y + 9, 2, 4);
+      // Leaves
+      ctx.fillRect(px + 5, y + 10, 3, 2);
+      ctx.fillRect(px + 9, y + 11, 2, 1);
+      // Flower head
+      ctx.fillStyle = '#ff4422';
+      ctx.fillRect(px + 5, y + 3, 6, 5);
+      ctx.fillRect(px + 4, y + 4, 8, 3);
+      // Petals
+      ctx.fillStyle = '#ff8844';
+      ctx.fillRect(px + 5, y + 2, 2, 2);
+      ctx.fillRect(px + 9, y + 2, 2, 2);
+      ctx.fillRect(px + 4, y + 5, 2, 2);
+      ctx.fillRect(px + 10, y + 5, 2, 2);
+      // Center
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(px + 7, y + 4, 2, 3);
+      ctx.fillStyle = '#ffdd00';
+      ctx.fillRect(px + 7, y + 5, 2, 1);
+      // Eyes
+      ctx.fillStyle = '#111';
+      ctx.fillRect(px + 6, y + 5, 1, 1);
+      ctx.fillRect(px + 9, y + 5, 1, 1);
+      break;
+    }
+    case 'crystal': {
+      // Power crystal / diamond
+      const cc = color || '#00ccdd';
+      ctx.fillStyle = cc;
+      ctx.fillRect(px + 6, y + 1, 4, 2);
+      ctx.fillRect(px + 5, y + 3, 6, 2);
+      ctx.fillRect(px + 4, y + 5, 8, 2);
+      ctx.fillRect(px + 3, y + 7, 10, 2);
+      ctx.fillRect(px + 4, y + 9, 8, 2);
+      ctx.fillRect(px + 5, y + 11, 6, 2);
+      ctx.fillRect(px + 6, y + 13, 4, 1);
+      // Shine
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.fillRect(px + 5, y + 3, 2, 3);
+      ctx.fillRect(px + 4, y + 6, 1, 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillRect(px + 7, y + 2, 1, 2);
+      break;
+    }
+    case 'trophy': {
+      // Gold trophy cup
+      ctx.fillStyle = '#ffd700';
+      // Cup
+      ctx.fillRect(px + 4, y + 2, 8, 5);
+      ctx.fillRect(px + 3, y + 3, 10, 3);
+      // Handles
+      ctx.fillRect(px + 2, y + 3, 2, 3);
+      ctx.fillRect(px + 12, y + 3, 2, 3);
+      // Stem
+      ctx.fillRect(px + 7, y + 7, 2, 3);
+      // Base
+      ctx.fillRect(px + 5, y + 10, 6, 2);
+      ctx.fillRect(px + 4, y + 12, 8, 2);
+      // Shine
+      ctx.fillStyle = '#ffee88';
+      ctx.fillRect(px + 5, y + 3, 2, 2);
+      ctx.fillRect(px + 3, y + 4, 1, 1);
+      // Star on cup
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(px + 7, y + 4, 2, 1);
+      ctx.fillRect(px + 8, y + 3, 1, 3);
+      break;
+    }
+  }
+}
+
+// ============================================
+// COMPANION CREATURE DRAWING (Pikachu-like)
+// ============================================
+function drawCompanion(ctx, px, py, dir, frame, time) {
+  const t = time || Date.now();
+  const breathe = Math.round(Math.sin(t / 800 * Math.PI * 2) * 0.5);
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.fillRect(px + 2, py + 13, 10, 2);
+
+  // Tail
+  ctx.fillStyle = '#cc8800';
+  if (dir === 'left') {
+    ctx.fillRect(px + 11, py + 5, 2, 2);
+    ctx.fillRect(px + 12, py + 3, 2, 3);
+    ctx.fillRect(px + 13, py + 1, 2, 3);
+  } else if (dir === 'right') {
+    ctx.fillRect(px + 1, py + 5, 2, 2);
+    ctx.fillRect(px + 0, py + 3, 2, 3);
+    ctx.fillRect(px - 1, py + 1, 2, 3);
+  } else {
+    ctx.fillRect(px + 10, py + 4, 2, 2);
+    ctx.fillRect(px + 11, py + 2, 2, 3);
+    ctx.fillRect(px + 12, py + 0, 2, 3);
+  }
+  // Tail tip
+  ctx.fillStyle = '#aa6600';
+  if (dir === 'left') ctx.fillRect(px + 13, py + 1, 2, 1);
+  else if (dir === 'right') ctx.fillRect(px - 1, py + 1, 2, 1);
+  else ctx.fillRect(px + 12, py + 0, 2, 1);
+
+  // Body
+  ctx.fillStyle = '#ffdd44';
+  ctx.fillRect(px + 3, py + 6 + breathe, 8, 6);
+  ctx.fillRect(px + 4, py + 5 + breathe, 6, 8);
+
+  // Feet
+  const legOff = frame % 2 === 1 ? 1 : 0;
+  ctx.fillStyle = '#ddbb33';
+  ctx.fillRect(px + 3 + legOff, py + 12, 3, 2);
+  ctx.fillRect(px + 8 - legOff, py + 12, 3, 2);
+
+  // Head
+  ctx.fillStyle = '#ffdd44';
+  ctx.fillRect(px + 3, py + 1, 8, 6);
+  ctx.fillRect(px + 2, py + 2, 10, 4);
+
+  // Ears
+  ctx.fillStyle = '#ffdd44';
+  ctx.fillRect(px + 2, py - 2, 2, 4);
+  ctx.fillRect(px + 10, py - 2, 2, 4);
+  // Ear tips
+  ctx.fillStyle = '#222';
+  ctx.fillRect(px + 2, py - 2, 2, 1);
+  ctx.fillRect(px + 10, py - 2, 2, 1);
+
+  // Face (front/side)
+  if (dir === 'down' || dir === 'up') {
+    // Eyes
+    ctx.fillStyle = '#111';
+    ctx.fillRect(px + 4, py + 3, 2, 2);
+    ctx.fillRect(px + 8, py + 3, 2, 2);
+    // Eye shine
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(px + 4, py + 3, 1, 1);
+    ctx.fillRect(px + 8, py + 3, 1, 1);
+    // Cheeks
+    ctx.fillStyle = '#ff5544';
+    ctx.fillRect(px + 2, py + 4, 2, 2);
+    ctx.fillRect(px + 10, py + 4, 2, 2);
+    // Nose
+    ctx.fillStyle = '#222';
+    ctx.fillRect(px + 7, py + 4, 1, 1);
+    // Mouth
+    if (dir === 'down') {
+      ctx.fillStyle = '#cc8800';
+      ctx.fillRect(px + 6, py + 5, 3, 1);
+    }
+  } else {
+    // Side view
+    const flip = dir === 'right' ? 1 : 0;
+    ctx.fillStyle = '#111';
+    ctx.fillRect(px + (flip ? 8 : 4), py + 3, 2, 2);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(px + (flip ? 8 : 4), py + 3, 1, 1);
+    ctx.fillStyle = '#ff5544';
+    ctx.fillRect(px + (flip ? 10 : 2), py + 4, 2, 2);
+    ctx.fillStyle = '#222';
+    ctx.fillRect(px + (flip ? 9 : 5), py + 4, 1, 1);
+  }
+
+  // Brown back stripes
+  ctx.fillStyle = '#cc8800';
+  ctx.fillRect(px + 5, py + 7 + breathe, 4, 1);
+  ctx.fillRect(px + 4, py + 9 + breathe, 2, 1);
+  ctx.fillRect(px + 8, py + 9 + breathe, 2, 1);
+}
+
+// ============================================
 // CHARACTER DRAWING (much improved)
 // ============================================
 function drawChar(ctx, px, py, hairCol, bodyCol, dir, frame, skinCol, acc, breathe) {
@@ -1132,6 +1389,10 @@ class PortfolioRPG {
     this.dustTimer = 0;
     this.fireflyTimer = 0;
 
+    // Companion (Pikachu-like follower)
+    this.companion = { x: 13, y: 9, dir: 'down', frame: 0 };
+    this.posHistory = []; // trail of player positions for companion to follow
+
     // Room/interior state
     this.currentMap = 'overworld';
     this.overworldPos = null; // saved player position when entering building
@@ -1295,7 +1556,8 @@ class PortfolioRPG {
     ITEMS.forEach((item, i) => {
       const slot = document.createElement('div');
       slot.className = 'inv-slot' + (this.collected.has(i) ? ' collected' : ' empty');
-      slot.textContent = this.collected.has(i) ? item.icon : '?';
+      const styleIcons = { star: '\u2B50', mushroom: '\uD83C\uDF44', coin: '\uD83E\uDE99', fire: '\uD83D\uDD25', crystal: '\uD83D\uDC8E', trophy: '\uD83C\uDFC6' };
+      slot.textContent = this.collected.has(i) ? (styleIcons[item.style] || '\u2B50') : '?';
       slot.addEventListener('click', () => {
         if (this.collected.has(i)) {
           this.invDesc.textContent = item.name + ': ' + item.desc;
@@ -1437,13 +1699,29 @@ class PortfolioRPG {
 
     // Movement
     if (this.player.moving) {
-      this.player.progress += dt / 140;
+      // Slower movement in water
+      const targetTile = this.currentMap === 'overworld' ? (MAP[this.player.targetY] && MAP[this.player.targetY][this.player.targetX]) : null;
+      const inWater = targetTile === T.WATER;
+      const moveSpeed = inWater ? 260 : 140;
+      this.player.progress += dt / moveSpeed;
       if (this.player.progress >= 1) {
         this.player.x = this.player.targetX;
         this.player.y = this.player.targetY;
         this.player.moving = false;
         this.player.progress = 0;
         this.player.frame++;
+        // Splash when entering water
+        if (inWater) {
+          this.particles.emit(this.player.x * S + 8, this.player.y * S + 10, 'splash', 6);
+        }
+        // Update companion to follow
+        if (this.posHistory.length >= 2) {
+          const followPos = this.posHistory[0];
+          this.companion.x = followPos.x;
+          this.companion.y = followPos.y;
+          this.companion.dir = followPos.dir;
+          this.companion.frame++;
+        }
         // Check for exit tile in interior
         if (this.currentMap !== 'overworld') {
           const imap = INTERIOR_MAPS[this.currentMap];
@@ -1456,7 +1734,7 @@ class PortfolioRPG {
           this.checkItemPickup();
         }
       }
-      // Emit dust particles while moving on path
+      // Emit particles while moving
       this.dustTimer += dt;
       if (this.dustTimer > 100) {
         this.dustTimer = 0;
@@ -1466,6 +1744,10 @@ class PortfolioRPG {
             const ppx = (this.player.x + (this.player.targetX - this.player.x) * this.player.progress) * S + 8;
             const ppy = (this.player.y + (this.player.targetY - this.player.y) * this.player.progress) * S + 14;
             this.particles.emit(ppx, ppy, 'dust', 2);
+          } else if (tile === T.WATER) {
+            const ppx = (this.player.x + (this.player.targetX - this.player.x) * this.player.progress) * S + 8;
+            const ppy = (this.player.y + (this.player.targetY - this.player.y) * this.player.progress) * S + 12;
+            this.particles.emit(ppx, ppy, 'splash', 2);
           }
         }
       }
@@ -1487,6 +1769,10 @@ class PortfolioRPG {
     const nx = this.player.x + dx;
     const ny = this.player.y + dy;
     if (this.isWalkable(nx, ny)) {
+      // Record position for companion to follow
+      this.posHistory.push({ x: this.player.x, y: this.player.y, dir: dir });
+      if (this.posHistory.length > 3) this.posHistory.shift();
+
       this.player.targetX = nx;
       this.player.targetY = ny;
       this.player.moving = true;
@@ -1576,6 +1862,10 @@ class PortfolioRPG {
     this.player.moving = false;
     this.player.progress = 0;
     this.particles = new Particles();
+    this.posHistory = [];
+    this.companion.x = 6;
+    this.companion.y = 8;
+    this.companion.dir = 'up';
     // Show room name
     this.roomNameEl.textContent = BUILDINGS[buildingId].name;
     this.roomNameEl.classList.remove('hidden');
@@ -1597,6 +1887,10 @@ class PortfolioRPG {
     this.player.progress = 0;
     this.overworldPos = null;
     this.particles = new Particles();
+    this.posHistory = [];
+    this.companion.x = this.player.x - 1;
+    this.companion.y = this.player.y;
+    this.companion.dir = 'down';
     // Hide room name
     this.roomNameEl.classList.add('hidden');
   }
@@ -1726,6 +2020,8 @@ class PortfolioRPG {
     this.particles = new Particles();
     this.currentMap = 'overworld';
     this.overworldPos = null;
+    this.posHistory = [];
+    this.companion = { x: 13, y: 9, dir: 'down', frame: 0 };
     this.roomNameEl.classList.add('hidden');
     this.itemCountEl.textContent = '0';
     this.areaCountEl.textContent = '0';
@@ -1766,45 +2062,27 @@ class PortfolioRPG {
     // Blit map
     ctx.drawImage(this.mapCanvas, 0, 0);
 
-    // Draw items with enhanced effects
+    // Draw items (Mario-style)
     for (let i = 0; i < ITEMS.length; i++) {
       if (this.collected.has(i)) continue;
       const item = ITEMS[i];
-      const bob = Math.sin(t / 400 + i * 1.3) * 2;
-      const pulse = (Math.sin(t / 300 + i * 0.7) + 1) * 0.5;
-      const px = item.x * S, py = item.y * S + bob;
+      const px = item.x * S, py = item.y * S;
 
-      ctx.globalAlpha = 0.1 + pulse * 0.15;
+      // Glow pulse underneath
+      const pulse = (Math.sin(t / 300 + i * 0.7) + 1) * 0.5;
+      ctx.globalAlpha = 0.15 + pulse * 0.1;
       ctx.fillStyle = item.color;
-      ctx.fillRect(px - 1, py - 1, 18, 18);
+      ctx.fillRect(px, py + 2, S, S - 2);
       ctx.globalAlpha = 1;
 
-      ctx.fillStyle = 'rgba(255,255,255,0.12)';
-      ctx.fillRect(px + 1, py + 1, 14, 14);
+      // Draw the styled item
+      drawItem(ctx, px, py, item.style, t + i * 500, item.color);
 
-      ctx.fillStyle = item.color;
-      ctx.fillRect(px + 3, py + 3, 10, 10);
-
-      const darkerColor = item.color.replace(/[0-9a-f]{2}/gi, (m, offset) => {
-        if (offset === 0) return m;
-        const v = Math.max(0, parseInt(m, 16) - 40);
-        return v.toString(16).padStart(2, '0');
-      });
-      ctx.fillStyle = darkerColor;
-      ctx.fillRect(px + 3, py + 11, 10, 2);
-      ctx.fillRect(px + 11, py + 3, 2, 10);
-
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
-      ctx.fillRect(px + 4, py + 4, 2, 2);
-      ctx.fillStyle = 'rgba(255,255,255,0.3)';
-      ctx.fillRect(px + 4, py + 6, 1, 2);
-      ctx.fillRect(px + 6, py + 4, 2, 1);
-
+      // Rotating sparkle
       const sparkAngle = (t / 500 + i) % (Math.PI * 2);
-      const sx = px + 8 + Math.cos(sparkAngle) * 7;
-      const sy = py + 8 + Math.sin(sparkAngle) * 7;
-      const sparkAlpha = (Math.sin(t / 200 + i * 2) + 1) * 0.4;
-      ctx.globalAlpha = sparkAlpha;
+      const sx = px + 8 + Math.cos(sparkAngle) * 8;
+      const sy = py + 8 + Math.sin(sparkAngle) * 8;
+      ctx.globalAlpha = (Math.sin(t / 200 + i * 2) + 1) * 0.5;
       ctx.fillStyle = '#fff';
       ctx.fillRect(sx, sy, 1, 1);
       ctx.globalAlpha = 1;
@@ -1825,14 +2103,57 @@ class PortfolioRPG {
       ctx.fillRect(npc.x * S + 10, npc.y * S - 8 + bubBob, 1, 1);
     }
 
+    // Check if player/companion is in water
+    const playerCheckY = this.player.moving ? this.player.targetY : this.player.y;
+    const playerCheckX = this.player.moving ? this.player.targetX : this.player.x;
+    const playerTile = MAP[playerCheckY] && MAP[playerCheckY][playerCheckX];
+    const companionTile = MAP[this.companion.y] && MAP[this.companion.y][this.companion.x];
+    const playerInWater = playerTile === T.WATER;
+    const companionInWater = companionTile === T.WATER;
+
+    // Draw companion (behind player)
+    if (companionInWater) {
+      // Companion swimming - only draw top half
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(this.companion.x * S, this.companion.y * S, S, 8);
+      ctx.clip();
+      drawCompanion(ctx, this.companion.x * S + 1, this.companion.y * S, this.companion.dir, this.companion.frame, t);
+      ctx.restore();
+      // Water ripple around companion
+      const ripple = Math.sin(t / 300) * 1;
+      ctx.fillStyle = 'rgba(100,180,255,0.4)';
+      ctx.fillRect(this.companion.x * S, this.companion.y * S + 7 + ripple, 14, 2);
+    } else {
+      drawCompanion(ctx, this.companion.x * S + 1, this.companion.y * S, this.companion.dir, this.companion.frame, t);
+    }
+
     // Draw player
     const [ppx, ppy] = this.getPlayerScreenPos();
     const playerBreathe = (t / 1200) % 1;
     const playerFrame = this.player.moving ? Math.floor(this.player.progress * 4) : 0;
-    drawChar(ctx, ppx, ppy, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
+
+    if (playerInWater) {
+      // Swimming - clip bottom half, draw with bobbing
+      const swimBob = Math.sin(t / 400) * 1.5;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(ppx - 2, ppy - 4, S + 4, 12);
+      ctx.clip();
+      drawChar(ctx, ppx, ppy - 4 + swimBob, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
+      ctx.restore();
+      // Water ripple around player
+      const ripple = Math.sin(t / 300 + 1) * 1;
+      ctx.fillStyle = 'rgba(80,160,240,0.5)';
+      ctx.fillRect(ppx - 1, ppy + 7 + ripple, S + 2, 2);
+      ctx.fillStyle = 'rgba(150,210,255,0.3)';
+      ctx.fillRect(ppx + 1, ppy + 6 + ripple, S - 2, 1);
+    } else {
+      drawChar(ctx, ppx, ppy, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
+    }
 
     // Player direction indicator
-    if (!this.player.moving) {
+    if (!this.player.moving && !playerInWater) {
       const indicatorPulse = (Math.sin(t / 400) + 1) * 0.3 + 0.2;
       ctx.globalAlpha = indicatorPulse;
       ctx.fillStyle = '#00ddee';
@@ -1927,6 +2248,9 @@ class PortfolioRPG {
         ctx.globalAlpha = 1;
       }
     }
+
+    // Draw companion in interior
+    drawCompanion(ctx, this.companion.x * S + offsetX + 1, this.companion.y * S + offsetY, this.companion.dir, this.companion.frame, t);
 
     // Draw player in interior
     const [ppx, ppy] = this.getPlayerScreenPos();
