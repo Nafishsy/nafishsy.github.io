@@ -182,6 +182,13 @@
         <div class="arrow-right"></div>
         <div class="arrow-head"></div>
       </div>
+      <div class="mobile-scroll-hint">
+        <div class="scroll-dots">
+          <div class="scroll-dot"></div>
+          <div class="scroll-dot"></div>
+          <div class="scroll-dot"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -200,6 +207,13 @@
       <button class="action-btn" id="btn-inv">I<span>Items</span></button>
     </div>
   </div>
+
+  <!-- Mobile scroll indicator -->
+  <div class="mobile-scroll-banner" id="mobile-scroll-cv">
+    <span class="msb-text">SCROLL FOR CV</span>
+    <span class="msb-arrow">&#9660;</span>
+  </div>
+
   </section>
 
   <!-- ═══════════════ PORTFOLIO SECTION ═══════════════ -->
@@ -389,6 +403,27 @@
         </div>
         <div class="project-metric">90.81 Dice Score</div>
       </div>
+    </div>
+
+    <div class="port-divider"></div>
+
+    <!-- TRY MY MODELS -->
+    <div class="section-tag">// LIVE DEMOS</div>
+    <h2 class="section-title">Try My Models</h2>
+    <p class="section-subtitle">Interact with my deployed ML models directly. No setup required.</p>
+
+    <div class="demo-tabs">
+      <button class="demo-tab active" data-demo="few-shot">Retinal Segmentation</button>
+      <button class="demo-tab" data-demo="passported">PassPorted</button>
+      <button class="demo-tab" data-demo="scoboba">Bengali Legal RAG</button>
+    </div>
+
+    <div class="demo-container">
+      <div class="demo-loading">
+        <div class="demo-spinner"></div>
+        <span>Loading model... This may take 30-60s on first visit</span>
+      </div>
+      <iframe id="demo-frame" class="demo-iframe" src="https://suzera1n-few-shot.hf.space" frameborder="0" allow="accelerometer; camera; microphone" loading="lazy"></iframe>
     </div>
 
     <div class="port-divider"></div>

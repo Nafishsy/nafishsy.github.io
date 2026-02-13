@@ -17,7 +17,15 @@
     });
   }
 
-  // --- Hide controls & busy sidebar when scrolled past game section ---
+  // --- Mobile scroll banner ---
+  const mobileScroll = document.getElementById('mobile-scroll-cv');
+  if (mobileScroll) {
+    mobileScroll.addEventListener('click', () => {
+      document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // --- Hide controls, busy sidebar & mobile banner when scrolled past game section ---
   if (gameSection) {
     let visible = true;
     window.addEventListener('scroll', () => {
@@ -27,8 +35,29 @@
         visible = shouldShow;
         if (controls) controls.style.display = shouldShow ? '' : 'none';
         if (scrollBtn) scrollBtn.style.display = shouldShow ? '' : 'none';
+        if (mobileScroll) mobileScroll.style.display = shouldShow ? '' : 'none';
       }
     }, { passive: true });
+  }
+
+  // --- Demo tabs ---
+  const demoUrls = {
+    'few-shot': 'https://suzera1n-few-shot.hf.space',
+    'passported': 'https://suzera1n-passported.hf.space',
+    'scoboba': 'https://suzera1n-scoboba.hf.space'
+  };
+  const demoFrame = document.getElementById('demo-frame');
+  const demoTabs = document.querySelectorAll('.demo-tab');
+  if (demoFrame && demoTabs.length) {
+    demoFrame.addEventListener('load', () => demoFrame.classList.add('loaded'));
+    demoTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        demoTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        demoFrame.classList.remove('loaded');
+        demoFrame.src = demoUrls[tab.dataset.demo];
+      });
+    });
   }
 
   // --- Lofi music ---
