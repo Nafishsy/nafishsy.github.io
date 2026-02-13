@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nafiz Ahmed | Portfolio RPG</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="game-wrapper">
@@ -35,12 +37,18 @@
 
     <div id="hud">
       <div class="hud-left">ITEMS <span id="item-count">0</span>/10</div>
+      <div id="room-name" class="hidden"></div>
       <div class="hud-right">AREAS <span id="area-count">0</span>/4</div>
     </div>
 
     <div id="dialog" class="hidden">
       <div id="dialog-speaker"></div>
       <div id="dialog-text"></div>
+      <div id="dialog-confirm" class="hidden">
+        <span class="confirm-label">View project?</span>
+        <span class="confirm-option" id="confirm-yes">YES</span>
+        <span class="confirm-option" id="confirm-no">NO</span>
+      </div>
       <div id="dialog-prompt">&#9660; SPACE</div>
     </div>
 

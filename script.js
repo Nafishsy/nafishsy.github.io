@@ -11,7 +11,8 @@ const ROWS = 20;
 const T = {
   GRASS: 0, PATH: 1, TREE: 2, WATER: 3, WALL: 4, DOOR: 5,
   ROOF_C: 6, ROOF_R: 7, ROOF_Y: 8, ROOF_P: 9,
-  FLOWER_R: 10, FLOWER_Y: 11
+  FLOWER_R: 10, FLOWER_Y: 11,
+  FLOOR: 12, EXIT: 13
 };
 
 // Walkable tiles
@@ -168,6 +169,168 @@ const LABELS = [
   { x: 5, y: 12, text: 'CAREER', color: '#ccaa30' },
   { x: 23, y: 12, text: 'ACADEMY', color: '#8844aa' }
 ];
+
+// ============================================
+// INTERIOR MAPS (12x10 each)
+// ============================================
+const INTERIOR_COLS = 12;
+const INTERIOR_ROWS = 10;
+
+const INTERIOR_MAPS = {
+  lab: [
+    [4,4,4,4,4,4,4,4,4,4,4,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,4,4,4,4,13,13,4,4,4,4,4]
+  ],
+  workshop: [
+    [4,4,4,4,4,4,4,4,4,4,4,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,4,4,4,4,13,13,4,4,4,4,4]
+  ],
+  career: [
+    [4,4,4,4,4,4,4,4,4,4,4,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,4,4,4,4,13,13,4,4,4,4,4]
+  ],
+  academy: [
+    [4,4,4,4,4,4,4,4,4,4,4,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,12,12,12,12,12,12,12,12,12,12,4],
+    [4,4,4,4,4,13,13,4,4,4,4,4]
+  ]
+};
+
+// Interior objects for each building
+const INTERIOR_OBJECTS = {
+  lab: [
+    { x: 5, y: 1, type: 'board', name: 'Research Whiteboard',
+      dialog: [
+        { speaker: 'RESEARCH WHITEBOARD', text: 'Welcome! This lab houses all of Nafiz\'s published research and ongoing work.' },
+        { speaker: 'RESEARCH WHITEBOARD', text: 'Check the terminals and desks around the room for details on each project.' }
+      ]},
+    { x: 2, y: 3, type: 'computer', name: 'Publication Terminal',
+      link: 'https://doi.org/10.1016/j.nlp.2024.100112',
+      dialog: [
+        { speaker: 'PUBLICATION TERMINAL', text: '"Deep Learning-Based NLP in Human-Agent Interaction" - Elsevier NLP Journal, 2024. A comprehensive survey on DL techniques in NLP for dialogue systems.' },
+        { speaker: 'PUBLICATION TERMINAL', text: '"Blockchain-Based Data Security for ERP Systems" - IJIEEB, 2023. Two proposed models for securing enterprise data with blockchain.' }
+      ]},
+    { x: 9, y: 3, type: 'computer', name: 'Review Terminal',
+      dialog: [
+        { speaker: 'REVIEW TERMINAL', text: '"Hybrid MedT" - A novel few-shot architecture achieving 92.72% Dice coefficient with only 5% training data for retinal vessel segmentation.' },
+        { speaker: 'REVIEW TERMINAL', text: '"Explainable Brain Tumor Localization" - Custom YOLOv12 with DenseBlock achieving 94.35% mAP@50 on 4-class brain tumor dataset.' }
+      ]},
+    { x: 5, y: 6, type: 'desk', name: 'Ongoing Research Desk',
+      dialog: [
+        { speaker: 'ONGOING RESEARCH', text: '"AI-Driven Staging of Pediatric Nephroblastoma" - Dual-stream system achieving 90.81% Dice score for Wilms\' tumor detection on CT scans.' }
+      ]},
+    { x: 2, y: 6, type: 'shelf', name: 'Reference Shelf',
+      dialog: [
+        { speaker: 'REFERENCE SHELF', text: 'Stacked with papers on Medical AI, Explainable AI, and Few-Shot Learning. Nafiz\'s core research domains.' }
+      ]}
+  ],
+  workshop: [
+    { x: 5, y: 1, type: 'board', name: 'Project Board',
+      dialog: [
+        { speaker: 'PROJECT BOARD', text: 'Here you\'ll find Nafiz\'s most impressive engineering projects! Check each workstation for details.' }
+      ]},
+    { x: 2, y: 3, type: 'computer', name: 'Segmentation Station',
+      link: 'https://huggingface.co/spaces/Suzera1n/Few_Shot',
+      dialog: [
+        { speaker: 'RETINAL SEGMENTATION', text: 'Few-shot learning architecture with 92.72% Dice using Medical Transformer + hybrid attention. Built with TensorFlow.' }
+      ]},
+    { x: 9, y: 3, type: 'computer', name: 'RAG Terminal',
+      link: 'https://huggingface.co/spaces/Suzera1n/ScoBoba',
+      dialog: [
+        { speaker: 'BENGALI LEGAL RAG', text: 'Enterprise-scale RAG pipeline for 50,000+ legal documents. 98% layout fidelity, 0.95 Faithfulness score using YOLOv8 + GPT-4.' }
+      ]},
+    { x: 2, y: 6, type: 'workbench', name: 'Bank System Bench',
+      dialog: [
+        { speaker: 'BANK WARNING SYSTEM', text: 'Financial risk prediction for DBH Bank using XGBoost + Prophet. Time-series analysis for proactive defaulter identification. Live in production!' }
+      ]},
+    { x: 9, y: 6, type: 'workbench', name: 'PassPorted Station',
+      link: 'https://huggingface.co/spaces/Suzera1n/PassPorted',
+      dialog: [
+        { speaker: 'PASSPORTED', text: 'Generative AI system using Latent Diffusion + ControlNet to transform casual photos into standardized passport photos. Deployed on HuggingFace Spaces.' }
+      ]},
+    { x: 5, y: 6, type: 'computer', name: 'Brain Tumor Terminal',
+      dialog: [
+        { speaker: 'BRAIN TUMOR AI', text: 'Custom YOLOv12 with DenseBlock integration. 94.35% mAP@50 across 4 tumor classes with Grad-CAM explainability.' }
+      ]}
+  ],
+  career: [
+    { x: 5, y: 1, type: 'board', name: 'Career Timeline',
+      dialog: [
+        { speaker: 'CAREER TIMELINE', text: 'Nafiz\'s professional journey spans multiple countries and cutting-edge AI domains!' }
+      ]},
+    { x: 2, y: 3, type: 'desk', name: 'Periscopelabs Desk',
+      dialog: [
+        { speaker: 'PERISCOPELABS', text: 'ML Engineer (Mid-Level) | Oct 2025 - Present | Banani, Bangladesh. Architecting defaulter warning systems, RAG pipelines with YOLOv5n + GPT-4, multi-agentic AI solutions.' }
+      ]},
+    { x: 9, y: 3, type: 'computer', name: 'ELITE Lab Terminal',
+      dialog: [
+        { speaker: 'ELITE LAB', text: 'Researcher | Sep 2025 - Present | New York (Remote). Contributing to 3 papers on CV and LLMs. Built modified U-Net for retinal segmentation. Designed child-safe LLM guardrails.' }
+      ]},
+    { x: 2, y: 6, type: 'computer', name: 'Metrosofts Station',
+      dialog: [
+        { speaker: 'METROSOFTS', text: 'ML Engineer | Jan 2024 - Oct 2025 | Gothenburg, Sweden (Remote). Multi-modal AI pipeline with dual-YOLOv5n (87% acc, 120 FPS). LLaVaNext for UI annotation.' }
+      ]},
+    { x: 9, y: 6, type: 'desk', name: 'Previous Roles Desk',
+      dialog: [
+        { speaker: 'AMIR LAB', text: 'Research Intern | Sep 2023 - Mar 2024 | Dhaka. Published peer-reviewed literature review on NLP + Deep Learning. Led 3-member research team.' },
+        { speaker: 'SHAPLA INFOSYS', text: 'Jr Software Engineer | Jan - Dec 2023 | Dhaka. Built web apps with Laravel/React (+40% satisfaction). 200+ Figma prototypes. 98% Lighthouse score.' }
+      ]}
+  ],
+  academy: [
+    { x: 5, y: 1, type: 'board', name: 'Welcome Board',
+      dialog: [
+        { speaker: 'ACADEMY', text: 'Welcome to the Academy! Here lies Nafiz\'s academic achievements and credentials.' }
+      ]},
+    { x: 2, y: 2, type: 'shelf', name: 'Diploma Shelf',
+      dialog: [
+        { speaker: 'EDUCATION', text: 'B.Sc. in Computer Science & Engineering from American International University-Bangladesh (AIUB). CGPA: 3.93/4.00 - Top 2% of graduating class!' }
+      ]},
+    { x: 9, y: 2, type: 'trophy', name: 'Trophy Case',
+      dialog: [
+        { speaker: 'HONORS', text: 'Magna Cum Laude honor! That\'s the highest academic distinction. Plus 4 consecutive Dean\'s List Awards for outstanding performance.' }
+      ]},
+    { x: 2, y: 6, type: 'computer', name: 'Skills Terminal',
+      dialog: [
+        { speaker: 'SKILLS', text: 'ML/DL: PyTorch, TensorFlow, Keras, Transformers. CV: YOLO, U-Net, Segmentation, Medical Imaging. GenAI: RAG, LangChain, CrewAI, Prompt Engineering.' },
+        { speaker: 'SKILLS', text: 'MLOps: Docker, FastAPI, AWS, ChromaDB. Languages: Python, JavaScript, SQL. Research: Medical AI, Explainable AI, Few-Shot Learning.' }
+      ]},
+    { x: 9, y: 6, type: 'cabinet', name: 'Contact Directory',
+      dialog: [
+        { speaker: 'CONTACT', text: 'Email: nafizahmed273273@gmail.com | GitHub: Nafishsy | LinkedIn: Nafishy | Google Scholar: Nafiz Ahmed' }
+      ]}
+  ]
+};
 
 // ============================================
 // PARTICLE SYSTEM
@@ -475,6 +638,251 @@ function drawTile(ctx, x, y, type, time) {
       ctx.fillRect(px + 6, py + 4, 1, 1);
       break;
     }
+    case T.FLOOR: {
+      // Wooden floor with plank pattern
+      ctx.fillStyle = '#8b6f47';
+      ctx.fillRect(px, py, S, S);
+      ctx.fillStyle = '#7d6340';
+      ctx.fillRect(px, py + 5, S, 1);
+      ctx.fillRect(px, py + 11, S, 1);
+      // Plank grain
+      const fs = (x * 5 + y * 11) % 9;
+      ctx.fillStyle = '#977a52';
+      ctx.fillRect(px + (fs % 7) + 2, py + 2, 3, 1);
+      ctx.fillRect(px + ((fs * 3) % 10) + 1, py + 8, 2, 1);
+      ctx.fillStyle = '#826a42';
+      ctx.fillRect(px + ((fs * 2) % 8) + 3, py + 13, 2, 1);
+      break;
+    }
+    case T.EXIT: {
+      // Exit door mat - visible return point
+      ctx.fillStyle = '#8b6f47';
+      ctx.fillRect(px, py, S, S);
+      // Red carpet / mat
+      ctx.fillStyle = '#994444';
+      ctx.fillRect(px + 1, py + 1, 14, 14);
+      ctx.fillStyle = '#aa5555';
+      ctx.fillRect(px + 2, py + 2, 12, 12);
+      // Arrow pointing down (exit indicator)
+      ctx.fillStyle = '#ddccaa';
+      ctx.fillRect(px + 7, py + 3, 2, 7);
+      ctx.fillRect(px + 5, py + 7, 6, 2);
+      ctx.fillRect(px + 6, py + 9, 4, 2);
+      ctx.fillRect(px + 7, py + 11, 2, 1);
+      break;
+    }
+  }
+}
+
+// ============================================
+// INTERIOR OBJECT DRAWING
+// ============================================
+function drawInteriorObject(ctx, x, y, type, time) {
+  const px = x * S, py = y * S;
+  const t = time || Date.now();
+
+  switch (type) {
+    case 'desk': {
+      // Wooden desk
+      ctx.fillStyle = '#6b4025';
+      ctx.fillRect(px + 1, py + 6, 14, 8);
+      ctx.fillStyle = '#8b5e3c';
+      ctx.fillRect(px + 1, py + 5, 14, 3);
+      // Desk surface highlight
+      ctx.fillStyle = '#9a6d4a';
+      ctx.fillRect(px + 2, py + 5, 12, 1);
+      // Legs
+      ctx.fillStyle = '#5a3520';
+      ctx.fillRect(px + 2, py + 13, 2, 3);
+      ctx.fillRect(px + 12, py + 13, 2, 3);
+      // Papers on desk
+      ctx.fillStyle = '#eee8d5';
+      ctx.fillRect(px + 3, py + 3, 5, 3);
+      ctx.fillStyle = '#ddd8c5';
+      ctx.fillRect(px + 5, py + 2, 4, 4);
+      // Pen
+      ctx.fillStyle = '#2244aa';
+      ctx.fillRect(px + 10, py + 4, 1, 3);
+      break;
+    }
+    case 'computer': {
+      // Desk base
+      ctx.fillStyle = '#6b4025';
+      ctx.fillRect(px + 1, py + 8, 14, 6);
+      ctx.fillStyle = '#8b5e3c';
+      ctx.fillRect(px + 1, py + 7, 14, 3);
+      // Legs
+      ctx.fillStyle = '#5a3520';
+      ctx.fillRect(px + 2, py + 13, 2, 3);
+      ctx.fillRect(px + 12, py + 13, 2, 3);
+      // Monitor
+      ctx.fillStyle = '#333340';
+      ctx.fillRect(px + 3, py + 1, 10, 7);
+      // Screen
+      const screenGlow = Math.sin(t / 2000) * 0.1 + 0.9;
+      ctx.fillStyle = `rgba(60,180,220,${screenGlow})`;
+      ctx.fillRect(px + 4, py + 2, 8, 5);
+      // Screen content lines
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillRect(px + 5, py + 3, 5, 1);
+      ctx.fillRect(px + 5, py + 5, 3, 1);
+      // Monitor stand
+      ctx.fillStyle = '#333340';
+      ctx.fillRect(px + 7, py + 7, 2, 2);
+      ctx.fillRect(px + 5, py + 8, 6, 1);
+      // Keyboard
+      ctx.fillStyle = '#444450';
+      ctx.fillRect(px + 4, py + 9, 8, 2);
+      ctx.fillStyle = '#555560';
+      ctx.fillRect(px + 5, py + 9, 6, 1);
+      break;
+    }
+    case 'shelf': {
+      // Bookshelf
+      ctx.fillStyle = '#5a3520';
+      ctx.fillRect(px + 1, py + 0, 14, 16);
+      // Shelf boards
+      ctx.fillStyle = '#6b4025';
+      ctx.fillRect(px + 1, py + 5, 14, 1);
+      ctx.fillRect(px + 1, py + 10, 14, 1);
+      // Books - top shelf
+      ctx.fillStyle = '#cc3344';
+      ctx.fillRect(px + 2, py + 1, 2, 4);
+      ctx.fillStyle = '#3366cc';
+      ctx.fillRect(px + 4, py + 2, 2, 3);
+      ctx.fillStyle = '#44aa44';
+      ctx.fillRect(px + 7, py + 1, 3, 4);
+      ctx.fillStyle = '#cc8833';
+      ctx.fillRect(px + 11, py + 2, 2, 3);
+      // Books - middle shelf
+      ctx.fillStyle = '#884488';
+      ctx.fillRect(px + 2, py + 6, 3, 4);
+      ctx.fillStyle = '#cc6633';
+      ctx.fillRect(px + 6, py + 7, 2, 3);
+      ctx.fillStyle = '#3388aa';
+      ctx.fillRect(px + 9, py + 6, 2, 4);
+      ctx.fillStyle = '#aa3333';
+      ctx.fillRect(px + 12, py + 7, 2, 3);
+      // Books - bottom shelf
+      ctx.fillStyle = '#5577aa';
+      ctx.fillRect(px + 2, py + 11, 4, 4);
+      ctx.fillStyle = '#778833';
+      ctx.fillRect(px + 7, py + 12, 3, 3);
+      ctx.fillStyle = '#993366';
+      ctx.fillRect(px + 11, py + 11, 2, 4);
+      break;
+    }
+    case 'board': {
+      // Whiteboard / bulletin board
+      ctx.fillStyle = '#888890';
+      ctx.fillRect(px + 1, py + 1, 14, 12);
+      // White surface
+      ctx.fillStyle = '#e8e8e0';
+      ctx.fillRect(px + 2, py + 2, 12, 10);
+      // Content (colored markers / pins)
+      ctx.fillStyle = '#cc3344';
+      ctx.fillRect(px + 3, py + 3, 5, 1);
+      ctx.fillStyle = '#3366cc';
+      ctx.fillRect(px + 3, py + 5, 7, 1);
+      ctx.fillStyle = '#44aa44';
+      ctx.fillRect(px + 3, py + 7, 4, 1);
+      ctx.fillStyle = '#cc8833';
+      ctx.fillRect(px + 9, py + 4, 3, 3);
+      // Tray
+      ctx.fillStyle = '#666670';
+      ctx.fillRect(px + 2, py + 13, 12, 2);
+      // Markers in tray
+      ctx.fillStyle = '#cc3344';
+      ctx.fillRect(px + 4, py + 13, 1, 2);
+      ctx.fillStyle = '#3366cc';
+      ctx.fillRect(px + 6, py + 13, 1, 2);
+      ctx.fillStyle = '#44aa44';
+      ctx.fillRect(px + 8, py + 13, 1, 2);
+      break;
+    }
+    case 'workbench': {
+      // Heavy work table
+      ctx.fillStyle = '#555560';
+      ctx.fillRect(px + 0, py + 6, 16, 8);
+      ctx.fillStyle = '#666670';
+      ctx.fillRect(px + 0, py + 5, 16, 3);
+      // Metal legs
+      ctx.fillStyle = '#444450';
+      ctx.fillRect(px + 1, py + 13, 2, 3);
+      ctx.fillRect(px + 13, py + 13, 2, 3);
+      // Tools on bench
+      ctx.fillStyle = '#cc8833';
+      ctx.fillRect(px + 2, py + 3, 2, 4); // wrench
+      ctx.fillStyle = '#aaaaaa';
+      ctx.fillRect(px + 2, py + 2, 2, 2);
+      // Circuit board
+      ctx.fillStyle = '#226633';
+      ctx.fillRect(px + 6, py + 3, 5, 3);
+      ctx.fillStyle = '#44cc44';
+      ctx.fillRect(px + 7, py + 4, 1, 1);
+      ctx.fillRect(px + 9, py + 4, 1, 1);
+      // Soldering iron
+      ctx.fillStyle = '#888888';
+      ctx.fillRect(px + 13, py + 2, 1, 5);
+      ctx.fillStyle = '#ff6633';
+      ctx.fillRect(px + 13, py + 2, 1, 1);
+      break;
+    }
+    case 'trophy': {
+      // Trophy display case
+      ctx.fillStyle = '#5a3520';
+      ctx.fillRect(px + 1, py + 0, 14, 16);
+      // Glass front
+      ctx.fillStyle = 'rgba(180,220,255,0.3)';
+      ctx.fillRect(px + 2, py + 1, 12, 14);
+      // Shelf
+      ctx.fillStyle = '#6b4025';
+      ctx.fillRect(px + 2, py + 8, 12, 1);
+      // Trophy top
+      ctx.fillStyle = '#ffd700';
+      ctx.fillRect(px + 6, py + 2, 4, 2);
+      ctx.fillRect(px + 5, py + 2, 1, 1);
+      ctx.fillRect(px + 10, py + 2, 1, 1);
+      ctx.fillRect(px + 7, py + 4, 2, 1);
+      ctx.fillRect(px + 6, py + 5, 4, 1);
+      ctx.fillRect(px + 7, py + 6, 2, 2);
+      // Trophy shine
+      ctx.fillStyle = '#ffee88';
+      ctx.fillRect(px + 6, py + 2, 1, 1);
+      // Medal bottom shelf
+      ctx.fillStyle = '#ffd700';
+      ctx.fillRect(px + 4, py + 10, 3, 3);
+      ctx.fillStyle = '#cc4444';
+      ctx.fillRect(px + 9, py + 10, 3, 3);
+      // Ribbon
+      ctx.fillStyle = '#cc3344';
+      ctx.fillRect(px + 5, py + 9, 1, 2);
+      ctx.fillStyle = '#3366cc';
+      ctx.fillRect(px + 10, py + 9, 1, 2);
+      break;
+    }
+    case 'cabinet': {
+      // File cabinet
+      ctx.fillStyle = '#707080';
+      ctx.fillRect(px + 2, py + 0, 12, 16);
+      ctx.fillStyle = '#606070';
+      ctx.fillRect(px + 2, py + 5, 12, 1);
+      ctx.fillRect(px + 2, py + 10, 12, 1);
+      // Drawer handles
+      ctx.fillStyle = '#aaaaaa';
+      ctx.fillRect(px + 7, py + 2, 3, 1);
+      ctx.fillRect(px + 7, py + 7, 3, 1);
+      ctx.fillRect(px + 7, py + 12, 3, 1);
+      // Label slots
+      ctx.fillStyle = '#e8e8e0';
+      ctx.fillRect(px + 5, py + 3, 4, 1);
+      ctx.fillRect(px + 5, py + 8, 4, 1);
+      ctx.fillRect(px + 5, py + 13, 4, 1);
+      // Highlight edge
+      ctx.fillStyle = '#808090';
+      ctx.fillRect(px + 2, py + 0, 1, 16);
+      break;
+    }
   }
 }
 
@@ -709,6 +1117,9 @@ class PortfolioRPG {
     this.dialogActive = false;
     this.dialogPages = [];
     this.dialogIndex = 0;
+    this.dialogLink = null;       // URL to open on confirm
+    this.dialogConfirm = false;   // showing yes/no prompt
+    this.dialogConfirmChoice = 0; // 0 = YES, 1 = NO
     this.inventoryOpen = false;
     this.pickupTimer = 0;
     this.pickupText = '';
@@ -721,16 +1132,29 @@ class PortfolioRPG {
     this.dustTimer = 0;
     this.fireflyTimer = 0;
 
+    // Room/interior state
+    this.currentMap = 'overworld';
+    this.overworldPos = null; // saved player position when entering building
+
     // Pre-render map
     this.mapCanvas = document.createElement('canvas');
     this.mapCanvas.width = COLS * S;
     this.mapCanvas.height = ROWS * S;
 
+    // Interior pre-render canvas
+    this.interiorCanvas = document.createElement('canvas');
+    this.interiorCanvas.width = INTERIOR_COLS * S;
+    this.interiorCanvas.height = INTERIOR_ROWS * S;
+
     // DOM refs
     this.hudEl = document.getElementById('hud');
+    this.roomNameEl = document.getElementById('room-name');
     this.dialogEl = document.getElementById('dialog');
     this.dialogSpeaker = document.getElementById('dialog-speaker');
     this.dialogText = document.getElementById('dialog-text');
+    this.dialogConfirmEl = document.getElementById('dialog-confirm');
+    this.confirmYesEl = document.getElementById('confirm-yes');
+    this.confirmNoEl = document.getElementById('confirm-no');
     this.pickupEl = document.getElementById('pickup');
     this.pickupTextEl = document.getElementById('pickup-text');
     this.inventoryEl = document.getElementById('inventory');
@@ -828,6 +1252,20 @@ class PortfolioRPG {
       startGame();
       this.keyJustPressed['KeyI'] = true;
     });
+
+    // Confirm dialog click handlers
+    this.confirmYesEl.addEventListener('click', () => {
+      if (this.dialogConfirm) {
+        this.dialogConfirmChoice = 0;
+        this.resolveConfirm();
+      }
+    });
+    this.confirmNoEl.addEventListener('click', () => {
+      if (this.dialogConfirm) {
+        this.dialogConfirmChoice = 1;
+        this.resolveConfirm();
+      }
+    });
   }
 
   buildInventoryUI() {
@@ -857,6 +1295,18 @@ class PortfolioRPG {
     }
   }
 
+  renderInteriorMap() {
+    const ictx = this.interiorCanvas.getContext('2d');
+    const imap = INTERIOR_MAPS[this.currentMap];
+    if (!imap) return;
+    const t = Date.now();
+    for (let y = 0; y < INTERIOR_ROWS; y++) {
+      for (let x = 0; x < INTERIOR_COLS; x++) {
+        drawTile(ictx, x, y, imap[y][x], t);
+      }
+    }
+  }
+
   start() {
     this.renderMap();
     requestAnimationFrame(t => this.loop(t));
@@ -881,37 +1331,49 @@ class PortfolioRPG {
     // Update particles
     this.particles.update(dt);
 
-    // NPC idle animations
-    for (const npc of NPCS) {
-      npc.idleTimer += dt;
-      // Change facing direction occasionally
-      if (npc.idleTimer > 2000 + Math.random() * 3000) {
-        npc.idleTimer = 0;
-        npc.idleCycle++;
-        const dirs = ['down', 'left', 'right', 'down'];
-        npc.idleDir = dirs[npc.idleCycle % dirs.length];
+    // NPC idle animations (overworld only)
+    if (this.currentMap === 'overworld') {
+      for (const npc of NPCS) {
+        npc.idleTimer += dt;
+        if (npc.idleTimer > 2000 + Math.random() * 3000) {
+          npc.idleTimer = 0;
+          npc.idleCycle++;
+          const dirs = ['down', 'left', 'right', 'down'];
+          npc.idleDir = dirs[npc.idleCycle % dirs.length];
+        }
+        const dx = this.player.x - npc.x;
+        const dy = this.player.y - npc.y;
+        const dist = Math.abs(dx) + Math.abs(dy);
+        if (dist <= 2) {
+          if (Math.abs(dx) > Math.abs(dy)) {
+            npc.idleDir = dx > 0 ? 'right' : 'left';
+          } else {
+            npc.idleDir = dy > 0 ? 'down' : 'up';
+          }
+        }
       }
-      // Face player when near
-      const dx = this.player.x - npc.x;
-      const dy = this.player.y - npc.y;
-      const dist = Math.abs(dx) + Math.abs(dy);
-      if (dist <= 2) {
-        if (Math.abs(dx) > Math.abs(dy)) {
-          npc.idleDir = dx > 0 ? 'right' : 'left';
-        } else {
-          npc.idleDir = dy > 0 ? 'down' : 'up';
+
+      // Spawn ambient fireflies near grass
+      this.fireflyTimer += dt;
+      if (this.fireflyTimer > 800) {
+        this.fireflyTimer = 0;
+        if (Math.random() < 0.3) {
+          const fx = (2 + Math.random() * 26) * S;
+          const fy = (2 + Math.random() * 16) * S;
+          this.particles.emit(fx, fy, 'firefly', 1);
         }
       }
     }
 
-    // Spawn ambient fireflies near grass
-    this.fireflyTimer += dt;
-    if (this.fireflyTimer > 800) {
-      this.fireflyTimer = 0;
-      if (Math.random() < 0.3) {
-        const fx = (2 + Math.random() * 26) * S;
-        const fy = (2 + Math.random() * 16) * S;
-        this.particles.emit(fx, fy, 'firefly', 1);
+    // Dialog confirm left/right selection
+    if (this.dialogConfirm) {
+      if (this.keyJustPressed['ArrowLeft'] || this.keyJustPressed['KeyA']) {
+        this.dialogConfirmChoice = 0; // YES
+        this.updateConfirmUI();
+      }
+      if (this.keyJustPressed['ArrowRight'] || this.keyJustPressed['KeyD']) {
+        this.dialogConfirmChoice = 1; // NO
+        this.updateConfirmUI();
       }
     }
 
@@ -919,6 +1381,10 @@ class PortfolioRPG {
     if (this.keyJustPressed['Space']) {
       if (this.completed) {
         this.restart();
+        return;
+      }
+      if (this.dialogConfirm) {
+        this.resolveConfirm();
         return;
       }
       if (this.dialogActive) {
@@ -956,17 +1422,29 @@ class PortfolioRPG {
         this.player.moving = false;
         this.player.progress = 0;
         this.player.frame++;
-        this.checkItemPickup();
+        // Check for exit tile in interior
+        if (this.currentMap !== 'overworld') {
+          const imap = INTERIOR_MAPS[this.currentMap];
+          if (imap && imap[this.player.y] && imap[this.player.y][this.player.x] === T.EXIT) {
+            this.exitBuilding();
+            return;
+          }
+        }
+        if (this.currentMap === 'overworld') {
+          this.checkItemPickup();
+        }
       }
       // Emit dust particles while moving on path
       this.dustTimer += dt;
       if (this.dustTimer > 100) {
         this.dustTimer = 0;
-        const tile = MAP[this.player.targetY] && MAP[this.player.targetY][this.player.targetX];
-        if (tile === T.PATH) {
-          const ppx = (this.player.x + (this.player.targetX - this.player.x) * this.player.progress) * S + 8;
-          const ppy = (this.player.y + (this.player.targetY - this.player.y) * this.player.progress) * S + 14;
-          this.particles.emit(ppx, ppy, 'dust', 2);
+        if (this.currentMap === 'overworld') {
+          const tile = MAP[this.player.targetY] && MAP[this.player.targetY][this.player.targetX];
+          if (tile === T.PATH) {
+            const ppx = (this.player.x + (this.player.targetX - this.player.x) * this.player.progress) * S + 8;
+            const ppy = (this.player.y + (this.player.targetY - this.player.y) * this.player.progress) * S + 14;
+            this.particles.emit(ppx, ppy, 'dust', 2);
+          }
         }
       }
     } else {
@@ -997,12 +1475,27 @@ class PortfolioRPG {
   }
 
   isWalkable(x, y) {
-    if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
-    if (!WALKABLE.has(MAP[y][x])) return false;
-    for (const npc of NPCS) {
-      if (npc.x === x && npc.y === y) return false;
+    if (this.currentMap === 'overworld') {
+      if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
+      if (!WALKABLE.has(MAP[y][x])) return false;
+      for (const npc of NPCS) {
+        if (npc.x === x && npc.y === y) return false;
+      }
+      return true;
+    } else {
+      // Interior map
+      const imap = INTERIOR_MAPS[this.currentMap];
+      if (!imap) return false;
+      if (x < 0 || x >= INTERIOR_COLS || y < 0 || y >= INTERIOR_ROWS) return false;
+      const tile = imap[y][x];
+      if (tile !== T.FLOOR && tile !== T.EXIT) return false;
+      // Check interior objects block movement
+      const objects = INTERIOR_OBJECTS[this.currentMap] || [];
+      for (const obj of objects) {
+        if (obj.x === x && obj.y === y) return false;
+      }
+      return true;
     }
-    return true;
   }
 
   getFacing() {
@@ -1013,27 +1506,77 @@ class PortfolioRPG {
 
   interact() {
     const f = this.getFacing();
-    const key = f.x + ',' + f.y;
 
-    // Check doors
-    if (DOOR_MAP[key]) {
-      const b = BUILDINGS[DOOR_MAP[key]];
-      if (!this.discovered.has(DOOR_MAP[key])) {
-        this.discovered.add(DOOR_MAP[key]);
-        this.areaCountEl.textContent = this.discovered.size;
-      }
-      this.showDialog(b.pages);
-      this.checkComplete();
-      return;
-    }
+    if (this.currentMap === 'overworld') {
+      const key = f.x + ',' + f.y;
 
-    // Check NPCs
-    for (const npc of NPCS) {
-      if (npc.x === f.x && npc.y === f.y) {
-        this.showDialog(npc.dialog);
+      // Check doors - enter building
+      if (DOOR_MAP[key]) {
+        this.enterBuilding(DOOR_MAP[key]);
         return;
       }
+
+      // Check NPCs
+      for (const npc of NPCS) {
+        if (npc.x === f.x && npc.y === f.y) {
+          this.showDialog(npc.dialog);
+          return;
+        }
+      }
+    } else {
+      // Interior - check objects
+      const objects = INTERIOR_OBJECTS[this.currentMap] || [];
+      for (const obj of objects) {
+        if (obj.x === f.x && obj.y === f.y) {
+          this.showDialog(obj.dialog, obj.link || null);
+          return;
+        }
+      }
     }
+  }
+
+  enterBuilding(buildingId) {
+    // Save overworld position
+    this.overworldPos = { x: this.player.x, y: this.player.y, dir: this.player.dir };
+    // Mark as discovered
+    if (!this.discovered.has(buildingId)) {
+      this.discovered.add(buildingId);
+      this.areaCountEl.textContent = this.discovered.size;
+    }
+    // Switch map
+    this.currentMap = buildingId;
+    // Place player at interior entrance (just above exit tiles)
+    this.player.x = 5;
+    this.player.y = 8;
+    this.player.targetX = 5;
+    this.player.targetY = 8;
+    this.player.dir = 'up';
+    this.player.moving = false;
+    this.player.progress = 0;
+    this.particles = new Particles();
+    // Show room name
+    this.roomNameEl.textContent = BUILDINGS[buildingId].name;
+    this.roomNameEl.classList.remove('hidden');
+    // Render interior map
+    this.renderInteriorMap();
+    this.checkComplete();
+  }
+
+  exitBuilding() {
+    if (!this.overworldPos) return;
+    // Restore overworld position
+    this.currentMap = 'overworld';
+    this.player.x = this.overworldPos.x;
+    this.player.y = this.overworldPos.y;
+    this.player.targetX = this.overworldPos.x;
+    this.player.targetY = this.overworldPos.y;
+    this.player.dir = 'down';
+    this.player.moving = false;
+    this.player.progress = 0;
+    this.overworldPos = null;
+    this.particles = new Particles();
+    // Hide room name
+    this.roomNameEl.classList.add('hidden');
   }
 
   checkItemPickup() {
@@ -1059,10 +1602,13 @@ class PortfolioRPG {
     this.pickupTimer = 2000;
   }
 
-  showDialog(pages) {
+  showDialog(pages, link) {
     this.dialogActive = true;
     this.dialogPages = pages;
     this.dialogIndex = 0;
+    this.dialogLink = link || null;
+    this.dialogConfirm = false;
+    this.dialogConfirmEl.classList.add('hidden');
     this.renderDialogPage();
     this.dialogEl.classList.remove('hidden');
   }
@@ -1071,18 +1617,56 @@ class PortfolioRPG {
     const page = this.dialogPages[this.dialogIndex];
     this.dialogSpeaker.textContent = page.speaker;
     this.dialogText.textContent = page.text;
-    document.getElementById('dialog-prompt').textContent =
-      this.dialogIndex < this.dialogPages.length - 1 ? '\u25BC SPACE' : '\u25A0 CLOSE';
+    const isLast = this.dialogIndex >= this.dialogPages.length - 1;
+    if (isLast && this.dialogLink) {
+      document.getElementById('dialog-prompt').textContent = '\u25BC SPACE';
+    } else {
+      document.getElementById('dialog-prompt').textContent =
+        !isLast ? '\u25BC SPACE' : '\u25A0 CLOSE';
+    }
   }
 
   advanceDialog() {
     this.dialogIndex++;
     if (this.dialogIndex >= this.dialogPages.length) {
-      this.dialogActive = false;
-      this.dialogEl.classList.add('hidden');
+      // If there's a link, show confirm instead of closing
+      if (this.dialogLink && !this.dialogConfirm) {
+        this.showConfirmPrompt();
+        return;
+      }
+      this.closeDialog();
     } else {
       this.renderDialogPage();
     }
+  }
+
+  showConfirmPrompt() {
+    this.dialogConfirm = true;
+    this.dialogConfirmChoice = 0; // default to YES
+    this.dialogConfirmEl.classList.remove('hidden');
+    document.getElementById('dialog-prompt').textContent = '\u25C0\u25B6 Select   SPACE Confirm';
+    this.updateConfirmUI();
+  }
+
+  updateConfirmUI() {
+    this.confirmYesEl.classList.toggle('selected', this.dialogConfirmChoice === 0);
+    this.confirmNoEl.classList.toggle('selected', this.dialogConfirmChoice === 1);
+  }
+
+  resolveConfirm() {
+    if (this.dialogConfirmChoice === 0 && this.dialogLink) {
+      // Open project link
+      window.open(this.dialogLink, '_blank');
+    }
+    this.closeDialog();
+  }
+
+  closeDialog() {
+    this.dialogActive = false;
+    this.dialogConfirm = false;
+    this.dialogLink = null;
+    this.dialogEl.classList.add('hidden');
+    this.dialogConfirmEl.classList.add('hidden');
   }
 
   toggleInventory() {
@@ -1112,14 +1696,20 @@ class PortfolioRPG {
     this.discovered = new Set();
     this.player = { x: 14, y: 9, dir: 'down', moving: false, targetX: 14, targetY: 9, progress: 0, frame: 0 };
     this.dialogActive = false;
+    this.dialogConfirm = false;
+    this.dialogLink = null;
     this.inventoryOpen = false;
     this.completed = false;
     this.pickupTimer = 0;
     this.particles = new Particles();
+    this.currentMap = 'overworld';
+    this.overworldPos = null;
+    this.roomNameEl.classList.add('hidden');
     this.itemCountEl.textContent = '0';
     this.areaCountEl.textContent = '0';
     this.completeEl.classList.add('hidden');
     this.dialogEl.classList.add('hidden');
+    this.dialogConfirmEl.classList.add('hidden');
     this.inventoryEl.classList.add('hidden');
     this.pickupEl.classList.add('hidden');
     this.buildInventoryUI();
@@ -1132,6 +1722,14 @@ class PortfolioRPG {
     const ctx = this.ctx;
     const t = time || Date.now();
 
+    if (this.currentMap === 'overworld') {
+      this.renderOverworld(ctx, t);
+    } else {
+      this.renderInterior(ctx, t);
+    }
+  }
+
+  renderOverworld(ctx, t) {
     // Re-render animated tiles (water, flowers, grass with wind)
     const mctx = this.mapCanvas.getContext('2d');
     for (let y = 0; y < ROWS; y++) {
@@ -1154,23 +1752,19 @@ class PortfolioRPG {
       const pulse = (Math.sin(t / 300 + i * 0.7) + 1) * 0.5;
       const px = item.x * S, py = item.y * S + bob;
 
-      // Outer glow pulse
       ctx.globalAlpha = 0.1 + pulse * 0.15;
       ctx.fillStyle = item.color;
       ctx.fillRect(px - 1, py - 1, 18, 18);
       ctx.globalAlpha = 1;
 
-      // Inner glow
       ctx.fillStyle = 'rgba(255,255,255,0.12)';
       ctx.fillRect(px + 1, py + 1, 14, 14);
 
-      // Item body with gradient feel
       ctx.fillStyle = item.color;
       ctx.fillRect(px + 3, py + 3, 10, 10);
 
-      // Darker edge for depth
       const darkerColor = item.color.replace(/[0-9a-f]{2}/gi, (m, offset) => {
-        if (offset === 0) return m; // skip #
+        if (offset === 0) return m;
         const v = Math.max(0, parseInt(m, 16) - 40);
         return v.toString(16).padStart(2, '0');
       });
@@ -1178,14 +1772,12 @@ class PortfolioRPG {
       ctx.fillRect(px + 3, py + 11, 10, 2);
       ctx.fillRect(px + 11, py + 3, 2, 10);
 
-      // Highlight
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.fillRect(px + 4, py + 4, 2, 2);
       ctx.fillStyle = 'rgba(255,255,255,0.3)';
       ctx.fillRect(px + 4, py + 6, 1, 2);
       ctx.fillRect(px + 6, py + 4, 2, 1);
 
-      // Rotating sparkle
       const sparkAngle = (t / 500 + i) % (Math.PI * 2);
       const sx = px + 8 + Math.cos(sparkAngle) * 7;
       const sy = py + 8 + Math.sin(sparkAngle) * 7;
@@ -1197,43 +1789,27 @@ class PortfolioRPG {
     }
 
     // Draw NPCs with idle animation
-    const breathePhase = t / 1500;
     for (const npc of NPCS) {
       const npcBreathe = (t / 1500 + NPCS.indexOf(npc) * 0.5) % 1;
       drawChar(ctx, npc.x * S, npc.y * S, npc.hair, npc.body, npc.idleDir, 0, npc.skin, npc.acc, npcBreathe);
 
-      // Speech bubble indicator (bouncing)
       const bubBob = Math.sin(t / 500 + NPCS.indexOf(npc)) * 1.5;
-      // Background
       ctx.fillStyle = 'rgba(255,255,255,0.9)';
       ctx.fillRect(npc.x * S + 5, npc.y * S - 10 + bubBob, 6, 6);
-      // Triangle
       ctx.fillRect(npc.x * S + 7, npc.y * S - 5 + bubBob, 2, 2);
-      // Dots
       ctx.fillStyle = '#333';
       ctx.fillRect(npc.x * S + 6, npc.y * S - 8 + bubBob, 1, 1);
       ctx.fillRect(npc.x * S + 8, npc.y * S - 8 + bubBob, 1, 1);
       ctx.fillRect(npc.x * S + 10, npc.y * S - 8 + bubBob, 1, 1);
     }
 
-    // Draw player (ease-out interpolation for smooth movement)
-    let ppx, ppy;
-    if (this.player.moving) {
-      const dx = this.player.targetX - this.player.x;
-      const dy = this.player.targetY - this.player.y;
-      const eased = this.player.progress * (2 - this.player.progress);
-      ppx = (this.player.x + dx * eased) * S;
-      ppy = (this.player.y + dy * eased) * S;
-    } else {
-      ppx = this.player.x * S;
-      ppy = this.player.y * S;
-    }
-
+    // Draw player
+    const [ppx, ppy] = this.getPlayerScreenPos();
     const playerBreathe = (t / 1200) % 1;
     const playerFrame = this.player.moving ? Math.floor(this.player.progress * 4) : 0;
     drawChar(ctx, ppx, ppy, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
 
-    // Player direction indicator (small triangle showing facing)
+    // Player direction indicator
     if (!this.player.moving) {
       const indicatorPulse = (Math.sin(t / 400) + 1) * 0.3 + 0.2;
       ctx.globalAlpha = indicatorPulse;
@@ -1255,12 +1831,10 @@ class PortfolioRPG {
     for (const label of LABELS) {
       const labelPulse = (Math.sin(t / 1000 + LABELS.indexOf(label)) + 1) * 0.15;
       ctx.font = '5px "Press Start 2P"';
-      // Glow
       ctx.globalAlpha = 0.3 + labelPulse;
       ctx.fillStyle = label.color;
       ctx.fillText(label.text, label.x * S + S / 2, label.y * S - 1);
       ctx.fillText(label.text, label.x * S + S / 2 + 1, label.y * S - 2);
-      // Main text
       ctx.globalAlpha = 1;
       ctx.fillStyle = '#000';
       ctx.fillText(label.text, label.x * S + S / 2 + 1, label.y * S - 2);
@@ -1268,7 +1842,7 @@ class PortfolioRPG {
       ctx.fillText(label.text, label.x * S + S / 2, label.y * S - 3);
     }
 
-    // Door hints - only show when player is near
+    // Door hints
     const doors = [[5, 5], [23, 5], [5, 15], [23, 15]];
     ctx.font = '4px "Press Start 2P"';
     for (const [dx, dy] of doors) {
@@ -1282,19 +1856,126 @@ class PortfolioRPG {
       }
     }
 
-    // Vignette overlay for atmosphere
+    // Vignette
     const gradient = ctx.createRadialGradient(240, 160, 120, 240, 160, 280);
     gradient.addColorStop(0, 'rgba(0,0,0,0)');
     gradient.addColorStop(1, 'rgba(0,0,0,0.25)');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, COLS * S, ROWS * S);
   }
+
+  renderInterior(ctx, t) {
+    const imap = INTERIOR_MAPS[this.currentMap];
+    if (!imap) return;
+
+    // Clear canvas with dark background
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Center the interior map on the canvas
+    const offsetX = Math.floor((COLS * S - INTERIOR_COLS * S) / 2);
+    const offsetY = Math.floor((ROWS * S - INTERIOR_ROWS * S) / 2);
+
+    // Re-render interior tiles
+    const ictx = this.interiorCanvas.getContext('2d');
+    for (let y = 0; y < INTERIOR_ROWS; y++) {
+      for (let x = 0; x < INTERIOR_COLS; x++) {
+        drawTile(ictx, x, y, imap[y][x], t);
+      }
+    }
+
+    // Blit interior map centered
+    ctx.drawImage(this.interiorCanvas, offsetX, offsetY);
+
+    // Draw interior objects
+    const objects = INTERIOR_OBJECTS[this.currentMap] || [];
+    for (const obj of objects) {
+      drawInteriorObject(ctx, obj.x + offsetX / S, obj.y + offsetY / S, obj.type, t);
+
+      // Interaction hint when player is adjacent
+      const f = this.getFacing();
+      if (f.x === obj.x && f.y === obj.y && !this.player.moving) {
+        const hintPulse = (Math.sin(t / 400) + 1) * 0.3 + 0.5;
+        ctx.globalAlpha = hintPulse;
+        ctx.fillStyle = '#fff';
+        ctx.font = '4px "Press Start 2P"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('SPACE', (obj.x + 0.5) * S + offsetX, obj.y * S + offsetY - 2);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Draw player in interior
+    const [ppx, ppy] = this.getPlayerScreenPos();
+    const playerBreathe = (t / 1200) % 1;
+    const playerFrame = this.player.moving ? Math.floor(this.player.progress * 4) : 0;
+    drawChar(ctx, ppx + offsetX, ppy + offsetY, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
+
+    // Player direction indicator
+    if (!this.player.moving) {
+      const indicatorPulse = (Math.sin(t / 400) + 1) * 0.3 + 0.2;
+      ctx.globalAlpha = indicatorPulse;
+      ctx.fillStyle = '#00ddee';
+      const cx = ppx + offsetX + 8, cy = ppy + offsetY + 8;
+      if (this.player.dir === 'down') ctx.fillRect(cx - 1, ppy + offsetY + 17, 2, 2);
+      else if (this.player.dir === 'up') ctx.fillRect(cx - 1, ppy + offsetY - 3, 2, 2);
+      else if (this.player.dir === 'left') ctx.fillRect(ppx + offsetX - 3, cy - 1, 2, 2);
+      else if (this.player.dir === 'right') ctx.fillRect(ppx + offsetX + 17, cy - 1, 2, 2);
+      ctx.globalAlpha = 1;
+    }
+
+    // Particles
+    this.particles.draw(ctx);
+
+    // Exit hint near exit tiles
+    ctx.font = '4px "Press Start 2P"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    const exitY = INTERIOR_ROWS - 1;
+    const playerDist = Math.abs(this.player.y - exitY) + Math.min(Math.abs(this.player.x - 5), Math.abs(this.player.x - 6));
+    if (playerDist <= 3) {
+      const hintAlpha = Math.max(0, 1 - (playerDist - 1) * 0.4);
+      ctx.globalAlpha = hintAlpha * ((Math.sin(t / 500) + 1) * 0.3 + 0.4);
+      ctx.fillStyle = '#fff';
+      ctx.fillText('EXIT', 5.5 * S + offsetX, exitY * S + offsetY - 2);
+      ctx.globalAlpha = 1;
+    }
+
+    // Interior vignette (slightly warmer/darker)
+    const gradient = ctx.createRadialGradient(240, 160, 80, 240, 160, 260);
+    gradient.addColorStop(0, 'rgba(0,0,0,0)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0.35)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, COLS * S, ROWS * S);
+  }
+
+  getPlayerScreenPos() {
+    let ppx, ppy;
+    if (this.player.moving) {
+      const dx = this.player.targetX - this.player.x;
+      const dy = this.player.targetY - this.player.y;
+      const eased = this.player.progress * (2 - this.player.progress);
+      ppx = (this.player.x + dx * eased) * S;
+      ppy = (this.player.y + dy * eased) * S;
+    } else {
+      ppx = this.player.x * S;
+      ppy = this.player.y * S;
+    }
+    return [ppx, ppy];
+  }
 }
 
 // ============================================
 // INIT
 // ============================================
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
+  // Wait for pixel font to load before rendering canvas text
+  try {
+    await document.fonts.load('16px "Press Start 2P"');
+    await document.fonts.ready;
+  } catch (e) { /* proceed anyway if font API unavailable */ }
+
   const game = new PortfolioRPG();
   game.start();
 

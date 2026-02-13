@@ -50,6 +50,18 @@ body {
 }
 #hud.visible { opacity: 1; }
 
+#room-name {
+  color: #ffd700;
+  font-size: clamp(7px, 1.2vw, 11px);
+  text-align: center;
+  animation: roomFadeIn 0.5s ease-out;
+}
+
+@keyframes roomFadeIn {
+  0% { opacity: 0; transform: translateY(-4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 /* Dialog Box */
 #dialog {
   position: absolute;
@@ -73,6 +85,38 @@ body {
 }
 
 #dialog-text { min-height: 30px; }
+
+#dialog-confirm {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 16px);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.confirm-label {
+  color: #aaa;
+  font-size: clamp(7px, 1vw, 9px);
+  margin-right: auto;
+}
+
+.confirm-option {
+  padding: 4px 14px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(7px, 1vw, 9px);
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.confirm-option.selected {
+  border-color: #00ddee;
+  color: #00ddee;
+  background: rgba(0, 221, 238, 0.1);
+}
 
 #dialog-prompt {
   text-align: right;
