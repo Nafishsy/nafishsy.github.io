@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <section id="game-section">
   <div id="game-wrapper">
     <canvas id="game" width="480" height="320"></canvas>
 
@@ -23,7 +24,7 @@
         <button class="dpad-btn down" data-dir="down">&#9660;</button>
       </div>
       <div class="action-btns">
-        <button class="action-btn" id="btn-action">A<span>Talk</span></button>
+        <button class="action-btn" id="btn-action">A<span>Interact</span></button>
         <button class="action-btn" id="btn-inv">I<span>Items</span></button>
       </div>
     </div>
@@ -31,7 +32,7 @@
     <!-- Controls hint bar -->
     <div id="controls-hint">
       <span>&#8593;&#8595;&#8592;&#8594; Move</span>
-      <span>SPACE Talk</span>
+      <span>SPACE Interact</span>
       <span>I Items</span>
     </div>
 
@@ -92,6 +93,341 @@
       </div>
     </div>
   </div>
+  <div class="scroll-indicator" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'})">
+    <span class="scroll-label">SCROLL FOR CV</span>
+    <div class="scroll-arrow"></div>
+  </div>
+  </section>
+
+  <!-- ═══════════════ PORTFOLIO SECTION ═══════════════ -->
+  <main id="portfolio">
+
+    <!-- ABOUT -->
+    <div class="section-tag">// ABOUT</div>
+    <h2 class="section-title">Nafiz Ahmed</h2>
+    <p class="section-subtitle">ML Engineer & Researcher with 3+ years of experience in Software Engineering, Computer Vision & Research. Currently building Agentic AI Solutions for Banking & Travel.</p>
+
+    <div class="about-hero">
+      <div class="about-text">
+        <p>I specialize in building <strong>production ML systems</strong> — from dual-YOLO pipelines running at 120 FPS to multi-agentic RAG architectures processing 50K+ documents. My work spans real-time computer vision, LLM-powered applications, and medical image analysis.</p>
+        <p>Currently at <strong>Periscopelabs</strong> engineering defaulter warning systems for DBH Bank and building agentic solutions with LangChain, CrewAI, and n8n. Simultaneously conducting research at <strong>ELITE Lab (NYC)</strong> on retinal vessel segmentation and explainable brain tumor detection.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-number">3+</span>
+          <span class="stat-label">Years Exp</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">5</span>
+          <span class="stat-label">Publications</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">3.93</span>
+          <span class="stat-label">CGPA / 4.0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">6+</span>
+          <span class="stat-label">ML Projects</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="port-divider"></div>
+
+    <!-- EXPERIENCE -->
+    <div class="section-tag">// EXPERIENCE</div>
+    <h2 class="section-title">Career Timeline</h2>
+    <p class="section-subtitle">From software engineering to ML research — each role sharpened a different edge.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-role">ML Engineer (Mid-Level)</span>
+          <span class="timeline-date">Oct 2025 - Present</span>
+        </div>
+        <div class="timeline-company">Periscopelabs <span class="timeline-location">| Banani, Bangladesh</span></div>
+        <ul class="timeline-desc">
+          <li>Engineered Early Warning System for DBH Bank using XGBoost, Prophet & Vue.js</li>
+          <li>Built RAG pipeline with YOLOv5n + GPT-4 for Bengali legal document processing</li>
+          <li>Developing multi-agentic AI solutions with n8n, LangChain & CrewAI for banking/travel</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-role">Researcher</span>
+          <span class="timeline-date">Sep 2025 - Present</span>
+        </div>
+        <div class="timeline-company">ELITE Lab <span class="timeline-location">| New York, USA (Remote)</span></div>
+        <ul class="timeline-desc">
+          <li>Publishing 3 papers on Computer Vision + LLMs (retinal segmentation, brain tumor, child-safe LLM)</li>
+          <li>Modified U-Net architecture achieving 92.72% Dice on retinal vessel segmentation</li>
+          <li>Custom YOLOv12 for brain tumor detection with 94.35% mAP@50</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-role">ML Engineer</span>
+          <span class="timeline-date">Jan 2024 - Oct 2025</span>
+        </div>
+        <div class="timeline-company">MetroSofts <span class="timeline-location">| Stockholm, Sweden (Remote)</span></div>
+        <ul class="timeline-desc">
+          <li>Dual-YOLOv5n pipeline: 87% accuracy at 120 FPS for real-time detection</li>
+          <li>LLaVaNext-based UI annotation system for automated testing</li>
+          <li>Built Rasa-powered digital twin conversational agent</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-role">Research Intern</span>
+          <span class="timeline-date">Sep 2023 - Mar 2024</span>
+        </div>
+        <div class="timeline-company">AMIR Lab <span class="timeline-location">| Dhaka, Bangladesh</span></div>
+        <ul class="timeline-desc">
+          <li>Published NLP literature review using PRISMA methodology</li>
+          <li>Led 3-member research team on deep learning for human-agent interaction</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-role">Jr. Software Engineer</span>
+          <span class="timeline-date">Jan - Dec 2023</span>
+        </div>
+        <div class="timeline-company">Shapla Infosys <span class="timeline-location">| Dhaka, Bangladesh</span></div>
+        <ul class="timeline-desc">
+          <li>Full-stack Laravel/React applications with 98% Lighthouse performance score</li>
+          <li>Designed 200+ Figma prototypes for client projects</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="port-divider"></div>
+
+    <!-- PROJECTS -->
+    <div class="section-tag">// PROJECTS</div>
+    <h2 class="section-title">Featured Work</h2>
+    <p class="section-subtitle">Systems I've built — from real-time vision pipelines to agentic RAG architectures.</p>
+
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-name">Early Warning System — DBH Bank</div>
+        <div class="project-desc">Defaulter prediction system using ensemble ML models with time-series forecasting and an interactive Vue.js dashboard for bank analysts.</div>
+        <div class="project-tech">
+          <span class="tech-pill">XGBoost</span>
+          <span class="tech-pill">Prophet</span>
+          <span class="tech-pill">Vue.js</span>
+          <span class="tech-pill">FastAPI</span>
+        </div>
+        <div class="project-metric">Production system for DBH Bank</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">Retinal Vessel Segmentation</div>
+        <div class="project-desc">Modified Medical Transformer (MedT) with hybrid U-Net architecture for few-shot retinal vessel segmentation from fundus images.</div>
+        <div class="project-tech">
+          <span class="tech-pill">TensorFlow</span>
+          <span class="tech-pill">MedT</span>
+          <span class="tech-pill">U-Net</span>
+        </div>
+        <div class="project-metric">92.72% Dice Score</div>
+        <a href="https://huggingface.co/spaces/Suzera1n/Few_Shot" target="_blank" class="project-link">Live Demo</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">PassPorted</div>
+        <div class="project-desc">AI-powered passport photo generator using Diffusion Models and ControlNet for studio-quality ID photos from casual selfies.</div>
+        <div class="project-tech">
+          <span class="tech-pill">Diffusion Models</span>
+          <span class="tech-pill">ControlNet</span>
+          <span class="tech-pill">Gradio</span>
+        </div>
+        <a href="https://huggingface.co/spaces/Suzera1n/PassPorted" target="_blank" class="project-link">Live Demo</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">Bengali Legal RAG System</div>
+        <div class="project-desc">Document intelligence pipeline for 50K+ Bengali legal documents using YOLOv8 layout detection, ChromaDB vector store, and GPT-4 generation.</div>
+        <div class="project-tech">
+          <span class="tech-pill">YOLOv8</span>
+          <span class="tech-pill">ChromaDB</span>
+          <span class="tech-pill">GPT-4</span>
+          <span class="tech-pill">RAG</span>
+        </div>
+        <div class="project-metric">50K+ documents processed</div>
+        <a href="https://huggingface.co/spaces/Suzera1n/ScoBoba" target="_blank" class="project-link">Live Demo</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">Brain Tumor Detection</div>
+        <div class="project-desc">Custom YOLOv12 architecture for explainable brain tumor localization with Grad-CAM visualization and clinical interpretability.</div>
+        <div class="project-tech">
+          <span class="tech-pill">YOLOv12</span>
+          <span class="tech-pill">Grad-CAM</span>
+          <span class="tech-pill">PyTorch</span>
+        </div>
+        <div class="project-metric">94.35% mAP@50</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-name">Pediatric Nephroblastoma Staging</div>
+        <div class="project-desc">AI-driven staging system for pediatric kidney tumors using DeepLabV3 semantic segmentation on histopathology images.</div>
+        <div class="project-tech">
+          <span class="tech-pill">PyTorch</span>
+          <span class="tech-pill">DeepLabV3</span>
+          <span class="tech-pill">Histopathology</span>
+        </div>
+        <div class="project-metric">90.81 Dice Score</div>
+      </div>
+    </div>
+
+    <div class="port-divider"></div>
+
+    <!-- PUBLICATIONS -->
+    <div class="section-tag">// PUBLICATIONS</div>
+    <h2 class="section-title">Research Papers</h2>
+    <p class="section-subtitle">Peer-reviewed journals and conference submissions.</p>
+
+    <div class="pub-list">
+      <div class="pub-item">
+        <div class="pub-status">PUBLISHED</div>
+        <div class="pub-title">Deep Learning-Based NLP in Human-Agent Interaction: Applications, Challenges, and a PRISMA-Guided Future</div>
+        <div class="pub-venue">Elsevier Natural Language Processing Journal, 2024</div>
+        <a href="https://doi.org/10.1016/j.nlp.2024.100112" target="_blank" class="pub-doi">DOI: 10.1016/j.nlp.2024.100112</a>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-status">PUBLISHED</div>
+        <div class="pub-title">Blockchain-Based Data Security for Enterprise Resource Planning</div>
+        <div class="pub-venue">International Journal of Information Engineering and Electronic Business (IJIEEB), 2023</div>
+        <a href="https://doi.org/10.5815/ijieeb.2023.06.02" target="_blank" class="pub-doi">DOI: 10.5815/ijieeb.2023.06.02</a>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-status">SUBMITTED</div>
+        <div class="pub-title">Hybrid MedT for Retinal Vessel Segmentation</div>
+        <div class="pub-venue">Under review</div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-status">SUBMITTED</div>
+        <div class="pub-title">Explainable Brain Tumor Localization with YOLOv12</div>
+        <div class="pub-venue">Under review</div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-status">ONGOING</div>
+        <div class="pub-title">AI-Driven Staging of Pediatric Nephroblastoma</div>
+        <div class="pub-venue">In progress</div>
+      </div>
+    </div>
+
+    <div class="port-divider"></div>
+
+    <!-- SKILLS -->
+    <div class="section-tag">// SKILLS</div>
+    <h2 class="section-title">Tech Stack</h2>
+    <p class="section-subtitle">Tools and frameworks I work with daily.</p>
+
+    <div class="skills-container">
+      <div class="skill-category">
+        <h3>ML / DL</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">PyTorch</span>
+          <span class="skill-tag">TensorFlow</span>
+          <span class="skill-tag">Keras</span>
+          <span class="skill-tag">Scikit-learn</span>
+          <span class="skill-tag">YOLO</span>
+          <span class="skill-tag">U-Net</span>
+          <span class="skill-tag">XGBoost</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <h3>LLM / AGENTS</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">LangChain</span>
+          <span class="skill-tag">CrewAI</span>
+          <span class="skill-tag">RAG</span>
+          <span class="skill-tag">n8n</span>
+          <span class="skill-tag">Rasa</span>
+          <span class="skill-tag">GPT-4</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <h3>LANGUAGES</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">SQL</span>
+          <span class="skill-tag">PHP</span>
+        </div>
+      </div>
+      <div class="skill-category">
+        <h3>INFRA / WEB</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">AWS</span>
+          <span class="skill-tag">FastAPI</span>
+          <span class="skill-tag">React</span>
+          <span class="skill-tag">Vue.js</span>
+          <span class="skill-tag">Laravel</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="port-divider"></div>
+
+    <!-- EDUCATION -->
+    <div class="section-tag">// EDUCATION</div>
+    <h2 class="section-title">Academic Background</h2>
+
+    <div class="edu-card">
+      <div class="edu-degree">B.Sc. in Computer Science & Engineering</div>
+      <div class="edu-school">American International University-Bangladesh (AIUB)</div>
+      <ul class="edu-details">
+        <li>CGPA 3.93 / 4.00 — Top 2% of graduating class</li>
+        <li>Magna Cum Laude honors</li>
+        <li>4x Dean's List Award recipient</li>
+      </ul>
+    </div>
+
+    <div class="port-divider"></div>
+
+    <!-- CONTACT -->
+    <div class="contact-section">
+      <div class="section-tag">// CONTACT</div>
+      <h2 class="section-title" style="text-align:center;">Let's Connect</h2>
+      <p class="section-subtitle" style="text-align:center; margin: 0 auto 32px;">Open to research collaborations, ML engineering roles, and interesting projects.</p>
+
+      <div class="contact-links">
+        <a href="mailto:nafizahmed273273@gmail.com" class="contact-link">
+          <span class="link-icon">@</span> Email
+        </a>
+        <a href="https://github.com/Nafishsy" target="_blank" class="contact-link">
+          <span class="link-icon">{}</span> GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/Nafishy" target="_blank" class="contact-link">
+          <span class="link-icon">in</span> LinkedIn
+        </a>
+        <a href="https://scholar.google.com/citations?user=oHLUQsUAAAAJ" target="_blank" class="contact-link">
+          <span class="link-icon">G</span> Scholar
+        </a>
+        <a href="tel:+8801767457527" class="contact-link">
+          <span class="link-icon">#</span> +88-01767457527
+        </a>
+      </div>
+
+      <p class="footer-note">Built with pixels & passion</p>
+    </div>
+
+  </main>
 
   <script src="script.js"></script>
 </body>
