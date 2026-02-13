@@ -1514,6 +1514,34 @@ class PortfolioRPG {
       this.keyJustPressed['KeyI'] = true;
     });
 
+    // Back button (exit building)
+    const btnBack = document.getElementById('btn-back');
+    if (btnBack) {
+      const handleBack = (e) => {
+        e.preventDefault();
+        if (this.currentMap !== 'overworld') {
+          this.exitBuilding();
+        }
+        if (this.inventoryOpen) {
+          this.inventoryOpen = false;
+          this.invEl.classList.add('hidden');
+        }
+      };
+      btnBack.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        btnBack.classList.add('pressed');
+      }, { passive: false });
+      btnBack.addEventListener('touchend', (e) => {
+        handleBack(e);
+        btnBack.classList.remove('pressed');
+      }, { passive: false });
+      btnBack.addEventListener('click', handleBack);
+    }
+
+    // Store button refs for context updates
+    this.btnActionEl = btnAction;
+    this.btnBackEl = btnBack;
+
     // Tap dialog to advance (mobile-friendly)
     this.dialogEl.addEventListener('click', (e) => {
       // Don't advance if tapping confirm buttons
@@ -2036,9 +2064,32 @@ class PortfolioRPG {
   // ============================================
   // RENDERING
   // ============================================
+  updateMobileButtons() {
+    if (!this.btnActionEl || !this.btnBackEl) return;
+    const label = this.btnActionEl.querySelector('span');
+    if (!label) return;
+
+    // Update A button label based on context
+    if (this.dialogActive) {
+      label.textContent = this.dialogConfirm ? 'OK' : 'Next';
+    } else {
+      label.textContent = 'Interact';
+    }
+
+    // Show/hide back button with context label
+    const backLabel = this.btnBackEl.querySelector('span');
+    const showBack = this.currentMap !== 'overworld' || this.inventoryOpen;
+    this.btnBackEl.style.display = showBack ? 'flex' : 'none';
+    if (backLabel) {
+      backLabel.textContent = this.inventoryOpen ? 'Close' : 'Exit';
+    }
+  }
+
   render(time) {
     const ctx = this.ctx;
     const t = time || Date.now();
+
+    this.updateMobileButtons();
 
     if (this.currentMap === 'overworld') {
       this.renderOverworld(ctx, t);

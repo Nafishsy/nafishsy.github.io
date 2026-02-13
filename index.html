@@ -93,22 +93,7 @@
   <div id="game-wrapper">
     <canvas id="game" width="480" height="320"></canvas>
 
-    <!-- On-screen Controls -->
-    <div id="controls">
-      <div class="dpad">
-        <button class="dpad-btn up" data-dir="up">&#9650;</button>
-        <button class="dpad-btn left" data-dir="left">&#9664;</button>
-        <div class="dpad-center"></div>
-        <button class="dpad-btn right" data-dir="right">&#9654;</button>
-        <button class="dpad-btn down" data-dir="down">&#9660;</button>
-      </div>
-      <div class="action-btns">
-        <button class="action-btn" id="btn-action">A<span>Interact</span></button>
-        <button class="action-btn" id="btn-inv">I<span>Items</span></button>
-      </div>
-    </div>
-
-    <!-- Controls hint bar -->
+    <!-- Controls hint bar (desktop) -->
     <div id="controls-hint">
       <span>&#8593;&#8595;&#8592;&#8594; Move</span>
       <span>SPACE Interact</span>
@@ -148,10 +133,10 @@
         <h1>NAFIZ AHMED</h1>
         <p class="welcome-role">ML Engineer &amp; Researcher</p>
         <p class="welcome-desc">Explore the town, talk to NPCs,<br>collect items &amp; discover buildings!</p>
-        <div class="welcome-start">PRESS SPACE OR CLICK</div>
+        <div class="welcome-start">TAP OR PRESS SPACE</div>
         <div class="welcome-controls">
-          <span>Arrow Keys: Move</span>
-          <span>Space: Interact</span>
+          <span>D-Pad: Move</span>
+          <span>A: Interact</span>
           <span>I: Inventory</span>
         </div>
       </div>
@@ -175,6 +160,22 @@
   <div class="scroll-indicator" id="scroll-to-cv">
     <span class="scroll-label">SCROLL FOR Actual Portfolio</span>
     <div class="scroll-arrow"></div>
+  </div>
+
+  <!-- Mobile On-screen Controls (fixed to bottom of viewport) -->
+  <div id="controls">
+    <div class="dpad">
+      <button class="dpad-btn up" data-dir="up">&#9650;</button>
+      <button class="dpad-btn left" data-dir="left">&#9664;</button>
+      <div class="dpad-center"></div>
+      <button class="dpad-btn right" data-dir="right">&#9654;</button>
+      <button class="dpad-btn down" data-dir="down">&#9660;</button>
+    </div>
+    <div class="action-btns">
+      <button class="action-btn" id="btn-back">&#9664;<span>Back</span></button>
+      <button class="action-btn" id="btn-action">A<span>Interact</span></button>
+      <button class="action-btn" id="btn-inv">I<span>Items</span></button>
+    </div>
   </div>
   </section>
 

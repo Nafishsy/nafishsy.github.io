@@ -1,5 +1,5 @@
 // ============================================
-// UI: Music Player & Scroll Indicator
+// UI: Music Player, Scroll Indicator, Controls Visibility
 // ============================================
 
 (function () {
@@ -7,12 +7,27 @@
   const btn = document.getElementById('music-toggle');
   const scene = document.querySelector('.lofi-scene');
   const scrollBtn = document.getElementById('scroll-to-cv');
+  const controls = document.getElementById('controls');
+  const gameSection = document.getElementById('game-section');
 
   // --- Scroll indicator ---
   if (scrollBtn) {
     scrollBtn.addEventListener('click', () => {
       document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' });
     });
+  }
+
+  // --- Hide controls when scrolled past game section ---
+  if (controls && gameSection) {
+    let controlsVisible = true;
+    window.addEventListener('scroll', () => {
+      const rect = gameSection.getBoundingClientRect();
+      const shouldShow = rect.bottom > 100;
+      if (shouldShow !== controlsVisible) {
+        controlsVisible = shouldShow;
+        controls.style.display = shouldShow ? '' : 'none';
+      }
+    }, { passive: true });
   }
 
   // --- Lofi music ---
