@@ -23,6 +23,7 @@
       <li><a href="#publications">Publications</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#experience">Experience</a></li>
+      <li><a href="#cv">CV</a></li>
       <li><a href="#contact" class="nav-cta">Contact</a></li>
     </ul>
     <div class="nav-toggle">
@@ -34,6 +35,7 @@
 
   <!-- Hero Section -->
   <section id="hero" class="hero">
+    <canvas id="neural-bg"></canvas>
     <div class="hero-content">
       <div class="hero-badge">Available for Research Collaborations</div>
       <h1 class="hero-title">
@@ -544,6 +546,74 @@
     </div>
   </section>
 
+  <!-- CV Section -->
+  <section id="cv" class="cv section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Credentials</span>
+        <h2 class="section-title">Curriculum Vitae</h2>
+      </div>
+      <div class="cv-content">
+        <div class="cv-preview-card">
+          <div class="cv-icon">
+            <i class="fas fa-file-alt"></i>
+            <div class="cv-icon-glow"></div>
+          </div>
+          <div class="cv-info">
+            <h3>Nafiz Ahmed</h3>
+            <p class="cv-subtitle">Machine Learning Engineer & Researcher</p>
+            <div class="cv-highlights">
+              <div class="cv-highlight">
+                <i class="fas fa-graduation-cap"></i>
+                <span>B.Sc. in CSE - CGPA 3.93/4.0</span>
+              </div>
+              <div class="cv-highlight">
+                <i class="fas fa-briefcase"></i>
+                <span>3+ Years Industry Experience</span>
+              </div>
+              <div class="cv-highlight">
+                <i class="fas fa-flask"></i>
+                <span>2 Published Research Papers</span>
+              </div>
+            </div>
+          </div>
+          <div class="cv-actions">
+            <a href="CV_Of_Nafiz_Ahmed.pdf" target="_blank" class="btn btn-primary cv-btn">
+              <i class="fas fa-eye"></i>
+              <span>View CV</span>
+            </a>
+            <a href="CV_Of_Nafiz_Ahmed.pdf" download class="btn btn-secondary cv-btn">
+              <i class="fas fa-download"></i>
+              <span>Download</span>
+            </a>
+          </div>
+        </div>
+        <div class="cv-skills-grid">
+          <div class="cv-skill-block">
+            <div class="cv-skill-icon"><i class="fas fa-brain"></i></div>
+            <h4>AI & Machine Learning</h4>
+            <p>Deep Learning, Computer Vision, NLP, Medical Imaging, Few-Shot Learning</p>
+          </div>
+          <div class="cv-skill-block">
+            <div class="cv-skill-icon"><i class="fas fa-robot"></i></div>
+            <h4>Agentic AI</h4>
+            <p>RAG Systems, LangChain, CrewAI, n8n, Multi-Agent Orchestration</p>
+          </div>
+          <div class="cv-skill-block">
+            <div class="cv-skill-icon"><i class="fas fa-code"></i></div>
+            <h4>Development</h4>
+            <p>Python, PyTorch, TensorFlow, FastAPI, Docker, AWS</p>
+          </div>
+          <div class="cv-skill-block">
+            <div class="cv-skill-icon"><i class="fas fa-microscope"></i></div>
+            <h4>Research</h4>
+            <p>Medical AI, Explainable AI, YOLO Architectures, Transformer Models</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Contact Section -->
   <section id="contact" class="contact section">
     <div class="container">
@@ -582,6 +652,33 @@
     </div>
   </footer>
 
+  <!-- Neuro Pet - AI Companion Game -->
+  <div id="neuro-pet" class="neuro-pet">
+    <div class="pet-bubble" id="petBubble"></div>
+    <div class="pet-sprite">
+      <div class="pet-antenna"><span></span></div>
+      <div class="pet-core">
+        <div class="pet-eye left"></div>
+        <div class="pet-eye right"></div>
+        <div class="pet-mouth"></div>
+      </div>
+      <div class="pet-feet">
+        <div class="pet-foot left"></div>
+        <div class="pet-foot right"></div>
+      </div>
+    </div>
+    <div class="pet-tag"><span class="pet-name">NEURO</span> <span class="pet-lvl">Lv.1</span></div>
+  </div>
+  <div id="neuro-hud" class="neuro-hud">
+    <div class="hud-item"><i class="fas fa-bolt"></i> <span id="neuronScore">0</span></div>
+    <div class="hud-sep">|</div>
+    <div class="hud-item"><i class="fas fa-map-marker-alt"></i> <span id="sectionsFound">0</span>/7</div>
+    <div class="hud-sep">|</div>
+    <div class="hud-item">LVL <span id="petLevel">1</span></div>
+    <div class="hud-xp"><div class="hud-xp-fill" id="petXP"></div></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
