@@ -43,7 +43,6 @@
     <div class="lofi-boy">
       <div class="boy-hair"></div>
       <div class="boy-head"></div>
-      <div class="boy-headband"></div>
       <div class="boy-ear-l"></div>
       <div class="boy-ear-r"></div>
       <div class="boy-body"></div>
@@ -173,8 +172,8 @@
       </div>
     </div>
   </div>
-  <div class="scroll-indicator" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'})">
-    <span class="scroll-label">SCROLL FOR CV</span>
+  <div class="scroll-indicator" id="scroll-to-cv">
+    <span class="scroll-label">SCROLL FOR Actual Portfolio</span>
     <div class="scroll-arrow"></div>
   </div>
   </section>
@@ -483,8 +482,8 @@
     <!-- CONTACT -->
     <div class="contact-section">
       <div class="section-tag">// CONTACT</div>
-      <h2 class="section-title" style="text-align:center;">Let's Connect</h2>
-      <p class="section-subtitle" style="text-align:center; margin: 0 auto 32px;">Open to research collaborations, ML engineering roles, and interesting projects.</p>
+      <h2 class="section-title">Let's Connect</h2>
+      <p class="section-subtitle">Open to research collaborations, ML engineering roles, and interesting projects.</p>
 
       <div class="contact-links">
         <a href="mailto:nafizahmed273273@gmail.com" class="contact-link">
@@ -510,54 +509,6 @@
   </main>
 
   <script src="script.js"></script>
-  <script>
-    // Lofi music toggle
-    (function() {
-      const audio = document.getElementById('lofi-audio');
-      const btn = document.getElementById('music-toggle');
-      const scene = document.querySelector('.lofi-scene');
-      if (!audio || !btn) return;
-      audio.volume = 0.3;
-
-      function startMusic() {
-        audio.play().then(() => {
-          btn.classList.add('playing');
-          if (scene) scene.classList.add('music-playing');
-        }).catch(() => {
-          // Autoplay blocked — start on first interaction
-          document.addEventListener('click', function once() {
-            audio.play().then(() => {
-              btn.classList.add('playing');
-              if (scene) scene.classList.add('music-playing');
-            }).catch(() => {});
-            document.removeEventListener('click', once);
-          });
-          document.addEventListener('keydown', function once() {
-            audio.play().then(() => {
-              btn.classList.add('playing');
-              if (scene) scene.classList.add('music-playing');
-            }).catch(() => {});
-            document.removeEventListener('keydown', once);
-          });
-        });
-      }
-
-      startMusic();
-
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        if (audio.paused) {
-          audio.play().then(() => {
-            btn.classList.add('playing');
-            if (scene) scene.classList.add('music-playing');
-          }).catch(() => {});
-        } else {
-          audio.pause();
-          btn.classList.remove('playing');
-          if (scene) scene.classList.remove('music-playing');
-        }
-      });
-    })();
-  </script>
+  <script src="ui.js"></script>
 </body>
 </html>
