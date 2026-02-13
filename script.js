@@ -1386,6 +1386,204 @@ function drawChar(ctx, px, py, hairCol, bodyCol, dir, frame, skinCol, acc, breat
 }
 
 // ============================================
+// PLAYER CHARACTER (Batman-style)
+// ============================================
+function drawPlayer(ctx, px, py, dir, frame, breathe) {
+  const b = breathe || 0;
+  const breatheOff = Math.round(Math.sin(b * Math.PI * 2) * 0.5);
+  const cowl = '#1a1a2e';
+  const suit = '#111122';
+  const cape = '#0a0a18';
+  const belt = '#c8a82a';
+  const sk = '#ffcc99';
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.fillRect(px + 2, py + 14, 12, 2);
+
+  if (dir === 'up') {
+    // Legs
+    const legOff = [0, 1, 0, -1][frame % 4];
+    ctx.fillStyle = '#0d0d1a';
+    ctx.fillRect(px + 4 + legOff, py + 12, 3, 4);
+    ctx.fillRect(px + 9 - legOff, py + 12, 3, 4);
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(px + 4 + legOff, py + 14, 3, 2);
+    ctx.fillRect(px + 9 - legOff, py + 14, 3, 2);
+    // Cape (back view - full cape visible)
+    ctx.fillStyle = cape;
+    ctx.fillRect(px + 2, py + 5 + breatheOff, 12, 9);
+    ctx.fillRect(px + 1, py + 7 + breatheOff, 1, 6);
+    ctx.fillRect(px + 14, py + 7 + breatheOff, 1, 6);
+    // Cape bottom scallop
+    ctx.fillStyle = '#06060f';
+    ctx.fillRect(px + 2, py + 13, 3, 1);
+    ctx.fillRect(px + 7, py + 13, 2, 1);
+    ctx.fillRect(px + 11, py + 13, 3, 1);
+    // Cowl (back)
+    ctx.fillStyle = cowl;
+    ctx.fillRect(px + 4, py + 1, 8, 5);
+    ctx.fillRect(px + 3, py + 2, 10, 3);
+    // Cowl ears
+    ctx.fillStyle = '#222240';
+    ctx.fillRect(px + 3, py - 2, 2, 4);
+    ctx.fillRect(px + 11, py - 2, 2, 4);
+    ctx.fillStyle = cowl;
+    ctx.fillRect(px + 4, py - 1, 1, 3);
+    ctx.fillRect(px + 11, py - 1, 1, 3);
+  } else if (dir === 'left' || dir === 'right') {
+    const flip = dir === 'right' ? 1 : 0;
+    const sLegOff = [0, 1, 0, -1][frame % 4];
+    // Legs
+    ctx.fillStyle = '#0d0d1a';
+    ctx.fillRect(px + 5 + sLegOff, py + 12, 3, 4);
+    ctx.fillRect(px + 8 - sLegOff, py + 12, 3, 4);
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(px + 5 + sLegOff, py + 14, 3, 2);
+    ctx.fillRect(px + 8 - sLegOff, py + 14, 3, 2);
+    // Cape (side - flows behind)
+    const aSwing = [0, -1, 0, 1][frame % 4];
+    ctx.fillStyle = cape;
+    if (dir === 'left') {
+      ctx.fillRect(px + 10, py + 5 + breatheOff, 4, 8);
+      ctx.fillRect(px + 13, py + 7 + breatheOff, 1, 5);
+    } else {
+      ctx.fillRect(px + 2, py + 5 + breatheOff, 4, 8);
+      ctx.fillRect(px + 2, py + 7 + breatheOff, 1, 5);
+    }
+    // Body
+    ctx.fillStyle = suit;
+    ctx.fillRect(px + 4, py + 7 + breatheOff, 8, 6);
+    // Belt
+    ctx.fillStyle = belt;
+    ctx.fillRect(px + 4, py + 11 + breatheOff, 8, 1);
+    ctx.fillStyle = '#e8c840';
+    ctx.fillRect(px + 7, py + 11 + breatheOff, 2, 1);
+    // Front arm
+    ctx.fillStyle = suit;
+    if (dir === 'left') {
+      ctx.fillRect(px + 3, py + 7 + breatheOff + aSwing, 3, 5);
+      // Gauntlet spikes
+      ctx.fillStyle = '#2a2a44';
+      ctx.fillRect(px + 2, py + 9 + breatheOff + aSwing, 1, 2);
+      ctx.fillStyle = suit;
+      ctx.fillRect(px + 3, py + 11 + breatheOff + aSwing, 3, 2);
+    } else {
+      ctx.fillRect(px + 10, py + 7 + breatheOff + aSwing, 3, 5);
+      ctx.fillStyle = '#2a2a44';
+      ctx.fillRect(px + 13, py + 9 + breatheOff + aSwing, 1, 2);
+      ctx.fillStyle = suit;
+      ctx.fillRect(px + 10, py + 11 + breatheOff + aSwing, 3, 2);
+    }
+    // Neck
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 6, py + 5, 4, 3);
+    // Cowl covers chin
+    ctx.fillStyle = cowl;
+    ctx.fillRect(px + 6, py + 5, 4, 1);
+    // Head
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 5, py + 2, 6, 4);
+    // Cowl
+    ctx.fillStyle = cowl;
+    ctx.fillRect(px + 3, py + 0, 10, 3);
+    if (dir === 'left') {
+      ctx.fillRect(px + 8, py + 3, 5, 2);
+    } else {
+      ctx.fillRect(px + 3, py + 3, 5, 2);
+    }
+    // Cowl ear
+    ctx.fillStyle = '#222240';
+    if (dir === 'left') {
+      ctx.fillRect(px + 10, py - 2, 2, 3);
+    } else {
+      ctx.fillRect(px + 4, py - 2, 2, 3);
+    }
+    // Eye (white slit)
+    ctx.fillStyle = '#fff';
+    if (dir === 'left') {
+      ctx.fillRect(px + 5, py + 3, 3, 1);
+      ctx.fillRect(px + 4, py + 4, 2, 1);
+    } else {
+      ctx.fillRect(px + 8, py + 3, 3, 1);
+      ctx.fillRect(px + 10, py + 4, 2, 1);
+    }
+  } else {
+    // === FRONT VIEW (down) ===
+    const fLegOff = [0, 1, 0, -1][frame % 4];
+    // Legs
+    ctx.fillStyle = '#0d0d1a';
+    ctx.fillRect(px + 4 + fLegOff, py + 12, 3, 4);
+    ctx.fillRect(px + 9 - fLegOff, py + 12, 3, 4);
+    ctx.fillStyle = '#0a0a12';
+    ctx.fillRect(px + 4 + fLegOff, py + 14, 3, 2);
+    ctx.fillRect(px + 9 - fLegOff, py + 14, 3, 2);
+    // Cape sides
+    const armOff = [0, -1, 0, 1][frame % 4];
+    ctx.fillStyle = cape;
+    ctx.fillRect(px + 0, py + 7 + breatheOff, 3, 7);
+    ctx.fillRect(px + 13, py + 7 + breatheOff, 3, 7);
+    // Body
+    ctx.fillStyle = suit;
+    ctx.fillRect(px + 3, py + 7 + breatheOff, 10, 6);
+    // Bat symbol on chest
+    ctx.fillStyle = '#c8a82a';
+    ctx.fillRect(px + 6, py + 8 + breatheOff, 4, 1);
+    ctx.fillRect(px + 5, py + 9 + breatheOff, 6, 1);
+    ctx.fillRect(px + 6, py + 10 + breatheOff, 1, 1);
+    ctx.fillRect(px + 9, py + 10 + breatheOff, 1, 1);
+    // Belt
+    ctx.fillStyle = belt;
+    ctx.fillRect(px + 3, py + 11 + breatheOff, 10, 1);
+    ctx.fillStyle = '#e8c840';
+    ctx.fillRect(px + 7, py + 11 + breatheOff, 2, 1);
+    // Arms (over cape)
+    ctx.fillStyle = suit;
+    ctx.fillRect(px + 1, py + 7 + breatheOff + armOff, 3, 5);
+    ctx.fillRect(px + 12, py + 7 + breatheOff - armOff, 3, 5);
+    // Gauntlet spikes
+    ctx.fillStyle = '#2a2a44';
+    ctx.fillRect(px + 0, py + 9 + breatheOff + armOff, 1, 2);
+    ctx.fillRect(px + 15, py + 9 + breatheOff - armOff, 1, 2);
+    // Gloves
+    ctx.fillStyle = '#1a1a30';
+    ctx.fillRect(px + 1, py + 11 + breatheOff + armOff, 3, 2);
+    ctx.fillRect(px + 12, py + 11 + breatheOff - armOff, 3, 2);
+    // Neck
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 6, py + 5, 4, 3);
+    // Cowl chin guard
+    ctx.fillStyle = cowl;
+    ctx.fillRect(px + 5, py + 5, 6, 1);
+    // Head (exposed jaw)
+    ctx.fillStyle = sk;
+    ctx.fillRect(px + 5, py + 3, 6, 3);
+    // Mouth (stern)
+    ctx.fillStyle = '#bb8877';
+    ctx.fillRect(px + 7, py + 5, 2, 1);
+    // Cowl
+    ctx.fillStyle = cowl;
+    ctx.fillRect(px + 3, py + 0, 10, 4);
+    ctx.fillRect(px + 3, py + 1, 2, 3);
+    ctx.fillRect(px + 11, py + 1, 2, 3);
+    // Cowl ears
+    ctx.fillStyle = '#222240';
+    ctx.fillRect(px + 3, py - 2, 2, 4);
+    ctx.fillRect(px + 11, py - 2, 2, 4);
+    ctx.fillStyle = cowl;
+    ctx.fillRect(px + 4, py - 1, 1, 3);
+    ctx.fillRect(px + 11, py - 1, 1, 3);
+    // Eyes (white slits - Batman style)
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(px + 5, py + 2, 3, 1);
+    ctx.fillRect(px + 8, py + 2, 3, 1);
+    // Eye shape (angular)
+    ctx.fillRect(px + 4, py + 3, 2, 1);
+    ctx.fillRect(px + 10, py + 3, 2, 1);
+  }
+}
+
+// ============================================
 // GAME CLASS
 // ============================================
 class PortfolioRPG {
@@ -2262,7 +2460,7 @@ class PortfolioRPG {
       ctx.beginPath();
       ctx.rect(ppx - 2, ppy - 4, S + 4, 12);
       ctx.clip();
-      drawChar(ctx, ppx, ppy - 4 + swimBob, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
+      drawPlayer(ctx, ppx, ppy - 4 + swimBob, this.player.dir, playerFrame, playerBreathe);
       ctx.restore();
       // Water ripple around player
       const ripple = Math.sin(t / 300 + 1) * 1;
@@ -2271,7 +2469,7 @@ class PortfolioRPG {
       ctx.fillStyle = 'rgba(150,210,255,0.3)';
       ctx.fillRect(ppx + 1, ppy + 6 + ripple, S - 2, 1);
     } else {
-      drawChar(ctx, ppx, ppy, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
+      drawPlayer(ctx, ppx, ppy, this.player.dir, playerFrame, playerBreathe);
     }
 
     // Player direction indicator
@@ -2380,7 +2578,7 @@ class PortfolioRPG {
     const [ppx, ppy] = this.getPlayerScreenPos();
     const playerBreathe = (t / 1200) % 1;
     const playerFrame = this.player.moving ? Math.floor(this.player.progress * 4) : 0;
-    drawChar(ctx, ppx + offsetX, ppy + offsetY, '#00c8d8', '#1a1a30', this.player.dir, playerFrame, '#ffcc99', null, playerBreathe);
+    drawPlayer(ctx, ppx + offsetX, ppy + offsetY, this.player.dir, playerFrame, playerBreathe);
 
     // Player direction indicator
     if (!this.player.moving) {
