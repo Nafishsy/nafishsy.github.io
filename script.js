@@ -1050,97 +1050,125 @@ function drawItem(ctx, px, py, style, time, color) {
 function drawCompanion(ctx, px, py, dir, frame, time) {
   const t = time || Date.now();
   const breathe = Math.round(Math.sin(t / 800 * Math.PI * 2) * 0.5);
+  // Offset to bottom-align smaller sprite in tile
+  const oy = 4;
 
   // Shadow
   ctx.fillStyle = 'rgba(0,0,0,0.15)';
-  ctx.fillRect(px + 2, py + 13, 10, 2);
+  ctx.fillRect(px + 3, py + oy + 10, 8, 2);
 
   // Tail
   ctx.fillStyle = '#cc8800';
   if (dir === 'left') {
-    ctx.fillRect(px + 11, py + 5, 2, 2);
-    ctx.fillRect(px + 12, py + 3, 2, 3);
-    ctx.fillRect(px + 13, py + 1, 2, 3);
+    ctx.fillRect(px + 10, py + oy + 4, 2, 1);
+    ctx.fillRect(px + 11, py + oy + 2, 1, 2);
   } else if (dir === 'right') {
-    ctx.fillRect(px + 1, py + 5, 2, 2);
-    ctx.fillRect(px + 0, py + 3, 2, 3);
-    ctx.fillRect(px - 1, py + 1, 2, 3);
+    ctx.fillRect(px + 2, py + oy + 4, 2, 1);
+    ctx.fillRect(px + 1, py + oy + 2, 1, 2);
   } else {
-    ctx.fillRect(px + 10, py + 4, 2, 2);
-    ctx.fillRect(px + 11, py + 2, 2, 3);
-    ctx.fillRect(px + 12, py + 0, 2, 3);
+    ctx.fillRect(px + 9, py + oy + 3, 1, 2);
+    ctx.fillRect(px + 10, py + oy + 1, 1, 2);
   }
   // Tail tip
   ctx.fillStyle = '#aa6600';
-  if (dir === 'left') ctx.fillRect(px + 13, py + 1, 2, 1);
-  else if (dir === 'right') ctx.fillRect(px - 1, py + 1, 2, 1);
-  else ctx.fillRect(px + 12, py + 0, 2, 1);
+  if (dir === 'left') ctx.fillRect(px + 11, py + oy + 2, 1, 1);
+  else if (dir === 'right') ctx.fillRect(px + 1, py + oy + 2, 1, 1);
+  else ctx.fillRect(px + 10, py + oy + 1, 1, 1);
 
   // Body
   ctx.fillStyle = '#ffdd44';
-  ctx.fillRect(px + 3, py + 6 + breathe, 8, 6);
-  ctx.fillRect(px + 4, py + 5 + breathe, 6, 8);
+  ctx.fillRect(px + 4, py + oy + 5 + breathe, 6, 4);
+  ctx.fillRect(px + 5, py + oy + 4 + breathe, 4, 6);
 
   // Feet
   const legOff = frame % 2 === 1 ? 1 : 0;
   ctx.fillStyle = '#ddbb33';
-  ctx.fillRect(px + 3 + legOff, py + 12, 3, 2);
-  ctx.fillRect(px + 8 - legOff, py + 12, 3, 2);
+  ctx.fillRect(px + 4 + legOff, py + oy + 9, 2, 2);
+  ctx.fillRect(px + 8 - legOff, py + oy + 9, 2, 2);
 
   // Head
   ctx.fillStyle = '#ffdd44';
-  ctx.fillRect(px + 3, py + 1, 8, 6);
-  ctx.fillRect(px + 2, py + 2, 10, 4);
+  ctx.fillRect(px + 4, py + oy + 1, 6, 4);
+  ctx.fillRect(px + 3, py + oy + 2, 8, 3);
 
   // Ears
   ctx.fillStyle = '#ffdd44';
-  ctx.fillRect(px + 2, py - 2, 2, 4);
-  ctx.fillRect(px + 10, py - 2, 2, 4);
+  ctx.fillRect(px + 3, py + oy - 1, 2, 3);
+  ctx.fillRect(px + 9, py + oy - 1, 2, 3);
   // Ear tips
   ctx.fillStyle = '#222';
-  ctx.fillRect(px + 2, py - 2, 2, 1);
-  ctx.fillRect(px + 10, py - 2, 2, 1);
+  ctx.fillRect(px + 3, py + oy - 1, 2, 1);
+  ctx.fillRect(px + 9, py + oy - 1, 2, 1);
 
   // Face (front/side)
   if (dir === 'down' || dir === 'up') {
     // Eyes
     ctx.fillStyle = '#111';
-    ctx.fillRect(px + 4, py + 3, 2, 2);
-    ctx.fillRect(px + 8, py + 3, 2, 2);
+    ctx.fillRect(px + 5, py + oy + 2, 1, 2);
+    ctx.fillRect(px + 8, py + oy + 2, 1, 2);
     // Eye shine
     ctx.fillStyle = '#fff';
-    ctx.fillRect(px + 4, py + 3, 1, 1);
-    ctx.fillRect(px + 8, py + 3, 1, 1);
+    ctx.fillRect(px + 5, py + oy + 2, 1, 1);
+    ctx.fillRect(px + 8, py + oy + 2, 1, 1);
     // Cheeks
     ctx.fillStyle = '#ff5544';
-    ctx.fillRect(px + 2, py + 4, 2, 2);
-    ctx.fillRect(px + 10, py + 4, 2, 2);
+    ctx.fillRect(px + 3, py + oy + 3, 2, 1);
+    ctx.fillRect(px + 9, py + oy + 3, 2, 1);
     // Nose
     ctx.fillStyle = '#222';
-    ctx.fillRect(px + 7, py + 4, 1, 1);
+    ctx.fillRect(px + 7, py + oy + 3, 1, 1);
     // Mouth
     if (dir === 'down') {
       ctx.fillStyle = '#cc8800';
-      ctx.fillRect(px + 6, py + 5, 3, 1);
+      ctx.fillRect(px + 6, py + oy + 4, 2, 1);
     }
   } else {
     // Side view
     const flip = dir === 'right' ? 1 : 0;
     ctx.fillStyle = '#111';
-    ctx.fillRect(px + (flip ? 8 : 4), py + 3, 2, 2);
+    ctx.fillRect(px + (flip ? 8 : 5), py + oy + 2, 1, 2);
     ctx.fillStyle = '#fff';
-    ctx.fillRect(px + (flip ? 8 : 4), py + 3, 1, 1);
+    ctx.fillRect(px + (flip ? 8 : 5), py + oy + 2, 1, 1);
     ctx.fillStyle = '#ff5544';
-    ctx.fillRect(px + (flip ? 10 : 2), py + 4, 2, 2);
+    ctx.fillRect(px + (flip ? 9 : 3), py + oy + 3, 2, 1);
     ctx.fillStyle = '#222';
-    ctx.fillRect(px + (flip ? 9 : 5), py + 4, 1, 1);
+    ctx.fillRect(px + (flip ? 9 : 5), py + oy + 3, 1, 1);
   }
 
   // Brown back stripes
   ctx.fillStyle = '#cc8800';
-  ctx.fillRect(px + 5, py + 7 + breathe, 4, 1);
-  ctx.fillRect(px + 4, py + 9 + breathe, 2, 1);
-  ctx.fillRect(px + 8, py + 9 + breathe, 2, 1);
+  ctx.fillRect(px + 5, py + oy + 6 + breathe, 4, 1);
+  ctx.fillRect(px + 5, py + oy + 8 + breathe, 1, 1);
+  ctx.fillRect(px + 8, py + oy + 8 + breathe, 1, 1);
+}
+
+function drawPetHearts(ctx, px, py, petTimer, time) {
+  if (petTimer <= 0) return;
+  const progress = 1 - petTimer / 1200;
+  const hearts = [
+    { dx: 0, dy: 0, delay: 0 },
+    { dx: -6, dy: 2, delay: 0.15 },
+    { dx: 7, dy: 1, delay: 0.3 }
+  ];
+  for (const h of hearts) {
+    const hp = Math.max(0, progress - h.delay) / (1 - h.delay);
+    if (hp <= 0 || hp >= 1) continue;
+    const rise = hp * 18;
+    const alpha = hp < 0.3 ? hp / 0.3 : 1 - (hp - 0.3) / 0.7;
+    const scale = hp < 0.2 ? hp / 0.2 : 1;
+    const wobble = Math.sin(time / 150 + h.delay * 20) * 2;
+    ctx.globalAlpha = alpha * 0.9;
+    ctx.fillStyle = '#ff4466';
+    const hx = px + 7 + h.dx + wobble;
+    const hy = py - 6 - rise + h.dy;
+    const s = Math.round(scale * 2 + 1);
+    // Pixel heart shape
+    ctx.fillRect(hx - s, hy, s, s);
+    ctx.fillRect(hx + 1, hy, s, s);
+    ctx.fillRect(hx - s, hy + s, s * 2 + 1, s);
+    ctx.fillRect(hx - s + 1, hy + s * 2, s * 2 - 1, Math.max(1, s - 1));
+  }
+  ctx.globalAlpha = 1;
 }
 
 // ============================================
@@ -1377,6 +1405,7 @@ class PortfolioRPG {
     this.dialogIndex = 0;
     this.dialogLink = null;       // URL to open on confirm
     this.dialogNPC = null;
+    this.petTimer = 0;
     this.dialogConfirm = false;   // showing yes/no prompt
     this.dialogConfirmChoice = 0; // 0 = YES, 1 = NO
     this.inventoryOpen = false;
@@ -1726,6 +1755,9 @@ class PortfolioRPG {
         this.pickupEl.classList.add('hidden');
       }
     }
+    if (this.petTimer > 0) {
+      this.petTimer -= dt;
+    }
 
     // Movement
     if (this.player.moving) {
@@ -1867,6 +1899,12 @@ class PortfolioRPG {
 
   interact() {
     const f = this.getFacing();
+
+    // Pet companion
+    if (f.x === this.companion.x && f.y === this.companion.y) {
+      this.petTimer = 1200;
+      return;
+    }
 
     if (this.currentMap === 'overworld') {
       const key = f.x + ',' + f.y;
@@ -2210,6 +2248,7 @@ class PortfolioRPG {
     } else {
       drawCompanion(ctx, ccx + 1, ccy, this.companion.dir, this.companion.frame, t);
     }
+    drawPetHearts(ctx, ccx, ccy, this.petTimer, t);
 
     // Draw player
     const [ppx, ppy] = this.getPlayerScreenPos();
@@ -2335,6 +2374,7 @@ class PortfolioRPG {
     // Draw companion in interior
     const [ccx, ccy] = this.getCompanionScreenPos(offsetX, offsetY);
     drawCompanion(ctx, ccx + 1, ccy, this.companion.dir, this.companion.frame, t);
+    drawPetHearts(ctx, ccx, ccy, this.petTimer, t);
 
     // Draw player in interior
     const [ppx, ppy] = this.getPlayerScreenPos();
