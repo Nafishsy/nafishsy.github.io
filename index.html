@@ -10,7 +10,87 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Lofi Background Music -->
+  <audio id="lofi-audio" loop preload="auto">
+    <source src="https://archive.org/download/kalaido-hanging-lanterns_202101/Kalaido%20-%20Hanging%20Lanterns.mp3" type="audio/mpeg">
+  </audio>
+
   <section id="game-section">
+
+  <!-- Lofi Room Scene -->
+  <div class="lofi-scene">
+    <!-- Window with stars -->
+    <div class="lofi-window">
+      <div class="window-frame"></div>
+      <div class="lofi-moon"></div>
+      <div class="lofi-star" style="top:18%;left:25%"></div>
+      <div class="lofi-star s2" style="top:30%;left:65%"></div>
+      <div class="lofi-star" style="top:12%;left:80%"></div>
+      <div class="lofi-star s3" style="top:38%;left:40%"></div>
+      <div class="lofi-star s2" style="top:8%;left:50%"></div>
+    </div>
+
+    <!-- Shelf with books -->
+    <div class="lofi-shelf">
+      <div class="shelf-book b1"></div>
+      <div class="shelf-book b2"></div>
+      <div class="shelf-book b3"></div>
+      <div class="shelf-book b4"></div>
+      <div class="shelf-book b5"></div>
+    </div>
+
+    <!-- Boy character with headphones -->
+    <div class="lofi-boy">
+      <div class="boy-hair"></div>
+      <div class="boy-head"></div>
+      <div class="boy-headband"></div>
+      <div class="boy-ear-l"></div>
+      <div class="boy-ear-r"></div>
+      <div class="boy-body"></div>
+      <div class="boy-arm"></div>
+    </div>
+
+    <!-- Desk surface -->
+    <div class="lofi-desk"></div>
+    <div class="lofi-desk-front"></div>
+
+    <!-- Coffee mug with steam -->
+    <div class="lofi-coffee">
+      <div class="coffee-steam s1"></div>
+      <div class="coffee-steam s2"></div>
+      <div class="coffee-steam s3"></div>
+    </div>
+
+    <!-- Plant -->
+    <div class="lofi-plant">
+      <div class="plant-pot"></div>
+      <div class="plant-leaf l1"></div>
+      <div class="plant-leaf l2"></div>
+      <div class="plant-leaf l3"></div>
+    </div>
+
+    <!-- Cat -->
+    <div class="lofi-cat">
+      <div class="cat-ear-l"></div>
+      <div class="cat-ear-r"></div>
+      <div class="cat-body"></div>
+      <div class="cat-tail"></div>
+    </div>
+
+    <!-- Floating music notes -->
+    <div class="lofi-notes">
+      <span class="note n1">&#9835;</span>
+      <span class="note n2">&#9834;</span>
+      <span class="note n3">&#9835;</span>
+    </div>
+  </div>
+
+  <!-- Music toggle -->
+  <button id="music-toggle" class="music-btn" aria-label="Toggle music">
+    <span class="music-icon">&#9835;</span>
+    <span class="music-label">LOFI</span>
+  </button>
+
   <div id="game-wrapper">
     <canvas id="game" width="480" height="320"></canvas>
 
@@ -430,5 +510,54 @@
   </main>
 
   <script src="script.js"></script>
+  <script>
+    // Lofi music toggle
+    (function() {
+      const audio = document.getElementById('lofi-audio');
+      const btn = document.getElementById('music-toggle');
+      const scene = document.querySelector('.lofi-scene');
+      if (!audio || !btn) return;
+      audio.volume = 0.3;
+
+      function startMusic() {
+        audio.play().then(() => {
+          btn.classList.add('playing');
+          if (scene) scene.classList.add('music-playing');
+        }).catch(() => {
+          // Autoplay blocked — start on first interaction
+          document.addEventListener('click', function once() {
+            audio.play().then(() => {
+              btn.classList.add('playing');
+              if (scene) scene.classList.add('music-playing');
+            }).catch(() => {});
+            document.removeEventListener('click', once);
+          });
+          document.addEventListener('keydown', function once() {
+            audio.play().then(() => {
+              btn.classList.add('playing');
+              if (scene) scene.classList.add('music-playing');
+            }).catch(() => {});
+            document.removeEventListener('keydown', once);
+          });
+        });
+      }
+
+      startMusic();
+
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (audio.paused) {
+          audio.play().then(() => {
+            btn.classList.add('playing');
+            if (scene) scene.classList.add('music-playing');
+          }).catch(() => {});
+        } else {
+          audio.pause();
+          btn.classList.remove('playing');
+          if (scene) scene.classList.remove('music-playing');
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

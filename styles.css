@@ -21,12 +21,530 @@ body {
   width: 100%;
   flex-shrink: 0;
   position: relative;
+  overflow: hidden;
 }
+
+/* ═══════════════════════════════════════════════════════
+   LOFI ROOM SCENE
+   ═══════════════════════════════════════════════════════ */
+
+.lofi-scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* ─── Window ─── */
+.lofi-window {
+  position: absolute;
+  top: 6%;
+  right: 8%;
+  width: 140px;
+  height: 120px;
+  background: linear-gradient(180deg, #0c1428 0%, #141e38 100%);
+  border: 4px solid #2a2a3a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.window-frame {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #2a2a3a;
+}
+
+.window-frame::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  width: 4px;
+  height: 124px;
+  background: #2a2a3a;
+}
+
+.lofi-moon {
+  position: absolute;
+  top: 15%;
+  right: 20%;
+  width: 24px;
+  height: 24px;
+  background: #e8e0c0;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(232, 224, 192, 0.3), 0 0 60px rgba(232, 224, 192, 0.1);
+  transition: box-shadow 0.5s;
+}
+
+.music-playing .lofi-moon {
+  animation: moonDrift 8s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(232, 224, 192, 0.5), 0 0 80px rgba(232, 224, 192, 0.2);
+}
+
+@keyframes moonDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(6px, -4px) scale(1.05); }
+  50% { transform: translate(-4px, -8px) scale(1.08); }
+  75% { transform: translate(-6px, -2px) scale(1.03); }
+}
+
+.lofi-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.lofi-star.s2 { animation-delay: 1s; width: 2px; height: 2px; }
+.lofi-star.s3 { animation-delay: 2s; width: 2px; height: 2px; opacity: 0.6; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ─── Shelf ─── */
+.lofi-shelf {
+  position: absolute;
+  top: 12%;
+  left: 6%;
+  width: 100px;
+  height: 8px;
+  background: #2a2035;
+  border-radius: 1px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 0 6px;
+}
+
+.shelf-book {
+  width: 10px;
+  border-radius: 1px 1px 0 0;
+  position: absolute;
+  bottom: 100%;
+}
+
+.shelf-book.b1 { left: 8px; height: 28px; background: #c94040; width: 10px; }
+.shelf-book.b2 { left: 20px; height: 24px; background: #3a7fc9; width: 8px; }
+.shelf-book.b3 { left: 30px; height: 30px; background: #c9a83a; width: 9px; }
+.shelf-book.b4 { left: 42px; height: 22px; background: #5a9a5a; width: 10px; }
+.shelf-book.b5 { left: 54px; height: 26px; background: #8a5ac9; width: 8px; }
+
+/* ─── Boy Character ─── */
+.lofi-boy {
+  position: absolute;
+  bottom: calc(50% - 160px);
+  left: calc(50% - min(48vw, 480px) - 80px);
+  width: 70px;
+  height: 90px;
+  z-index: 2;
+}
+
+.boy-head {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 30px;
+  background: #d4a574;
+  border-radius: 6px 6px 4px 4px;
+}
+
+.boy-hair {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 20px;
+  background: #2a1a0a;
+  border-radius: 8px 8px 0 0;
+  z-index: 1;
+}
+
+.boy-hair::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: -3px;
+  width: 8px;
+  height: 14px;
+  background: #2a1a0a;
+  border-radius: 0 4px 4px 0;
+}
+
+.boy-headband {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 8px;
+  z-index: 2;
+}
+
+.boy-ear-l, .boy-ear-r {
+  position: absolute;
+  top: 8px;
+  width: 16px;
+  height: 16px;
+  background: #444;
+  border-radius: 50%;
+  border: 3px solid #555;
+  z-index: 3;
+}
+
+.boy-ear-l { left: calc(50% - 24px); }
+.boy-ear-r { right: calc(50% - 24px); }
+
+.boy-ear-l::after, .boy-ear-r::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: #00ddee;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: headphoneGlow 2s ease-in-out infinite;
+}
+
+@keyframes headphoneGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+.boy-body {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 50px;
+  background: #2a4a6a;
+  border-radius: 4px 4px 0 0;
+}
+
+.boy-body::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 8px;
+  background: #1a3a5a;
+  border-radius: 0 0 6px 6px;
+}
+
+.boy-arm {
+  position: absolute;
+  top: 38px;
+  right: 4px;
+  width: 28px;
+  height: 12px;
+  background: #2a4a6a;
+  border-radius: 4px;
+  transform: rotate(-15deg);
+  transform-origin: left center;
+  animation: typing 1.5s ease-in-out infinite;
+}
+
+.boy-arm::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 2px;
+  width: 10px;
+  height: 8px;
+  background: #d4a574;
+  border-radius: 3px;
+}
+
+@keyframes typing {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(-10deg) translateY(-2px); }
+}
+
+/* ─── Desk ─── */
+.lofi-desk {
+  position: absolute;
+  bottom: calc(50% - 180px);
+  left: calc(50% - min(48vw, 480px) - 120px);
+  width: calc(min(96vw, 960px) + 240px);
+  height: 12px;
+  background: #3a2a20;
+  border-radius: 2px;
+  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.lofi-desk-front {
+  position: absolute;
+  bottom: calc(50% - 250px);
+  left: calc(50% - min(48vw, 480px) - 120px);
+  width: calc(min(96vw, 960px) + 240px);
+  height: 60px;
+  background: linear-gradient(180deg, #3a2a20, #2a1a14);
+  z-index: 1;
+  border-radius: 0 0 4px 4px;
+}
+
+/* ─── Coffee ─── */
+.lofi-coffee {
+  position: absolute;
+  bottom: calc(50% - 158px);
+  right: calc(50% - min(48vw, 480px) - 50px);
+  width: 22px;
+  height: 20px;
+  background: #fff;
+  border-radius: 2px 2px 4px 4px;
+  z-index: 3;
+}
+
+.lofi-coffee::before {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 4px;
+  width: 8px;
+  height: 10px;
+  border: 3px solid #fff;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+}
+
+.lofi-coffee::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  right: 3px;
+  height: 6px;
+  background: #6a4a2a;
+  border-radius: 2px;
+}
+
+.coffee-steam {
+  position: absolute;
+  bottom: 100%;
+  width: 3px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  animation: steam 2.5s ease-in-out infinite;
+}
+
+.coffee-steam.s1 { left: 4px; animation-delay: 0s; }
+.coffee-steam.s2 { left: 10px; animation-delay: 0.8s; height: 18px; }
+.coffee-steam.s3 { left: 16px; animation-delay: 1.6s; height: 12px; }
+
+@keyframes steam {
+  0% { transform: translateY(0) scaleX(1); opacity: 0; }
+  20% { opacity: 0.4; }
+  50% { transform: translateY(-12px) scaleX(1.5); opacity: 0.2; }
+  100% { transform: translateY(-24px) scaleX(0.5); opacity: 0; }
+}
+
+/* ─── Plant ─── */
+.lofi-plant {
+  position: absolute;
+  bottom: calc(50% - 148px);
+  right: calc(50% - min(48vw, 480px) - 100px);
+  z-index: 3;
+}
+
+.plant-pot {
+  width: 24px;
+  height: 20px;
+  background: #c96a3a;
+  border-radius: 2px 2px 4px 4px;
+  position: relative;
+}
+
+.plant-pot::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  right: -2px;
+  height: 5px;
+  background: #d47a4a;
+  border-radius: 2px;
+}
+
+.plant-leaf {
+  position: absolute;
+  width: 12px;
+  height: 18px;
+  background: #3a8a4a;
+  border-radius: 50% 0 50% 50%;
+}
+
+.plant-leaf.l1 {
+  bottom: 100%;
+  left: 2px;
+  transform: rotate(-20deg);
+}
+
+.plant-leaf.l2 {
+  bottom: calc(100% + 4px);
+  left: 8px;
+  transform: rotate(10deg);
+  width: 14px;
+  height: 22px;
+  background: #4a9a5a;
+}
+
+.plant-leaf.l3 {
+  bottom: calc(100% + 2px);
+  right: 0;
+  transform: rotate(30deg);
+  width: 10px;
+  height: 16px;
+  border-radius: 0 50% 50% 50%;
+}
+
+/* ─── Cat ─── */
+.lofi-cat {
+  position: absolute;
+  bottom: calc(50% - 160px);
+  right: calc(50% - min(48vw, 480px) - 20px);
+  z-index: 3;
+}
+
+.cat-body {
+  width: 28px;
+  height: 16px;
+  background: #888;
+  border-radius: 8px 8px 4px 4px;
+  position: relative;
+}
+
+.cat-ear-l, .cat-ear-r {
+  position: absolute;
+  bottom: 100%;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 8px solid #888;
+}
+
+.cat-ear-l { left: 2px; }
+.cat-ear-r { right: 2px; }
+
+.cat-tail {
+  position: absolute;
+  right: -14px;
+  bottom: 4px;
+  width: 18px;
+  height: 6px;
+  background: #888;
+  border-radius: 0 8px 8px 0;
+  transform-origin: left center;
+  animation: catTail 3s ease-in-out infinite;
+}
+
+@keyframes catTail {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(15deg); }
+}
+
+/* ─── Music Notes ─── */
+.lofi-notes {
+  position: absolute;
+  top: 25%;
+  left: calc(50% - min(48vw, 480px) - 40px);
+  z-index: 4;
+}
+
+.note {
+  position: absolute;
+  font-size: 16px;
+  color: rgba(0, 221, 238, 0.4);
+  animation: floatNote 4s ease-in-out infinite;
+}
+
+.note.n1 { left: 0; top: 0; animation-delay: 0s; }
+.note.n2 { left: 20px; top: -10px; animation-delay: 1.3s; font-size: 12px; }
+.note.n3 { left: -10px; top: -25px; animation-delay: 2.6s; font-size: 14px; }
+
+@keyframes floatNote {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.3; }
+  100% { transform: translateY(-40px) rotate(20deg); opacity: 0; }
+}
+
+/* ─── Music Toggle Button ─── */
+.music-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 60;
+  background: rgba(0, 0, 20, 0.85);
+  border: 2px solid #333;
+  border-radius: 6px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.music-btn:hover {
+  border-color: #00ddee;
+}
+
+.music-btn.playing {
+  border-color: #00ddee;
+  background: rgba(0, 221, 238, 0.1);
+}
+
+.music-icon {
+  font-size: 14px;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.music-btn.playing .music-icon {
+  color: #00ddee;
+  animation: noteBounce 1s ease-in-out infinite;
+}
+
+@keyframes noteBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+.music-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.music-btn.playing .music-label { color: #00ddee; }
 
 #game-wrapper {
   position: relative;
   width: min(96vw, 960px);
   aspect-ratio: 3 / 2;
+  z-index: 2;
 }
 
 #game {
@@ -1040,6 +1558,14 @@ body {
   }
 
   .scroll-indicator { display: none; }
+
+  .lofi-scene { display: none; }
+
+  .music-btn {
+    top: 8px;
+    right: 8px;
+    padding: 6px 10px;
+  }
 }
 
 @media (max-width: 480px) {
