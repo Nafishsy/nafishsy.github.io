@@ -1390,7 +1390,7 @@ class PortfolioRPG {
     this.fireflyTimer = 0;
 
     // Companion (Pikachu-like follower)
-    this.companion = { x: 13, y: 9, dir: 'down', frame: 0 };
+    this.companion = { x: 13, y: 9, dir: 'down', frame: 0, prevX: 13, prevY: 9, lerp: 1 };
     this.posHistory = []; // trail of player positions for companion to follow
 
     // Room/interior state
@@ -1730,7 +1730,7 @@ class PortfolioRPG {
       // Slower movement in water
       const targetTile = this.currentMap === 'overworld' ? (MAP[this.player.targetY] && MAP[this.player.targetY][this.player.targetX]) : null;
       const inWater = targetTile === T.WATER;
-      const moveSpeed = inWater ? 260 : 140;
+      const moveSpeed = inWater ? 240 : 150;
       this.player.progress += dt / moveSpeed;
       if (this.player.progress >= 1) {
         this.player.x = this.player.targetX;
@@ -1742,11 +1742,16 @@ class PortfolioRPG {
         if (inWater) {
           this.particles.emit(this.player.x * S + 8, this.player.y * S + 10, 'splash', 6);
         }
-        // Update companion to follow
+        // Update companion to follow (with smooth lerp)
         if (this.posHistory.length >= 2) {
           const followPos = this.posHistory[0];
-          this.companion.x = followPos.x;
-          this.companion.y = followPos.y;
+          if (followPos.x !== this.companion.x || followPos.y !== this.companion.y) {
+            this.companion.prevX = this.companion.x;
+            this.companion.prevY = this.companion.y;
+            this.companion.x = followPos.x;
+            this.companion.y = followPos.y;
+            this.companion.lerp = 0;
+          }
           this.companion.dir = followPos.dir;
           this.companion.frame++;
         }
@@ -1761,6 +1766,13 @@ class PortfolioRPG {
         if (this.currentMap === 'overworld') {
           this.checkItemPickup();
         }
+        // Immediately chain next move if key still held (no delay between tiles)
+        let chained = false;
+        if (this.keys['ArrowUp'] || this.keys['KeyW']) { chained = this.tryMove(0, -1, 'up'); }
+        else if (this.keys['ArrowDown'] || this.keys['KeyS']) { chained = this.tryMove(0, 1, 'down'); }
+        else if (this.keys['ArrowLeft'] || this.keys['KeyA']) { chained = this.tryMove(-1, 0, 'left'); }
+        else if (this.keys['ArrowRight'] || this.keys['KeyD']) { chained = this.tryMove(1, 0, 'right'); }
+        if (chained) this.moveTimer = 0;
       }
       // Emit particles while moving
       this.dustTimer += dt;
@@ -1780,16 +1792,27 @@ class PortfolioRPG {
         }
       }
     } else {
-      this.moveTimer += dt;
-      if (this.moveTimer > 30) {
-        let moved = false;
-        if (this.keys['ArrowUp'] || this.keys['KeyW']) { moved = this.tryMove(0, -1, 'up'); }
-        else if (this.keys['ArrowDown'] || this.keys['KeyS']) { moved = this.tryMove(0, 1, 'down'); }
-        else if (this.keys['ArrowLeft'] || this.keys['KeyA']) { moved = this.tryMove(-1, 0, 'left'); }
-        else if (this.keys['ArrowRight'] || this.keys['KeyD']) { moved = this.tryMove(1, 0, 'right'); }
-        if (moved) this.moveTimer = 0;
-      }
+      // Instant response — no delay before first step
+      let moved = false;
+      if (this.keys['ArrowUp'] || this.keys['KeyW']) { moved = this.tryMove(0, -1, 'up'); }
+      else if (this.keys['ArrowDown'] || this.keys['KeyS']) { moved = this.tryMove(0, 1, 'down'); }
+      else if (this.keys['ArrowLeft'] || this.keys['KeyA']) { moved = this.tryMove(-1, 0, 'left'); }
+      else if (this.keys['ArrowRight'] || this.keys['KeyD']) { moved = this.tryMove(1, 0, 'right'); }
+      if (moved) this.moveTimer = 0;
     }
+
+    // Smooth companion lerp
+    if (this.companion.lerp < 1) {
+      this.companion.lerp = Math.min(1, this.companion.lerp + dt / 120);
+    }
+  }
+
+  getCompanionScreenPos(offsetX, offsetY) {
+    const c = this.companion;
+    const t = c.lerp < 0.5 ? 4 * c.lerp * c.lerp * c.lerp : 1 - Math.pow(-2 * c.lerp + 2, 3) / 2;
+    const cx = (c.prevX + (c.x - c.prevX) * t) * S + (offsetX || 0);
+    const cy = (c.prevY + (c.y - c.prevY) * t) * S + (offsetY || 0);
+    return [cx, cy];
   }
 
   tryMove(dx, dy, dir) {
@@ -2049,7 +2072,7 @@ class PortfolioRPG {
     this.currentMap = 'overworld';
     this.overworldPos = null;
     this.posHistory = [];
-    this.companion = { x: 13, y: 9, dir: 'down', frame: 0 };
+    this.companion = { x: 13, y: 9, dir: 'down', frame: 0, prevX: 13, prevY: 9, lerp: 1 };
     this.roomNameEl.classList.add('hidden');
     this.itemCountEl.textContent = '0';
     this.areaCountEl.textContent = '0';
@@ -2162,21 +2185,20 @@ class PortfolioRPG {
     const playerInWater = playerTile === T.WATER;
     const companionInWater = companionTile === T.WATER;
 
-    // Draw companion (behind player)
+    // Draw companion (behind player) with smooth position
+    const [ccx, ccy] = this.getCompanionScreenPos(0, 0);
     if (companionInWater) {
-      // Companion swimming - only draw top half
       ctx.save();
       ctx.beginPath();
-      ctx.rect(this.companion.x * S, this.companion.y * S, S, 8);
+      ctx.rect(ccx, ccy, S, 8);
       ctx.clip();
-      drawCompanion(ctx, this.companion.x * S + 1, this.companion.y * S, this.companion.dir, this.companion.frame, t);
+      drawCompanion(ctx, ccx + 1, ccy, this.companion.dir, this.companion.frame, t);
       ctx.restore();
-      // Water ripple around companion
       const ripple = Math.sin(t / 300) * 1;
       ctx.fillStyle = 'rgba(100,180,255,0.4)';
-      ctx.fillRect(this.companion.x * S, this.companion.y * S + 7 + ripple, 14, 2);
+      ctx.fillRect(ccx, ccy + 7 + ripple, 14, 2);
     } else {
-      drawCompanion(ctx, this.companion.x * S + 1, this.companion.y * S, this.companion.dir, this.companion.frame, t);
+      drawCompanion(ctx, ccx + 1, ccy, this.companion.dir, this.companion.frame, t);
     }
 
     // Draw player
@@ -2301,7 +2323,8 @@ class PortfolioRPG {
     }
 
     // Draw companion in interior
-    drawCompanion(ctx, this.companion.x * S + offsetX + 1, this.companion.y * S + offsetY, this.companion.dir, this.companion.frame, t);
+    const [ccx, ccy] = this.getCompanionScreenPos(offsetX, offsetY);
+    drawCompanion(ctx, ccx + 1, ccy, this.companion.dir, this.companion.frame, t);
 
     // Draw player in interior
     const [ppx, ppy] = this.getPlayerScreenPos();
@@ -2352,7 +2375,9 @@ class PortfolioRPG {
     if (this.player.moving) {
       const dx = this.player.targetX - this.player.x;
       const dy = this.player.targetY - this.player.y;
-      const eased = this.player.progress * (2 - this.player.progress);
+      // Smooth cubic ease-in-out
+      const p = this.player.progress;
+      const eased = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
       ppx = (this.player.x + dx * eased) * S;
       ppy = (this.player.y + dy * eased) * S;
     } else {
