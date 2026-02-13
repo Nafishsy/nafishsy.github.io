@@ -1371,10 +1371,12 @@ class PortfolioRPG {
     this.player = { x: 14, y: 9, dir: 'down', moving: false, targetX: 14, targetY: 9, progress: 0, frame: 0 };
     this.collected = new Set();
     this.discovered = new Set();
+    this.talkedNPCs = new Set();
     this.dialogActive = false;
     this.dialogPages = [];
     this.dialogIndex = 0;
     this.dialogLink = null;       // URL to open on confirm
+    this.dialogNPC = null;
     this.dialogConfirm = false;   // showing yes/no prompt
     this.dialogConfirmChoice = 0; // 0 = YES, 1 = NO
     this.inventoryOpen = false;
@@ -1878,6 +1880,7 @@ class PortfolioRPG {
       // Check NPCs
       for (const npc of NPCS) {
         if (npc.x === f.x && npc.y === f.y) {
+          this.dialogNPC = npc;
           this.showDialog(npc.dialog);
           return;
         }
@@ -2029,6 +2032,10 @@ class PortfolioRPG {
   }
 
   closeDialog() {
+    if (this.dialogNPC) {
+      this.talkedNPCs.add(this.dialogNPC);
+      this.dialogNPC = null;
+    }
     this.dialogActive = false;
     this.dialogConfirm = false;
     this.dialogLink = null;
@@ -2061,6 +2068,7 @@ class PortfolioRPG {
   restart() {
     this.collected = new Set();
     this.discovered = new Set();
+    this.talkedNPCs = new Set();
     this.player = { x: 14, y: 9, dir: 'down', moving: false, targetX: 14, targetY: 9, progress: 0, frame: 0 };
     this.dialogActive = false;
     this.dialogConfirm = false;
@@ -2167,14 +2175,16 @@ class PortfolioRPG {
       const npcBreathe = (t / 1500 + NPCS.indexOf(npc) * 0.5) % 1;
       drawChar(ctx, npc.x * S, npc.y * S, npc.hair, npc.body, npc.idleDir, 0, npc.skin, npc.acc, npcBreathe);
 
-      const bubBob = Math.sin(t / 500 + NPCS.indexOf(npc)) * 1.5;
-      ctx.fillStyle = 'rgba(255,255,255,0.9)';
-      ctx.fillRect(npc.x * S + 5, npc.y * S - 10 + bubBob, 6, 6);
-      ctx.fillRect(npc.x * S + 7, npc.y * S - 5 + bubBob, 2, 2);
-      ctx.fillStyle = '#333';
-      ctx.fillRect(npc.x * S + 6, npc.y * S - 8 + bubBob, 1, 1);
-      ctx.fillRect(npc.x * S + 8, npc.y * S - 8 + bubBob, 1, 1);
-      ctx.fillRect(npc.x * S + 10, npc.y * S - 8 + bubBob, 1, 1);
+      if (!this.talkedNPCs.has(npc)) {
+        const bubBob = Math.sin(t / 500 + NPCS.indexOf(npc)) * 1.5;
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.fillRect(npc.x * S + 5, npc.y * S - 10 + bubBob, 6, 6);
+        ctx.fillRect(npc.x * S + 7, npc.y * S - 5 + bubBob, 2, 2);
+        ctx.fillStyle = '#333';
+        ctx.fillRect(npc.x * S + 6, npc.y * S - 8 + bubBob, 1, 1);
+        ctx.fillRect(npc.x * S + 8, npc.y * S - 8 + bubBob, 1, 1);
+        ctx.fillRect(npc.x * S + 10, npc.y * S - 8 + bubBob, 1, 1);
+      }
     }
 
     // Check if player/companion is in water

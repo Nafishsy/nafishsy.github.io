@@ -970,15 +970,70 @@ body {
 /* Controls hint bar (desktop) */
 #controls-hint {
   position: absolute;
-  bottom: -28px;
+  bottom: -52px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
-  gap: clamp(12px, 2.5vw, 24px);
-  font-size: clamp(6px, 0.9vw, 8px);
-  color: #555;
-  padding: 6px 0;
+  align-items: center;
+  gap: clamp(18px, 3vw, 36px);
+  padding: 8px 0;
+}
+
+#controls-hint .hint-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#controls-hint .hint-label {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 0.5px;
+}
+
+#controls-hint .key-arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+#controls-hint .key-row-center {
+  display: flex;
+  justify-content: center;
+}
+
+#controls-hint .key-row {
+  display: flex;
+  gap: 2px;
+}
+
+#controls-hint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #111;
+  background: linear-gradient(180deg, #fff 0%, #e8e8e8 100%);
+  border: 2px solid #fff;
+  border-bottom: 3px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.3);
+  line-height: 1;
+}
+
+#controls-hint .key-wide {
+  min-width: 56px;
+  padding: 0 10px;
+  font-size: 9px;
+  letter-spacing: 1px;
 }
 
 /* ═══════════════════════════════════════════════════════
