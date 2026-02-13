@@ -17,15 +17,16 @@
     });
   }
 
-  // --- Hide controls when scrolled past game section ---
-  if (controls && gameSection) {
-    let controlsVisible = true;
+  // --- Hide controls & busy sidebar when scrolled past game section ---
+  if (gameSection) {
+    let visible = true;
     window.addEventListener('scroll', () => {
       const rect = gameSection.getBoundingClientRect();
       const shouldShow = rect.bottom > 100;
-      if (shouldShow !== controlsVisible) {
-        controlsVisible = shouldShow;
-        controls.style.display = shouldShow ? '' : 'none';
+      if (shouldShow !== visible) {
+        visible = shouldShow;
+        if (controls) controls.style.display = shouldShow ? '' : 'none';
+        if (scrollBtn) scrollBtn.style.display = shouldShow ? '' : 'none';
       }
     }, { passive: true });
   }

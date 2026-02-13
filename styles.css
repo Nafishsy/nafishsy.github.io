@@ -985,70 +985,160 @@ body {
    SCROLL INDICATOR
    ═══════════════════════════════════════════════════════ */
 
-.scroll-indicator {
+/* Busy people sidebar - LEFT side, big & obvious */
+.busy-sidebar {
   position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: -400px;
+  top: 20%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   cursor: pointer;
-  z-index: 5;
+  z-index: 10;
+  transition: transform 0.3s ease;
 }
 
-.scroll-indicator:hover .scroll-label {
-  background: #4ae0f0;
-  color: #0a0a0f;
-  text-shadow: none;
-  box-shadow: 0 0 16px rgba(74, 224, 240, 0.5), inset 0 -3px 0 #2ab0c0;
+.busy-sidebar:hover {
+  transform: translateY(-50%) scale(1.06);
 }
 
-.scroll-label {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
-  color: #fff;
-  background: #3a8fc2;
-  padding: 8px 18px;
-  border: 3px solid #2a6fa0;
-  border-radius: 2px;
-  box-shadow: 0 4px 0 #1a4f78, 0 0 12px rgba(58, 143, 194, 0.3), inset 0 -3px 0 #2a6fa0, inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  text-shadow: 2px 2px 0 #1a4f78;
-  letter-spacing: 2px;
+.caution-tape {
+  width: 100px;
+  height: 30px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #f5c518,
+    #f5c518 8px,
+    #111 8px,
+    #111 16px
+  );
+  border: 2px solid #111;
   image-rendering: pixelated;
-  transition: all 0.15s;
-  position: relative;
 }
 
-.scroll-label::before {
-  content: '';
+.busy-sign {
+  background: #cc2222;
+  border: 5px solid #881111;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.25),
+    inset 0 -3px 0 #991111,
+    5px 5px 0 rgba(0,0,0,0.5),
+    0 0 25px rgba(204, 34, 34, 0.5);
+  animation: signGlow 1.8s ease-in-out infinite;
+}
+
+.busy-sign-icon {
+  font-size: 50px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+  animation: signWobble 2s ease-in-out infinite;
+}
+
+.busy-sign-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 20px;
+  color: #fff;
+  text-shadow: 2px 2px 0 #660000;
+  letter-spacing: 1px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.busy-arrow {
+  display: none;
+}
+
+.busy-sign-sub {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #ffcc00;
+  text-shadow: 1px 1px 0 #660000;
+  letter-spacing: 1px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* Arrow line: goes DOWN from sign then turns RIGHT toward portfolio */
+.busy-arrow-line {
   position: absolute;
-  background: rgba(255, 255, 255, 0.15);
-  top: 2px;
-  left: 2px;
-  right: 50%;
-  height: 2px;
+  top: 100%;
+  left: 50%;
+  width: 310px;
+  height: 420px;
+  pointer-events: none;
+  overflow: visible;
 }
 
-.scroll-arrow {
-  width: 14px;
-  height: 14px;
-  border-right: 3px solid #3a8fc2;
-  border-bottom: 3px solid #3a8fc2;
-  transform: rotate(45deg);
-  animation: scrollBounce 1.5s ease-in-out infinite;
-  filter: drop-shadow(0 0 4px rgba(58, 143, 194, 0.4));
+.busy-arrow-line .arrow-down {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 400px;
+  background: linear-gradient(to bottom, #ffcc00, #ffcc00 90%, #ffcc00);
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+  animation: arrowLinePulse 1.5s ease-in-out infinite;
 }
 
-.scroll-indicator:hover .scroll-arrow {
-  border-color: #4ae0f0;
-  filter: drop-shadow(0 0 6px rgba(74, 224, 240, 0.5));
+.busy-arrow-line .arrow-right {
+  position: absolute;
+  top: 396px;
+  left: 0;
+  width: 280px;
+  height: 5px;
+  background: #ffcc00;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+  animation: arrowLinePulse 1.5s ease-in-out infinite;
 }
 
-@keyframes scrollBounce {
-  0%, 100% { transform: rotate(45deg) translateY(0); }
-  50% { transform: rotate(45deg) translateY(6px); }
+.busy-arrow-line .arrow-head {
+  position: absolute;
+  top: 386px;
+  left: 272px;
+  width: 0;
+  height: 0;
+  border-top: 14px solid transparent;
+  border-bottom: 14px solid transparent;
+  border-left: 22px solid #ffcc00;
+  filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.7));
+  animation: arrowHeadBounce 1s ease-in-out infinite;
+}
+
+.busy-sidebar:hover .busy-sign {
+  background: #ee3333;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.35),
+    inset 0 -3px 0 #bb1111,
+    5px 5px 0 rgba(0,0,0,0.5),
+    0 0 40px rgba(255, 50, 50, 0.7);
+}
+
+@keyframes signGlow {
+  0%, 100% { box-shadow: inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -3px 0 #991111, 5px 5px 0 rgba(0,0,0,0.5), 0 0 20px rgba(204, 34, 34, 0.4); }
+  50% { box-shadow: inset 0 2px 0 rgba(255,255,255,0.25), inset 0 -3px 0 #991111, 5px 5px 0 rgba(0,0,0,0.5), 0 0 40px rgba(255, 50, 50, 0.7); }
+}
+
+@keyframes signWobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-6deg); }
+  75% { transform: rotate(6deg); }
+}
+
+@keyframes arrowLinePulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+@keyframes arrowHeadBounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1561,7 +1651,38 @@ body {
     font-size: 13px;
   }
 
-  .scroll-indicator { display: none; }
+  .busy-sidebar {
+    position: fixed;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: auto;
+    transform: none !important;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    z-index: 9998;
+  }
+  .busy-sidebar:hover {
+    transform: none !important;
+  }
+  .caution-tape {
+    flex: 1;
+    width: auto;
+    height: 48px;
+    min-width: 20px;
+  }
+  .busy-sign {
+    flex-direction: row;
+    gap: 10px;
+    padding: 10px 16px;
+    flex-shrink: 0;
+    border-width: 3px;
+  }
+  .busy-sign-icon { font-size: 20px; }
+  .busy-sign-text { font-size: 8px; }
+  .busy-sign-sub { font-size: 6px; }
+  .busy-arrow-line { display: none; }
 
   .lofi-scene { display: none; }
 
