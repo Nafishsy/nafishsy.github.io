@@ -102,7 +102,7 @@ body {
 }
 
 .confirm-option {
-  padding: 4px 14px;
+  padding: 6px 18px;
   border: 2px solid #555;
   border-radius: 4px;
   font-family: 'Press Start 2P', monospace;
@@ -110,12 +110,25 @@ body {
   color: #888;
   cursor: pointer;
   transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .confirm-option.selected {
   border-color: #00ddee;
   color: #00ddee;
   background: rgba(0, 221, 238, 0.1);
+}
+
+@media (pointer: coarse), (max-width: 768px) {
+  .confirm-option {
+    padding: 10px 22px;
+    font-size: clamp(8px, 1.3vw, 11px);
+  }
+  #dialog {
+    cursor: pointer;
+  }
 }
 
 #dialog-prompt {

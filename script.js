@@ -1253,19 +1253,41 @@ class PortfolioRPG {
       this.keyJustPressed['KeyI'] = true;
     });
 
-    // Confirm dialog click handlers
-    this.confirmYesEl.addEventListener('click', () => {
+    // Tap dialog to advance (mobile-friendly)
+    this.dialogEl.addEventListener('click', (e) => {
+      // Don't advance if tapping confirm buttons
+      if (e.target.closest('#dialog-confirm')) return;
+      if (this.dialogConfirm) return;
+      if (this.dialogActive) {
+        this.advanceDialog();
+      }
+    });
+
+    // Confirm dialog click/touch handlers
+    const handleConfirmYes = (e) => {
+      e.stopPropagation();
       if (this.dialogConfirm) {
         this.dialogConfirmChoice = 0;
         this.resolveConfirm();
       }
-    });
-    this.confirmNoEl.addEventListener('click', () => {
+    };
+    const handleConfirmNo = (e) => {
+      e.stopPropagation();
       if (this.dialogConfirm) {
         this.dialogConfirmChoice = 1;
         this.resolveConfirm();
       }
-    });
+    };
+    this.confirmYesEl.addEventListener('click', handleConfirmYes);
+    this.confirmNoEl.addEventListener('click', handleConfirmNo);
+    this.confirmYesEl.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleConfirmYes(e);
+    }, { passive: false });
+    this.confirmNoEl.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleConfirmNo(e);
+    }, { passive: false });
   }
 
   buildInventoryUI() {
