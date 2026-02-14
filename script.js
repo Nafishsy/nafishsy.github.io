@@ -2649,6 +2649,135 @@ window.addEventListener('load', async () => {
   const game = new PortfolioRPG();
   game.start();
 
+  // ─── Career Tree (Pixel Art Canvas) ───
+  const ctWrap = document.querySelector('.career-tree-wrap');
+  const ctCanvas = document.getElementById('career-tree');
+  if (ctCanvas && ctWrap) {
+    const PX = 6; // pixel scale
+    const GW = 100, GH = 75; // grid cells
+    ctCanvas.width = GW * PX;
+    ctCanvas.height = GH * PX;
+    const ctx = ctCanvas.getContext('2d');
+
+    function px(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x * PX, y * PX, (w || 1) * PX, (h || 1) * PX);
+    }
+
+    function drawCareerTree() {
+      ctx.clearRect(0, 0, ctCanvas.width, ctCanvas.height);
+
+      // ── Roots ──
+      const rootC = '#3a2210';
+      for (let i = -3; i <= 3; i++) {
+        const rx = 49 + i * 2;
+        const ry = 70 + Math.abs(i);
+        px(rx, ry, 2, 2, rootC);
+        px(rx + (i < 0 ? -1 : 1), ry + 1, 1, 2, rootC);
+      }
+
+      // ── Trunk ──
+      const trunkDark = '#5a3a1a', trunkMid = '#7a5a3a', trunkLight = '#8a6a4a';
+      for (let y = 12; y < 72; y++) {
+        px(48, y, 1, 1, trunkDark);
+        px(49, y, 2, 1, trunkMid);
+        px(51, y, 1, 1, trunkDark);
+        // bark texture
+        if (y % 5 === 0) px(49, y, 1, 1, trunkLight);
+        if (y % 7 === 2) px(50, y, 1, 1, trunkLight);
+      }
+
+      // ── Branches ──
+      function drawBranch(startX, startY, endX, dir) {
+        const branchC = '#7a5a3a', branchD = '#5a3a1a';
+        const dx = dir; // -1 left, +1 right
+        let cx = startX;
+        const steps = Math.abs(endX - startX);
+        for (let i = 0; i < steps; i++) {
+          const by = startY - Math.floor(i * 0.3);
+          px(cx, by, 1, 1, branchC);
+          px(cx, by + 1, 1, 1, branchD);
+          cx += dx;
+        }
+      }
+
+      // Left branches (Professional) at trunk y positions
+      drawBranch(48, 18, 18, -1);  // P1 top
+      drawBranch(48, 34, 12, -1);  // P2 middle
+      drawBranch(48, 48, 22, -1);  // P3 bottom
+
+      // Right branches (Research)
+      drawBranch(52, 22, 82, 1);   // R1 top
+      drawBranch(52, 40, 86, 1);   // R2 middle
+
+      // ── Leaf Canopy ──
+      const greens = ['#2d6b3a','#3a8a4a','#4cb868','#5cd878','#2d6b3a','#3a8a4a'];
+      function drawCluster(cx, cy, r) {
+        for (let dy = -r; dy <= r; dy++) {
+          for (let dx = -r; dx <= r; dx++) {
+            if (dx * dx + dy * dy <= r * r + Math.random() * 4) {
+              const c = greens[Math.floor(Math.random() * greens.length)];
+              px(cx + dx, cy + dy, 1, 1, c);
+            }
+          }
+        }
+      }
+
+      // Crown cluster at top
+      drawCluster(50, 8, 7);
+      drawCluster(45, 10, 4);
+      drawCluster(55, 10, 4);
+
+      // Clusters at left branch ends
+      drawCluster(20, 12, 4);
+      drawCluster(14, 28, 4);
+      drawCluster(24, 42, 3);
+
+      // Clusters at right branch ends
+      drawCluster(80, 16, 4);
+      drawCluster(84, 34, 4);
+
+      // Small accent clusters along branches
+      drawCluster(35, 14, 3);
+      drawCluster(30, 30, 3);
+      drawCluster(65, 18, 3);
+      drawCluster(70, 36, 3);
+    }
+
+    drawCareerTree();
+
+    // ── Node click interaction ──
+    document.querySelectorAll('.ct-node').forEach(node => {
+      node.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const wasActive = node.classList.contains('active');
+        document.querySelectorAll('.ct-node.active').forEach(n => n.classList.remove('active'));
+        if (!wasActive) node.classList.add('active');
+      });
+    });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.ct-node.active').forEach(n => n.classList.remove('active'));
+    });
+
+    // ── Falling leaves ──
+    const leafColors = ['#4cb868','#3a8a4a','#5cd878','#2d6b3a','#ffd700','#ffc800'];
+    function spawnLeaf() {
+      const leaf = document.createElement('div');
+      leaf.className = 'leaf-fall';
+      const c = leafColors[Math.floor(Math.random() * leafColors.length)];
+      const x = 15 + Math.random() * 70;
+      const dur = 5 + Math.random() * 4;
+      const delay = Math.random() * 1.5;
+      const drift = (Math.random() - 0.5) * 50;
+      const size = 4 + Math.floor(Math.random() * 4);
+      leaf.style.cssText = `--lc:${c};--ld:${drift}px;left:${x}%;top:8%;width:${size}px;height:${size}px;animation-duration:${dur}s;animation-delay:${delay}s;`;
+      ctWrap.appendChild(leaf);
+      setTimeout(() => leaf.remove(), (dur + delay) * 1000);
+    }
+    setInterval(spawnLeaf, 1200);
+    for (let i = 0; i < 5; i++) setTimeout(spawnLeaf, i * 350);
+  }
+
   // Space to start/complete handling
   window.addEventListener('keydown', e => {
     if (e.code === 'Space') {
