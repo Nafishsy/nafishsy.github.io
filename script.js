@@ -1661,11 +1661,13 @@ class PortfolioRPG {
 
   setupInput() {
     window.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (!this.keys[e.code]) this.keyJustPressed[e.code] = true;
       this.keys[e.code] = true;
       e.preventDefault();
     });
     window.addEventListener('keyup', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       this.keys[e.code] = false;
     });
 
@@ -2776,6 +2778,122 @@ window.addEventListener('load', async () => {
     }
     setInterval(spawnLeaf, 1200);
     for (let i = 0; i < 5; i++) setTimeout(spawnLeaf, i * 350);
+  }
+
+  // ─── Interactive Hero Terminal ───
+  const heroInput = document.getElementById('hero-terminal-input');
+  const heroBody = document.getElementById('terminal-body');
+  if (heroInput && heroBody) {
+    const cmds = {
+      help: () =>
+        '<span class="t-comment"># Available commands:</span>\n' +
+        '<span class="t-key">about</span>      <span class="t-val">- who is Nafiz?</span>\n' +
+        '<span class="t-key">skills</span>     <span class="t-val">- list technical skills</span>\n' +
+        '<span class="t-key">experience</span> <span class="t-val">- career timeline</span>\n' +
+        '<span class="t-key">projects</span>   <span class="t-val">- featured projects</span>\n' +
+        '<span class="t-key">contact</span>    <span class="t-val">- get in touch</span>\n' +
+        '<span class="t-key">socials</span>    <span class="t-val">- social links</span>\n' +
+        '<span class="t-key">clear</span>      <span class="t-val">- clear terminal</span>\n' +
+        '<span class="t-key">neofetch</span>   <span class="t-val">- system info</span>',
+
+      about: () =>
+        '<span class="t-comment"># Nafiz Ahmed</span>\n' +
+        '<span class="t-key">role:</span> <span class="t-val">ML Engineer & Researcher</span>\n' +
+        '<span class="t-key">location:</span> <span class="t-val">Dhaka, Bangladesh</span>\n' +
+        '<span class="t-key">current:</span> <span class="t-val">Periscopelabs · ELITE Lab (NYC)</span>\n' +
+        '<span class="t-key">focus:</span> <span class="t-val">Computer Vision · Agentic AI · Medical Imaging</span>',
+
+      skills: () =>
+        '<span class="t-file">PyTorch/</span> <span class="t-file">TensorFlow/</span> <span class="t-file">YOLO/</span> <span class="t-file">LangChain/</span>\n' +
+        '<span class="t-file">CrewAI/</span> <span class="t-file">RAG/</span> <span class="t-file">FastAPI/</span> <span class="t-file">Docker/</span>\n' +
+        '<span class="t-file">React/</span> <span class="t-file">Laravel/</span> <span class="t-file">n8n/</span> <span class="t-file">Vue.js/</span>',
+
+      experience: () =>
+        '<span class="t-highlight">▸ ML Engineer (Mid) @ Periscopelabs — Oct 2025-Present</span>\n' +
+        '<span class="t-highlight">▸ Researcher @ ELITE Lab, NYC — Sep 2025-Present</span>\n' +
+        '<span class="t-highlight">▸ ML Engineer @ MetroSofts, Sweden — Jan 2024-Oct 2025</span>\n' +
+        '<span class="t-highlight">▸ Research Intern @ AMIR Lab — Sep 2023-Mar 2024</span>\n' +
+        '<span class="t-highlight">▸ Jr. Software Engineer @ Shapla Infosys — Jan-Dec 2023</span>',
+
+      projects: () => {
+        const sec = document.getElementById('projects-section');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+        return '<span class="t-val">Scrolling to projects...</span>';
+      },
+
+      contact: () => {
+        const sec = document.getElementById('contact-section');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+        return '<span class="t-key">email:</span> <span class="t-val">nafizahmed273273@gmail.com</span>\n' +
+               '<span class="t-val">Scrolling to contact section...</span>';
+      },
+
+      socials: () =>
+        '<span class="t-file"><a href="https://github.com/Nafishsy" target="_blank" style="color:#00ddee;text-decoration:none;">GitHub</a></span> · ' +
+        '<span class="t-file"><a href="https://www.linkedin.com/in/Nafishy" target="_blank" style="color:#00ddee;text-decoration:none;">LinkedIn</a></span> · ' +
+        '<span class="t-file"><a href="https://scholar.google.com/citations?user=oHLUQsUAAAAJ" target="_blank" style="color:#00ddee;text-decoration:none;">Google Scholar</a></span>',
+
+      neofetch: () =>
+        '<span class="t-comment">        ┌──────────────────┐</span>\n' +
+        '<span class="t-comment">        │  nafiz@portfolio │</span>\n' +
+        '<span class="t-comment">        └──────────────────┘</span>\n' +
+        '<span class="t-key">OS:</span>      <span class="t-val">Portfolio v2.0</span>\n' +
+        '<span class="t-key">Theme:</span>   <span class="t-val">Pixel Art RPG</span>\n' +
+        '<span class="t-key">Shell:</span>   <span class="t-val">interactive-terminal 1.0</span>\n' +
+        '<span class="t-key">Uptime:</span>  <span class="t-val">3+ years in ML/AI</span>\n' +
+        '<span class="t-key">Papers:</span>  <span class="t-val">3 in progress</span>\n' +
+        '<span class="t-key">Coffee:</span>  <span class="t-val">☕ too many to count</span>',
+
+      clear: () => '__CLEAR__'
+    };
+
+    // Alias commands
+    cmds['ls'] = cmds.skills;
+    cmds['whoami'] = cmds.about;
+    cmds['cat about.md'] = cmds.about;
+    cmds['echo $HIGHLIGHTS'] = cmds.experience;
+    cmds['ls skills/'] = cmds.skills;
+
+    const inputLine = heroInput.closest('.terminal-input-line');
+
+    function execCmd(raw) {
+      const cmd = raw.trim().toLowerCase();
+      if (!cmd) return;
+
+      // Add the typed command as a line
+      const cmdLine = document.createElement('div');
+      cmdLine.className = 'terminal-line';
+      cmdLine.innerHTML = '<span class="terminal-prompt">$</span><span class="terminal-cmd">' +
+        raw.replace(/</g, '&lt;') + '</span>';
+      heroBody.insertBefore(cmdLine, inputLine);
+
+      // Execute
+      const handler = cmds[cmd];
+      const result = handler ? (typeof handler === 'function' ? handler() : handler) :
+        '<span class="t-comment">command not found: ' + raw.replace(/</g, '&lt;') + '. Type "help" for available commands.</span>';
+
+      if (result === '__CLEAR__') {
+        // Remove everything except the input line
+        while (heroBody.firstChild && heroBody.firstChild !== inputLine) {
+          heroBody.removeChild(heroBody.firstChild);
+        }
+      } else {
+        const output = document.createElement('div');
+        output.className = 'terminal-output';
+        output.innerHTML = result;
+        heroBody.insertBefore(output, inputLine);
+      }
+
+      heroInput.value = '';
+      heroBody.scrollTop = heroBody.scrollHeight;
+    }
+
+    heroInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        execCmd(heroInput.value);
+      }
+    });
   }
 
   // Space to start/complete handling

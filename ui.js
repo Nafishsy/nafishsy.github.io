@@ -154,9 +154,31 @@
   if (!audio || !btn) return;
   audio.volume = 0.3;
 
+  let noteInterval = null;
   function setPlaying(on) {
     btn.classList.toggle('playing', on);
     if (scene) scene.classList.toggle('music-playing', on);
+    if (on && !noteInterval) {
+      noteInterval = setInterval(spawnNote, 800);
+    } else if (!on && noteInterval) {
+      clearInterval(noteInterval);
+      noteInterval = null;
+    }
+  }
+
+  const noteChars = ['\u266B','\u266A','\u2669','\u266C'];
+  function spawnNote() {
+    const note = document.createElement('span');
+    note.className = 'spawn-note';
+    note.textContent = noteChars[Math.floor(Math.random() * noteChars.length)];
+    const dx = (Math.random() - 0.5) * 60;
+    const dy = -40 - Math.random() * 40;
+    const rot = (Math.random() - 0.5) * 60;
+    const size = 10 + Math.random() * 10;
+    const dur = 1.5 + Math.random() * 1;
+    note.style.cssText = `--ndx:${dx}px;--ndy:${dy}px;--nr:${rot}deg;font-size:${size}px;left:50%;top:-5px;animation-duration:${dur}s;`;
+    btn.appendChild(note);
+    setTimeout(() => note.remove(), dur * 1000);
   }
 
   function play() {
