@@ -1296,132 +1296,54 @@ body {
 }
 
 /* ─── Music Notes ─── */
-.lofi-notes {
-  position: absolute;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 60px;
-  pointer-events: none;
-  overflow: visible;
-  display: none;
-}
-
-.music-btn.playing .lofi-notes {
-  display: block;
-}
-
-.note {
-  position: absolute;
-  font-size: 16px;
-  color: rgba(0, 221, 238, 0.4);
-  animation: floatNote 4s ease-in-out infinite;
-}
-
-.note.n1 {
-  left: 5px;
-  top: 0;
-  animation-delay: 0s;
-}
-
-.note.n2 {
-  left: 22px;
-  top: -5px;
-  animation-delay: 1.3s;
-  font-size: 12px;
-}
-
-.note.n3 {
-  left: -2px;
-  top: -15px;
-  animation-delay: 2.6s;
-  font-size: 14px;
-}
-
-/* Dynamically spawned notes */
+/* Dynamically spawned notes (drop downward) */
 .spawn-note {
   position: absolute;
   pointer-events: none;
   color: #00ddee;
-  z-index: 61;
-  animation: spawnNoteFloat linear forwards;
+  z-index: 1001;
+  animation: noteDropDown linear forwards;
 }
 
-@keyframes floatNote {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-    opacity: 0;
-  }
-
-  20% {
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: translate(15px, -50px) rotate(25deg);
-    opacity: 0;
-  }
-}
-
-@keyframes spawnNoteFloat {
+@keyframes noteDropDown {
   0% {
     transform: translate(0, 0) rotate(0deg) scale(1);
     opacity: 0.9;
   }
-  30% {
+  40% {
     opacity: 0.7;
   }
   100% {
-    transform: translate(var(--ndx), var(--ndy)) rotate(var(--nr)) scale(0.5);
+    transform: translate(var(--ndx), var(--ndy)) rotate(var(--nr)) scale(0.4);
     opacity: 0;
   }
 }
 
-/* ─── Music Toggle Button ─── */
+/* ─── Music Toggle Button (in navbar) ─── */
 .music-btn {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 9999;
-  background: rgba(0, 0, 20, 0.9);
-  border: 2px solid #444;
-  border-radius: 8px;
-  padding: 10px 16px;
+  position: relative;
+  background: transparent;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: auto;
+  transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
+  overflow: visible;
+  margin-left: 12px;
+  flex-shrink: 0;
 }
 
 .music-btn:hover {
   border-color: #00ddee;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 221, 238, 0.2);
 }
 
 .music-btn.playing {
   border-color: #00ddee;
-  background: rgba(0, 221, 238, 0.15);
-  box-shadow: 0 0 20px rgba(0, 221, 238, 0.3);
-  animation: pulseActive 2s infinite ease-in-out;
-}
-
-@keyframes pulseActive {
-
-  0%,
-  100% {
-    box-shadow: 0 0 15px rgba(0, 221, 238, 0.2);
-  }
-
-  50% {
-    box-shadow: 0 0 30px rgba(0, 221, 238, 0.5);
-  }
+  background: rgba(0, 221, 238, 0.1);
 }
 
 .music-icon {
@@ -1436,20 +1358,13 @@ body {
 }
 
 @keyframes noteBounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-2px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
 }
 
 .music-label {
   font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
+  font-size: 7px;
   color: #555;
   transition: color 0.2s;
 }
@@ -1463,6 +1378,7 @@ body {
   width: min(96vw, 960px);
   aspect-ratio: 3 / 2;
   z-index: 2;
+  overflow: visible;
 }
 
 #game {
@@ -1974,26 +1890,31 @@ body {
 /* Controls hint bar (desktop) */
 #controls-hint {
   position: absolute;
-  bottom: -52px;
-  left: 0;
-  right: 0;
+  top: 50%;
+  right: calc(100% + 16px);
+  transform: translateY(-50%);
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  gap: clamp(18px, 3vw, 36px);
-  padding: 8px 0;
+  gap: 16px;
+  padding: 14px 18px;
+  background: rgba(10, 10, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
 }
 
 #controls-hint .hint-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 #controls-hint .hint-label {
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 11px;
-  color: #666;
+  color: #888;
   letter-spacing: 0.5px;
 }
 
@@ -3044,9 +2965,11 @@ body {
   }
 
   .music-btn {
-    top: 12px;
-    right: 8px;
-    padding: 6px 10px;
+    padding: 4px 8px;
+    gap: 5px;
+  }
+  .music-label {
+    display: none;
   }
 
   .portfolio-section {

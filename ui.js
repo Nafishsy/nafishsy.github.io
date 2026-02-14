@@ -171,12 +171,13 @@
     const note = document.createElement('span');
     note.className = 'spawn-note';
     note.textContent = noteChars[Math.floor(Math.random() * noteChars.length)];
-    const dx = (Math.random() - 0.5) * 60;
-    const dy = -40 - Math.random() * 40;
+    const dx = (Math.random() - 0.5) * 40;
+    const dy = 30 + Math.random() * 50;
     const rot = (Math.random() - 0.5) * 60;
-    const size = 10 + Math.random() * 10;
-    const dur = 1.5 + Math.random() * 1;
-    note.style.cssText = `--ndx:${dx}px;--ndy:${dy}px;--nr:${rot}deg;font-size:${size}px;left:50%;top:-5px;animation-duration:${dur}s;`;
+    const size = 10 + Math.random() * 8;
+    const dur = 2 + Math.random() * 1;
+    const startX = Math.random() * 100;
+    note.style.cssText = `--ndx:${dx}px;--ndy:${dy}px;--nr:${rot}deg;font-size:${size}px;left:${startX}%;top:100%;animation-duration:${dur}s;`;
     btn.appendChild(note);
     setTimeout(() => note.remove(), dur * 1000);
   }
